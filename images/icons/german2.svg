@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.0"
+   width="2700"
+   height="1800"
+   id="German Austrian Hybrid Flag">
+  <defs
+     id="defs2230">
+    <clipPath
+       id="upper_left_triangle">
+      <polygon
+         points="0,0 2700,0 0,1800 0,0 "
+         id="polygon2233" />
+    </clipPath>
+  </defs>
+  <g
+     id="Flag of Austria">
+    <rect
+       width="2700"
+       height="1800"
+       x="0"
+       y="0"
+       style="fill:#d81e05"
+       id="rect2236" />
+    <rect
+       width="2700"
+       height="600"
+       x="0"
+       y="600"
+       style="fill:#ffffff"
+       id="rect2238" />
+  </g>
+  <g
+     clip-path="url(#upper_left_triangle)"
+     id="Flag of Germany">
+    <rect
+       width="2700"
+       height="600"
+       x="0"
+       y="0"
+       style="fill:#040000"
+       id="Black Stripe" />
+    <rect
+       width="2700"
+       height="600"
+       x="0"
+       y="600"
+       style="fill:#de1800"
+       id="Red Stripe 1" />
+    <rect
+       width="2700"
+       height="600"
+       x="0"
+       y="1200"
+       style="fill:#ffce00"
+       id="Yellow Stripe" />
+  </g>
+  <rect
+     width="1209.9469"
+     height="1209.9469"
+     x="745.02655"
+     y="295.02652"
+     style="fill:#de1800;stroke:#000000;stroke-opacity:1"
+     id="Red Field" />
+  <rect
+     width="241.9894"
+     height="806.63129"
+     x="1229.0052"
+     y="496.68436"
+     style="fill:#ffffff"
+     id="White Stick 1" />
+  <rect
+     width="806.63129"
+     height="241.9894"
+     x="946.68433"
+     y="779.00531"
+     style="fill:#ffffff"
+     id="White Stick 2" />
+</svg>
