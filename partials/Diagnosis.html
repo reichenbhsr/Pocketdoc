@@ -1,0 +1,38 @@
+﻿<div class="partialContent">
+    <div class="diagnosis">
+        <md-card>
+	        <md-card-content>
+	            <div ng-show="isFollowUp">
+	        		<h2>{{ 'diag_followUp_done' | translate }}</h2>
+	            </div>
+	            
+	            <div ng-hide="isFollowUp">
+		            <h2>{{ 'diag_diagnosis' | translate }}</h2>
+	            </div>
+
+	            <p>{{diagnosis.description}}</p>
+
+	            <h3>{{ 'diag_action' | translate }}</h3>
+	            <p>{{actionSuggestion.description}}</p>
+	        
+	        </md-card-content>
+        </md-card>
+    </div>
+
+    <div class="follow-up">
+        <md-card>
+	        <md-card-content>
+    	        <h2>{{ 'diag_followup' | translate }}</h2>
+    	        <p>{{ 'diag_followUp_desc' | translate }}</p>
+    	       
+				<div class="md-actions" layout="row" layout-align="center center">
+		            
+		            <md-button flex="20" class="" ng-click="goToMain()">{{ 'common_no' | translate }}</md-button>
+		            
+		            <md-button flex="20" class="md-raised" ng-click="acceptFollowUp()">{{ 'common_yes' | translate }}</md-button>
+
+				</div>
+	        </md-card-content>
+        </md-card>
+    </div>
+</div>
