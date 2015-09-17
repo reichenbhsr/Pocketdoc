@@ -2,7 +2,7 @@
 
 	var backend = angular.module('pocketdocBackend', ['pocketdocData']);
 	
-	backend.factory('UserService', ['_', 'DataService', '$cookies', function( _ ,  DataService, $cookies ){
+	backend.factory('UserService', ['_', 'DataService', 'UtilService', '$cookies', function( _ ,  DataService, UtilService, $cookies ){
 
 		var isLoggedIn = function() {
 			return currentUser.id !== -1;
@@ -10,7 +10,7 @@
 		
 		var create = function( data, success, error ) {
 			if ( currentUser.id !== -1 ) {
-				error("Ein Benutzer ist aktuell eingeloggt. Bitte zuerst ausloggen.");
+				UtilService.delay(error, "Ein Benutzer ist aktuell eingeloggt. Bitte zuerst ausloggen.");
 			} else {
 				var users = JSON.parse(localStorage.getItem("users"));
 
@@ -30,7 +30,7 @@
 				login( data, function(){}, function(){} );
 
  				delete currentUser.password;
- 				success( data );
+ 				UtilService.delay(success, data);
 			}
 		};
 		
@@ -40,10 +40,10 @@
 				user = $.grep(users, function(e){ return e.id == data.id; });
 			
 			if ( user.length == 0) {
-				error("Id ist ungültig");
+				UtilService.delay(error,"Id ist ungültig");
 			} else {
 				delete user[0].password
-				success(user[0]);
+				UtilService.delay(success,user[0]);
 			}
 			
 		};
@@ -55,7 +55,7 @@
 			
 			if ( ( typeof(data.oldPassword) !== "undefined" && data.oldPassword !== "")
 				 && data.oldPassword !== user.password ) {
-				error(
+				UtilService.delay(error,
 					{
 						errorType: 1,	// Type wrong password
 						message: "Das eingegebene Passwort ist fehlerhaft!"
@@ -84,7 +84,7 @@
 			currentUser = changedUser;
 			delete currentUser.password;
 			
-			success({
+			UtilService.delay(success,{
 				name: data.name,
 				lang: data.lang
 			});
@@ -106,17 +106,17 @@
 
 				clearSession();
 				
-				success({
+				UtilService.delay(success,{
 					name : name
 				});
 			} else {
-				error("Fehler beim Löschen des Benutzers!");
+				UtilService.delay(error,"Fehler beim Löschen des Benutzers!");
 			}
 		};
 		
 		var login = function( data, success, error ) {
 			if ( !data || ( !data.session && !data.email ) ) {
-				error({
+				UtilService.delay(error,{
 					errorType: 2,
 					message: "Keine Daten eingegeben!"
 				});
@@ -138,9 +138,9 @@
 					
 					saveUserSession( currentUser );
 
-					success( currentUser );
+					UtilService.delay(success, currentUser );
 				} else {
-					error(
+					UtilService.delay(error,
 						{
 							errorType: 1,	// Type wrong password
 							message: "Falsches Passwort!"
@@ -148,7 +148,7 @@
 					);
 				}
 			} else {
-				error(
+				UtilService.delay(error,
 					{
 						errorType: 0,	// Type user not found
 						message: "Benutzer nicht gefunden"
@@ -168,7 +168,7 @@
 
 			clearSession();
 			
-			success({name : userName});
+			UtilService.delay(success,{name : userName});
 		};
 		
 		var checkData = function( data, success, error ) {
@@ -181,7 +181,7 @@
 		
 		var updateLang = function( data, success, error ) {
 			currentUser.lang = data.lang;
-			success(
+			UtilService.delay(success,
 				{
 					lang: currentUser.lang
 				}
@@ -192,11 +192,11 @@
 			var users = JSON.parse(localStorage.getItem("users"));
 			
 			if (users == null)
-				success({inUse: false});
+				UtilService.delay(success,{inUse: false});
 			else {
 				var user = $.grep(users, function(e){ return e.email == data.email; });
 			
-				success({ inUse: user.length !== 0 });
+				UtilService.delay(success,{ inUse: user.length !== 0 });
 			}
 		};
 
@@ -392,7 +392,7 @@
 			nextQuestions = answerObj.next_questions;
 			
 			if ( nextQuestions.length === 0 || nextQuestions[0] === -1 ) {
-				error( $translate.instant('error_noMoreQuestions') );
+				UtilService.delay(error, $translate.instant('error_noMoreQuestions') );
 			} else {
 				getQ( { id: nextQuestions.pop() }, success, error );
 			}
@@ -432,7 +432,7 @@
 
 			questionResult.answers = answerTexts;
 			
-			success(questionResult);	
+			UtilService.delay(success, questionResult);	
 		};
 
 		var addDiagnosis = function( data, success, error ) {
@@ -450,15 +450,15 @@
 							answerId: data.answerId
 						},
 						function(answerData){
-							success(answerData);
+							UtilService.delay(success, answerData);
 						},
 						function(errorMsg){
-							error(errorMsg);
+							UtilService.delay(error, errorMsg);
 						}
 					);
 				},
 				function(errorMsg){
-					error(errorMsg);
+					UtilService.delay(error, errorMsg);
 				}
 			);
 		};
@@ -472,7 +472,7 @@
 				//FollowupService.deleteFollowup( followUp.id );
 				delete followUp;
 			}
-			success();
+			UtilService.delay(success);
 		};
 
 		/**
@@ -526,9 +526,9 @@
 			diagnosisData.action_suggestion = getActionByID( actionID );
 
 			if ( diagnosisData.diagnosis && diagnosisData.action_suggestion ) {
-				success( diagnosisData );
+				UtilService.delay(success, diagnosisData );
 			} else {
-				error( "Something went wrong while getting the Diagnosis!");
+				UtilService.delay(error, "Something went wrong while getting the Diagnosis!");
 			}
 		};
 
@@ -629,7 +629,7 @@
 			
 			save( followUps );
 
-			success( followUpID );
+			UtilService.delay(success, followUpID );
 		};
 		
 		/**
@@ -755,6 +755,10 @@
 			getIdByLocale : function(localeId, dataArray){
 				var obj = $.grep(dataArray, function(e){ return e.locale == localeId; });
 				return obj[0].id;
+			},
+			
+			delay : function(call, param){
+				setTimeout(function(){call(param);}, 2000);
 			}
 			
 		};
