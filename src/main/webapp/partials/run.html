@@ -1,0 +1,125 @@
+<div ng-controller="runController" ng-init="init()">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-11" id="content">
+        <div class ="row" id="titel">
+            <h2>Tests</h2>
+        </div>
+        <div class="row">
+
+            <div class="col-lg-3">
+                <h3>Fragen</h3>
+                <table class="table table-striped table-bordered table-hover minheight">
+                    <tr>
+                        <th class="col-md-8">Frage</th>
+                        <th class="col-md-2">Ja</th>
+                        <th class="col-md-2">Nein</th>
+                    </tr>
+                    <tr ng-repeat="oldQuestion in oldQuestions">
+                        <td> {{ oldQuestion.german_description}}</td>
+                        <td><input type="radio"
+                                   disabled
+                                   data-ng-checked="oldQuestion.isAnswerYes">
+                        </td>
+                        <td><input type="radio"
+                                   disabled data-ng-checked="!oldQuestion.isAnswerYes">
+                        </td>
+                    </tr>
+                    <tr ng-show="question.descriptions && !finished">
+                        <td> {{ question.german_description }}</td>
+                        <td><input type="radio"
+                                   value="answer_yes"
+                                   data-ng-change="setAnswer(question, question.answer_yes.answer_id, true)"
+                                   ng-model="radio">
+                        </td>
+                        <td><input type="radio"
+                                   value="answer_no"
+                                   data-ng-change="setAnswer(question, question.answer_no.answer_id, false)"
+                                   name="questionId()" ng-model="radio">
+                        </td>
+
+                    </tr>
+                    <tr ng-show="finished">
+                        <td colspan="3"> Fragedurchlauf abgeschlossen </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-4" ng-show="testDiagnoses && testDiagnoses.length > 0" style="overflow-x: auto">
+                <h3>Diagnosen</h3>
+                <table class="table table-striped table-bordered table-hover minwidth">
+                    <tr>
+                        <th ng-repeat="diagnosis in testDiagnoses">{{diagnosis.name}}</th>
+                    </tr>
+                    <tr ng-repeat="oldQuestion in oldQuestions">
+                        <td data-title="'Score'" ng-repeat="ranking in answerToDiagnosisMap[oldQuestion.answer_id] track by $index">
+                            <input type="number" min="-2147483647" max="2147483647" class="form-control" ng-show = "ranking" ng-model="ranking.score" data-ng-change="setDiagnosisScore(oldQuestion.answer_id,$index,ranking)"/>
+                            <i ng-show = "!ranking" class="glyphicon glyphicon-plus" data-ng-click="addDiagnosisScore(oldQuestion.answer_id, $index)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-repeat="diagnosis in testDiagnoses"><b>Total: {{diagnosis.score}}</b></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-5" ng-show="testActionSuggestions && testActionSuggestions.length > 0" style="overflow-x: auto">
+                <h3>Handlungsempfehlungen</h3>
+                <table class="table table-striped table-bordered table-hover minwidth">
+                    <tr>
+                        <th></th>
+                        <th ng-repeat="actionSuggestion in testActionSuggestions">{{actionSuggestion.name}}</th>
+                    </tr>
+                    <tr ng-repeat="oldQuestion in oldQuestions">
+                        <td></td>
+                        <td data-title="'Score'" ng-repeat="ranking in answerToActionSuggestionMap[oldQuestion.answer_id] track by $index">
+                            <input type="number" min="-2147483647" max="2147483647" class="form-control" ng-show = "ranking" ng-model="ranking.score" data-ng-change="setActionSuggestionScore(oldQuestion.answer_id,$index,ranking)"/>
+                            <i ng-show = "!ranking" class="glyphicon glyphicon-plus" data-ng-click="addActionSuggestionScore(oldQuestion.answer_id, $index)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Syndrome</th>
+                    </tr>
+                    <tr ng-repeat="syndrom in syndroms">
+                        <td>{{syndrom.name}}</td>
+                        <td data-title="'Score'" ng-repeat="ranking in syndromToActionSuggestionMap[syndrom.syndrom_id] track by $index">
+                            <input type="number" min="-2147483647" max="2147483647" class="form-control" ng-show = "ranking" ng-model="ranking.score" data-ng-change="setSyndromScore(syndrom.syndrom_id,$index,ranking)"/>
+                            <i ng-show = "!ranking" class="glyphicon glyphicon-plus" data-ng-click="addSyndromScore(syndrom.syndrom_id, $index)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td ng-repeat="actionSuggestion in testActionSuggestions"><b>Total: {{actionSuggestion.score}}</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row" ng-show="finished" id="Results">
+            <div class="col-lg-6">
+                <h4>Diagnose:</h4>
+
+                <p class="bg-success" ng-show="runResult.diagnosis.german_description">
+                    {{runResult.diagnosis.german_description}}</p>
+
+                <p class="bg-danger" ng-show="!runResult.diagnosis">{{no_diagnosis}}</p>
+            </div>
+            <div class="col-lg-6">
+                <h4>Action Suggestion:</h4>
+
+                <p class="bg-success"
+                   ng-repeat="action_suggestion in runResult.action_suggestions | limitTo:action_suggestion_quantity"
+                   ng-show="action_suggestion.german_description">
+                    {{action_suggestion.german_description}}</p>
+
+                <p class="bg-danger" ng-show="!runResult.action_suggestions">{{no_suggestion}}</p>
+
+            </div>
+        </div>
+        <div class="row" id="Buttons">
+            <button type="submit" class="btn btn-default" data-ng-click="restart()">Neu Starten</button>
+            <button type="submit" class="btn btn-default" ng-show="!finished" data-ng-click="finish()">Beenden
+            </button>
+            <button type="submit" class="btn btn-default" ng-show="finished" data-ng-click="continue()">Weitermachen
+            </button>
+        </div>
+    </div>
+
+</div>

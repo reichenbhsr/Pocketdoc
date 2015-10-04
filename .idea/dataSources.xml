@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="3969523073">
+    <data-source source="LOCAL" name="databaseMappers:mappingXML:hibernate.cfg.xml" uuid="f19388da-540e-404f-a3aa-a48efb1165b5">
+      <driver-ref>postgresql</driver-ref>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql:HEROKU_POSTGRESQL_COBALT_URL?generateSimpleParameterMetadata=true</jdbc-url>
+      <libraries>
+        <library>
+          <url>file://C:\Users\ofrischk\studium\5. Semester\Studienarbeit\pocketdoc\lib\postgresql-9.3-1102.jdbc41.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+    <data-source source="LOCAL" name="database:mappingXML:hibernate.cfg.xml" uuid="e2761a37-5d82-417a-9337-b89e6267db78">
+      <driver-ref>postgresql</driver-ref>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql:ec2-79-125-21-70.eu-west-1.compute.amazonaws.com:5432/d3sd306179mt7j?generateSimpleParameterMetadata=true</jdbc-url>
+      <libraries>
+        <library>
+          <url>file://C:\Users\ofrischk\studium\5. Semester\Studienarbeit\pocketdoc\lib\postgresql-9.3-1102.jdbc41.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+    <data-source source="LOCAL" name="src:main:resources:hibernate.cfg.xml" uuid="4451c357-3ad4-4844-a1e3-3ee1b19d29b0">
+      <driver-ref>postgresql</driver-ref>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/pocketdoc</jdbc-url>
+      <libraries>
+        <library>
+          <url>file://C:\Users\nathic\.m2\repository\org\postgresql\postgresql\9.3-1102-jdbc41\postgresql-9.3-1102-jdbc41.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+    <data-source source="LOCAL" name="hibernate.cfg.xml" uuid="b372c928-41da-480e-a516-cce8f97d83ce">
+      <driver-ref>postgresql</driver-ref>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/pocketdoc</jdbc-url>
+      <libraries>
+        <library>
+          <url>file://D:\.m2\repository\org\postgresql\postgresql\9.3-1102-jdbc41\postgresql-9.3-1102-jdbc41.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+    <data-source source="LOCAL" name="local.hibernate.cfg.xml" uuid="e1018cd2-df93-464e-96ca-19ea5f0b0104">
+      <driver-ref>postgresql</driver-ref>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/pocketdoc</jdbc-url>
+      <libraries>
+        <library>
+          <url>file://C:\Users\nathic\.m2\repository\org\postgresql\postgresql\9.3-1102-jdbc41\postgresql-9.3-1102-jdbc41.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+  </component>
+</project>
+

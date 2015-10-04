@@ -1,0 +1,16 @@
+/*
+ * Testdaten einfullen
+ */
+
+--TABLE histories
+INSERT INTO histories(consecutive_questions) VALUES
+(1);
+
+--TABLE users(name,password,history)
+INSERT INTO users(name,password,history) VALUES
+('admin', '1234', 1);
+
+--TABLE languages(name)
+INSERT INTO languages(name) VALUES
+('Deutsch'),
+('Englisch');

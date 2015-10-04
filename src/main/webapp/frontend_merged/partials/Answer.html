@@ -1,0 +1,13 @@
+﻿<div ng-controller="QuestionCtrl">
+	<md-content>
+		<md-card class="md-accent">
+			<h3 flex>
+				<span>{{currentQuestion}}</span>
+			</h3>
+			<div layout="row" flex>
+				<md-button flex="50" class="md-raised md-accent" ng-click="clickYes()">Yes</md-button>
+				<md-button flex="50" class="md-raised md-warn" ng-click="clickNo()">No</md-button>
+			</div>
+		</md-card>
+	</md-content>
+</div>

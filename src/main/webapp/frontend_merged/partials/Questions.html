@@ -1,0 +1,44 @@
+﻿<div layout="column">
+	<md-content>
+		<md-list>
+			<md-item ng-repeat="question in questions">
+				<md-item-content>
+					<md-card layout="row" layout-align="center center" flex>
+						<div class="md-tile-left">
+							<md-icon md-svg-src="images/{{question.status}}.svg" class="answer-{{question.status}}"></md-icon>
+						</div>
+						<div class="md-tile-content" layout="column">
+							<h3>{{question.subject}}</h3>
+							<h4>{{question.text}}</h4>
+						</div>
+					</md-card>
+				</md-item-content>
+			</md-item>
+		</md-list>
+	</md-content>
+	<div>
+        <div ng-hide="user.loggedIn" layout-align="center center" layout="row" flex>
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            <div>Login...</div>
+        </div>
+		<md-content id="currentQuestion" ng-show="user.loggedIn">
+            <md-card>
+                <div ng-show="loading" layout-align="center center" layout="row">
+                    <md-progress-circular md-mode="indeterminate" ng-show="loading"></md-progress-circular>
+                    <div>Loading...</div>
+                </div>
+                <div ng-hide="loading">
+                    <h3>
+                        <span>{{currentQuestion.text}} </span>
+                    </h3>
+                    <div layout="row">
+                        <md-button flex="50" class="md-raised md-accent" ng-click="answerQuestion('positive')">Ja</md-button>
+                        <md-button flex="50" class="md-raised md-warn" ng-click="answerQuestion('negative')">Nein</md-button>
+                    </div>
+                </div>
+			</md-card>
+		</md-content>
+	</div>
+</div>
+
+

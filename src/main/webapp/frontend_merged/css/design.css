@@ -1,0 +1,31 @@
+
+#logo
+{
+	height: 250px;
+	width:	250px;
+	margin:	auto;
+}
+
+md-toolbar h1
+{
+  font-size: 1.250em;
+  font-weight: 400;
+  margin: auto;
+}
+
+.answer-negative, .answer-positive
+{
+	height: 32px;
+	width:	32px;
+	margin:	0 5px;
+}
+
+.answer-negative
+{
+	color: red;
+}
+
+.answer-positive
+{
+	color: green;
+}

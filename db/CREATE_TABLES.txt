@@ -1,0 +1,118 @@
+CREATE TABLE settings (
+id SERIAL PRIMARY KEY NOT NULL,
+name TEXT NULL,
+value TEXT NOT NULL
+);
+
+CREATE TABLE answers (
+id SERIAL PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE histories (
+id SERIAL PRIMARY KEY NOT NULL,
+consecutive_questions INT NOT NULL,
+last_answer INT references answers(id)
+);
+
+CREATE TABLE users (
+id SERIAL PRIMARY KEY NOT NULL,
+name TEXT NULL,
+password TEXT NULL,
+history INT references histories(id) NOT NULL
+);
+
+CREATE TABLE questions (
+id SERIAL PRIMARY KEY NOT NULL,
+name TEXT NULL,
+is_symptom BOOLEAN,
+answer_yes INT NOT NULL references answers(id) ON DELETE CASCADE,
+answer_no INT NOT NULL references answers(id) ON DELETE CASCADE,
+depends_on INT references answers(id)
+);
+
+CREATE TABLE syndroms (
+id SERIAL PRIMARY KEY NOT NULL,
+name TEXT NULL
+);
+
+CREATE TABLE diagnoses (
+id SERIAL PRIMARY KEY NOT NULL,
+name TEXT NULL
+);
+
+CREATE TABLE action_suggestions (
+id SERIAL PRIMARY KEY NOT NULL,
+name TEXT NULL
+);
+
+
+CREATE TABLE languages (
+id SERIAL PRIMARY KEY NOT NULL,
+name TEXT NULL
+);
+
+
+CREATE TABLE answers_to_histories (
+id SERIAL PRIMARY KEY NOT NULL,
+answer INT NOT NULL references answers(id) ON DELETE CASCADE,
+history INT NOT NULL references histories(id) ON DELETE CASCADE
+);
+
+CREATE TABLE answers_to_syndroms (
+id SERIAL PRIMARY KEY NOT NULL,
+answer INT NOT NULL references answers(id) ON DELETE CASCADE,
+syndrom INT NOT NULL references syndroms(id) ON DELETE CASCADE
+);
+
+CREATE TABLE perfect_diagnosis_diagnoses_to_answers (
+id SERIAL PRIMARY KEY NOT NULL,
+diagnosis INT NOT NULL references diagnoses(id) ON DELETE CASCADE,
+answer INT NOT NULL references answers(id) ON DELETE CASCADE
+);
+
+CREATE TABLE score_distribution_answers_to_diagnoses (
+id SERIAL PRIMARY KEY NOT NULL,
+score INT NOT NULL,
+answer INT NOT NULL references answers(id) ON DELETE CASCADE,
+diagnosis INT NOT NULL references diagnoses(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE score_distribution_answers_to_action_suggestions (
+id SERIAL PRIMARY KEY NOT NULL,
+score INT NOT NULL,
+answer INT NOT NULL references answers(id) ON DELETE CASCADE,
+action_suggestion INT NOT NULL references action_suggestions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE score_distribution_syndroms_to_action_suggestions (
+id SERIAL PRIMARY KEY NOT NULL,
+score INT NOT NULL,
+syndrom INT NOT NULL references syndroms(id) ON DELETE CASCADE,
+action_suggestion INT NOT NULL references action_suggestions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE question_descriptions (
+id SERIAL PRIMARY KEY NOT NULL,
+description TEXT NULL,
+question INT NOT NULL references questions(id) ON DELETE CASCADE,
+language INT NOT NULL references languages(id) ON DELETE CASCADE
+);
+
+CREATE TABLE diagnosis_descriptions (
+id SERIAL PRIMARY KEY NOT NULL,
+description TEXT NULL,
+diagnosis INT NOT NULL references diagnoses(id) ON DELETE CASCADE,
+language INT NOT NULL references languages(id) ON DELETE CASCADE
+);
+
+CREATE TABLE action_suggestion_descriptions (
+id SERIAL PRIMARY KEY NOT NULL,
+description TEXT NULL,
+action_suggestion INT NOT NULL references action_suggestions(id) ON DELETE CASCADE,
+language INT NOT NULL references languages(id) ON DELETE CASCADE
+);
+
+
+
+

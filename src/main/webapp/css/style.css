@@ -1,0 +1,61 @@
+#leftNav{
+	height: 100%;
+	padding: 0 0 0 0;
+}
+
+.list-group ul{
+    padding-left: 0px;
+}
+.ng-scope li {
+    list-style-type: none;
+}
+
+#content{
+	height: 100%;
+}
+.navbar-default{
+	margin-bottom: 0px;
+}
+
+#left-nav-plus-content{
+	height: 700px;
+	border-color: #e7e7e7;
+	box-sizing: border-box;
+}
+.test-link{
+	font-size: 25px;
+}
+.setting-link{
+	font-size: 25px;
+}
+.navbar{
+	font-weight: bold;
+}
+
+.ng-table th {
+    text-align: left;
+}
+
+.glyphicon{
+    cursor: pointer;
+}
+
+.scroll{
+    overflow-x:auto;
+}
+
+.list-group-item{
+    min-height: 42px;
+}
+
+.error{
+    font-weight: bold;
+    color: red;
+}
+.minheight td, .minheight th{
+	height: 55px;
+}
+.minwidth td, .minwidth th {
+	height: 55px;
+	min-width: 100px;
+}

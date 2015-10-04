@@ -1,0 +1,13 @@
+﻿<div>
+	<md-content>
+		<md-card layout="column" layout-align="center center" flex class="md-tile-content">
+			<h4>Ihre Diagnose:</h4>
+			<h3>{{user.run.diagnosis}}</h3>
+			<h4>Unsere Empfehlung:</h4>
+			<h3>{{user.run.recommendation}}</h3>
+		</md-card>
+        <div layout="row" flex>
+            <md-button ng-hide="true" flex="20" class="md-raised md-accent" ng-click="goToRun()">Neue Diagnosis</md-button>
+        </div>
+	</md-content>
+</div>
