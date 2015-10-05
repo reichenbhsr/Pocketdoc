@@ -38,9 +38,10 @@ public class DatabaseConnector {
 
         try {
 
-            connection = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/pocketdoc", "postgres",
-                    "password");
+            connection = DriverManager.getConnection("jdbc:postgresql://ec2-79-125-21-70.eu-west-1.compute.amazonaws.com:5432/d3sd306179mt7j?user=zcdhqlrumnxkeo&amp;password=vFddXxjvToPRJwSesubS3Mux4U");
+//            connection = DriverManager.getConnection(
+//                    "jdbc:postgresql://localhost:5432/pocketdoc", "postgres",
+//                    "password");
 
         } catch (SQLException e) {
 
