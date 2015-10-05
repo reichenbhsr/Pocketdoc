@@ -27,9 +27,18 @@ public class DiagnosisConnector extends DatabaseConnector {
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO diagnosis (name) VALUES (" +
-                        "'" + diagnosis.getName() + "');";
+                        (diagnosis.getName() == null ? null : "'" + diagnosis.getName() + "'") + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                diagnosis.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -46,8 +55,8 @@ public class DiagnosisConnector extends DatabaseConnector {
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE diagnosis SET " +
-                    "name='" + diagnosis.getName() + "'," +
-                    " WHERE id ='" + diagnosis.getId() + "';";
+                    "name=" + (diagnosis.getName() == null ? null : "'" + diagnosis.getName() + "'") + "," +
+                    " WHERE id =" + diagnosis.getId() + ";";
 
             stmt.execute(SQL);
         }

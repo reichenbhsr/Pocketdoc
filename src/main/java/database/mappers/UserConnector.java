@@ -18,19 +18,28 @@ public class UserConnector extends DatabaseConnector {
 
             Statement stmt = connection.createStatement();
             String SQL = "SELECT id FROM User where id = " + user.getId() + ";";
-            ResultSet set = stmt.executeQuery(SQL);
+            ResultSet res = stmt.executeQuery(SQL);
 
-            if (set.next())
+            if (res.next())
                 System.out.println("User already exists!");
             else{
                 // Create User
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO Users (name, password, history) VALUES (" +
-                        "'" + user.getName() + "'," +
-                        "'" + user.getPassword() + "'," +
+                        (user.getName() == null ? null : "'" + user.getName() + "'") + "," +
+                        (user.getPassword() == null ? null : "'" + user.getPassword() + "'") + "," +
                         "'" + user.getHistory().getId() + "');";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                user.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -47,10 +56,10 @@ public class UserConnector extends DatabaseConnector {
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE Users SET " +
-                            " name='" + user.getName() + "'," +
-                            " password='" + user.getPassword() +"',"+
+                            " name=" + (user.getName() == null ? null : "'" + user.getName() + "'") + "," +
+                            " password=" + (user.getPassword() == null ? null : "'" + user.getPassword() + "'") +","+
                             " history='" + user.getHistory().getId() +"' "+
-                            " WHERE id ='" + user.getId() + "';";
+                            " WHERE id =" + user.getId() + ";";
 
             stmt.execute(SQL);
         }

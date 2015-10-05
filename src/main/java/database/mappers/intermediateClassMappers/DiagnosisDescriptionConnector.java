@@ -28,11 +28,20 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO Questions (description, language, diagnosis) VALUES (" +
-                        "'" + diagnosisDescription.getDescription() + "'," +
-                        "'" + diagnosisDescription.getLanguage().getId() + "'," +
-                        "'" + diagnosisDescription.getDiagnosis().getId() + "');";
+                        "" + (diagnosisDescription.getDescription() == null ? null : "'" + diagnosisDescription.getDescription() + "'") + "," +
+                        "" + diagnosisDescription.getLanguage().getId() + "," +
+                        "" + diagnosisDescription.getDiagnosis().getId() + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                diagnosisDescription.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -49,10 +58,10 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE diagnosis_descripitons SET " +
-                    "description='" + diagnosisDescription.getDescription() + "'," +
-                    " language='" + diagnosisDescription.getLanguage().getId() +"',"+
-                    " diagnosis='" + diagnosisDescription.getDiagnosis().getId() +"'"+
-                    " WHERE id ='" + diagnosisDescription.getId() + "';";
+                    "description=" + (diagnosisDescription.getDescription() == null ? null : "'" + diagnosisDescription.getDescription() + "'") + "," +
+                    " language=" + diagnosisDescription.getLanguage().getId() +","+
+                    " diagnosis=" + diagnosisDescription.getDiagnosis().getId() +""+
+                    " WHERE id =" + diagnosisDescription.getId() + ";";
 
             stmt.execute(SQL);
         }

@@ -29,11 +29,20 @@ public class QuestionDescriptionConnector extends DatabaseConnector{
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO question_descriptions (description, language, question) VALUES (" +
-                        "'" + questionDescription.getDescription() + "'," +
-                        "'" + questionDescription.getLanguage().getId() + "'," +
-                        "'" + questionDescription.getQuestion().getId() + "');";
+                        "" + (questionDescription.getDescription() == null ? null : "'" + questionDescription.getDescription() + "'") + "," +
+                        "" + questionDescription.getLanguage().getId() + "," +
+                        "" + questionDescription.getQuestion().getId() + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                questionDescription.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -50,10 +59,10 @@ public class QuestionDescriptionConnector extends DatabaseConnector{
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE question_descriptions SET " +
-                    "description='" + questionDescription.getDescription() + "'," +
-                    " language='" + questionDescription.getLanguage().getId() +"',"+
-                    " question='" + questionDescription.getQuestion().getId() +"' "+
-                    " WHERE id ='" + questionDescription.getId() + "';";
+                    "description=" + (questionDescription.getDescription() == null ? null : "'" + questionDescription.getDescription() + "'") + "," +
+                    " language=" + questionDescription.getLanguage().getId() +","+
+                    " question=" + questionDescription.getQuestion().getId() +" "+
+                    " WHERE id =" + questionDescription.getId() + ";";
 
             stmt.execute(SQL);
         }

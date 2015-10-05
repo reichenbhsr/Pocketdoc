@@ -1,5 +1,8 @@
 package models;
 
+import database.mappers.QuestionConnector;
+import database.mappers.intermediateClassMappers.AnswerToActionSuggestionScoreDistributionConnector;
+import database.mappers.intermediateClassMappers.AnswerToDiagnosisScoreDistributionConnector;
 import models.intermediateClassModels.AnswerToActionSuggestionScoreDistribution;
 import models.intermediateClassModels.AnswerToDiagnosisScoreDistribution;
 
@@ -39,6 +42,13 @@ public class Answer {
     }
 
     public Set<AnswerToActionSuggestionScoreDistribution> getAnswerToActionSuggestionScoreDistributions() {
+
+        if (answerToActionSuggestionScoreDistributions == null)
+        {
+            AnswerToActionSuggestionScoreDistributionConnector ac = new AnswerToActionSuggestionScoreDistributionConnector();
+            answerToActionSuggestionScoreDistributions = ac.readSetOfAnswer(id);
+        }
+
         return answerToActionSuggestionScoreDistributions;
     }
 
@@ -47,6 +57,13 @@ public class Answer {
     }
 
     public Set<AnswerToDiagnosisScoreDistribution> getAnswerToDiagnosisScoreDistributions() {
+
+        if (answerToDiagnosisScoreDistributions == null)
+        {
+            AnswerToDiagnosisScoreDistributionConnector ac = new AnswerToDiagnosisScoreDistributionConnector();
+            answerToDiagnosisScoreDistributions = ac.readSetOfAnswer(id);
+        }
+
         return answerToDiagnosisScoreDistributions;
     }
 
@@ -68,9 +85,15 @@ public class Answer {
     }
 
     public Set<Question> getDependencyFrom() {
+
+        if (dependencyFrom == null)
+        {
+            QuestionConnector qc = new QuestionConnector();
+            dependencyFrom = qc.readDependendQuestions(id);
+        }
+
         return dependencyFrom;
     }
-
     public void setDependencyFrom(Set<Question> dependencyFrom) {
         this.dependencyFrom = dependencyFrom;
     }

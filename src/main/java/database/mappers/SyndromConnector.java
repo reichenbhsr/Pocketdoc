@@ -27,9 +27,18 @@ public class SyndromConnector extends DatabaseConnector {
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO syndroms (name) VALUES (" +
-                        "'" + syndrom.getName() +  "');";
+                        "" + (syndrom.getName() == null ? null : "'" + syndrom.getName() + "'") +  ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                syndrom.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -46,7 +55,7 @@ public class SyndromConnector extends DatabaseConnector {
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE syndroms SET " +
-                    "name='" + syndrom.getName() + "';";
+                    "name=" + (syndrom.getName() == null ? null : "'" + syndrom.getName() + "'") + ";";
 
             stmt.execute(SQL);
         }

@@ -28,7 +28,16 @@ public class AnswerConnector extends DatabaseConnector {
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO answers DEFAULT VALUES;";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                answer.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -50,7 +59,7 @@ public class AnswerConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM answers WHERE id='"+ answerId + "';";
+            String SQL = "SELECT * FROM answers WHERE id="+ answerId + ";";
 
             ResultSet set = stmt.executeQuery(SQL);
 

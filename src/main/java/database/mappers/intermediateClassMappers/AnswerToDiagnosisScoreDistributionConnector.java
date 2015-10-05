@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Roman on 04.10.2015.
@@ -27,12 +28,21 @@ public class AnswerToDiagnosisScoreDistributionConnector extends DatabaseConnect
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO score_distribution_answers_to_diagnoses (score, answer, diagnosis,) VALUES (" +
-                        "'" + atdsd.getScore() + "'," +
-                        "'" + atdsd.getAnswer().getId() + "'," +
-                        "'" + atdsd.getDiagnosis().getId() + "');";
+                SQL = "INSERT INTO score_distribution_answers_to_diagnoses (score, answer, diagnosis) VALUES (" +
+                        "" + atdsd.getScore() + "," +
+                        "" + atdsd.getAnswer().getId() + "," +
+                        "" + atdsd.getDiagnosis().getId() + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                atdsd.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -49,10 +59,10 @@ public class AnswerToDiagnosisScoreDistributionConnector extends DatabaseConnect
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE score_distribution_answers_to_diagnoses SET " +
-                    "score='" + atdsd.getScore() + "'," +
-                    " answer='" + atdsd.getAnswer().getId() +"',"+
-                    " diagnosis='" + atdsd.getDiagnosis().getId() +"' "+
-                    " WHERE id ='" + atdsd.getId() + "';";
+                    "score=" + atdsd.getScore() + "," +
+                    " answer=" + atdsd.getAnswer().getId() +","+
+                    " diagnosis=" + atdsd.getDiagnosis().getId() +" "+
+                    " WHERE id =" + atdsd.getId() + ";";
 
             stmt.execute(SQL);
         }
@@ -123,6 +133,39 @@ public class AnswerToDiagnosisScoreDistributionConnector extends DatabaseConnect
         }
 
         return atdsds;
+    }
+
+    public HashSet<AnswerToDiagnosisScoreDistribution> readSetOfAnswer(int answerId){
+
+        HashSet<AnswerToDiagnosisScoreDistribution> set = new HashSet<AnswerToDiagnosisScoreDistribution>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM score_distribution_answers_to_diagnoses WHERE answer = " + answerId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            AnswerToDiagnosisScoreDistribution atdsd;
+            while (res.next())
+            {
+                atdsd = new AnswerToDiagnosisScoreDistribution();
+                atdsd.setId(res.getInt("id"));
+                atdsd.setScore(res.getInt("score"));
+                atdsd.setDiagnosisId(res.getInt("diagnosis"));
+                atdsd.setAnswerId(res.getInt("answer"));
+
+                set.add(atdsd);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read all Answer to diagnosis score distribution");
+        }
+
+        return set;
     }
 
     public void delete(int atdsdId){

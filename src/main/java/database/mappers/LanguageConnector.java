@@ -27,9 +27,18 @@ public class LanguageConnector extends DatabaseConnector {
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO languages (name) VALUES (" +
-                        "'" + language.getName() + "');";
+                        (language.getName() == null ? null : "'" + language.getName() + "'") + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                language.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -46,8 +55,8 @@ public class LanguageConnector extends DatabaseConnector {
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE languages SET " +
-                    "name='" + language.getName() + "'," +
-                    " WHERE id ='" + language.getId() + "';";
+                    "name=" + (language.getName() == null ? null : "'" + language.getName() + "'") + "," +
+                    " WHERE id =" + language.getId() + ";";
 
             stmt.execute(SQL);
         }

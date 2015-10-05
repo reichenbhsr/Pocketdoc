@@ -27,9 +27,18 @@ public class ActionSuggestionConnector extends DatabaseConnector{
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO action_suggestions (name) VALUES (" +
-                        "'" + actionSuggestion.getName() + "');";
+                        (actionSuggestion.getName() == null ? null : "'" + actionSuggestion.getName() + "'") + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                       id = set.getInt(1);
+                }
+                actionSuggestion.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -47,8 +56,8 @@ public class ActionSuggestionConnector extends DatabaseConnector{
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE action_suggestions SET " +
-                    " name='" + actionSuggestion.getName() +"' "+
-                    " WHERE id ='" + actionSuggestion.getId() + "';";
+                    " name=" + (actionSuggestion.getName() == null ? null : "'" + actionSuggestion.getName() + "'") +" "+
+                    " WHERE id =" + actionSuggestion.getId() + ";";
 
             stmt.execute(SQL);
         }

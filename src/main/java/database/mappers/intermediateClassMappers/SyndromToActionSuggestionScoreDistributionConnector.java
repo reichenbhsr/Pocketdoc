@@ -28,11 +28,20 @@ public class SyndromToActionSuggestionScoreDistributionConnector extends Databas
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO score_distribution_syndroms_to_action_suggestions (score, syndrom, action_suggestion) VALUES (" +
-                        "'" + stassd.getScore() + "'," +
-                        "'" + stassd.getSyndrom().getId() + "'," +
-                        "'" + stassd.getActionSuggestion().getId() + "');";
+                        "" + stassd.getScore() + "," +
+                        "" + stassd.getSyndrom().getId() + "," +
+                        "" + stassd.getActionSuggestion().getId() + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                stassd.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -49,10 +58,10 @@ public class SyndromToActionSuggestionScoreDistributionConnector extends Databas
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE score_distribution_syndroms_to_action_suggestions SET " +
-                    "score='" + stassd.getScore() + "'," +
-                    " syndrom='" + stassd.getSyndrom().getId() +"',"+
-                    " action_suggestion='" + stassd.getActionSuggestion().getId() +"' "+
-                    " WHERE id ='" + stassd.getId() + "';";
+                    "score=" + stassd.getScore() + "," +
+                    " syndrom=" + stassd.getSyndrom().getId() +","+
+                    " action_suggestion=" + stassd.getActionSuggestion().getId() +" "+
+                    " WHERE id =" + stassd.getId() + ";";
 
             stmt.execute(SQL);
         }

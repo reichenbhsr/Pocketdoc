@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Roman on 04.10.2015.
@@ -27,13 +28,22 @@ public class QuestionConnector extends DatabaseConnector{
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO Questions (name, is_symptom, answer_yes, answer_no, depends_on) VALUES (" +
-                        "'" + question.getName() + "'," +
+                        (question.getName() == null ? null : "'" + question.getName() + "'") + "," +
                         "'" + question.isSymptom() + "'," +
-                        "'" + question.getAnswerYes().getId() + "'," +
-                        "'" + question.getAnswerNo().getId() + "'," +
-                        "'" + (question.getDependsOn() != null ? question.getDependsOn().getId() : "") + "');";
+                        "" + question.getAnswerYes().getId() + "," +
+                        "" + question.getAnswerNo().getId() + "," +
+                        "" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                question.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -50,12 +60,12 @@ public class QuestionConnector extends DatabaseConnector{
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE Questions SET " +
-                            "name='" + question.getName() + "'," +
+                            "name=" + (question.getName() == null ? null : "'" + question.getName() + "'") + "," +
                             " is_symptom='" + question.isSymptom() +"',"+
-                            " answer_yes='" + question.getAnswerYes().getId() +"',"+
-                            " answer_no='" + question.getAnswerNo().getId() +"',"+
-                            " depends_on='" + question.getDependsOn().getId() +"' "+
-                            " WHERE id ='" + question.getId() + "';";
+                            " answer_yes=" + question.getAnswerYes().getId() +","+
+                            " answer_no=" + question.getAnswerNo().getId() +","+
+                            " depends_on=" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) +" "+
+                            " WHERE id =" + question.getId() + ";";
 
             stmt.execute(SQL);
         }
@@ -64,6 +74,42 @@ public class QuestionConnector extends DatabaseConnector{
         }
 
         return question;
+    }
+
+    public HashSet<Question> readDependendQuestions(int answerId){
+
+        HashSet<Question> dependentQuestions = new HashSet<Question>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM Questions WHERE depends_on='" + answerId + "';";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            Question question;
+            while (set.next())
+            {
+                question = new Question();
+                question.setId(set.getInt("id"));
+                question.setName(set.getString("name"));
+                question.setSymptom(set.getBoolean("is_symptom"));
+                question.setAnswerNoId(set.getInt("answer_no"));
+                question.setAnswerYesId(set.getInt("answer_yes"));
+                question.setDependsOnId(set.getInt("depends_on"));
+
+                dependentQuestions.add(question);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read dependent questions");
+        }
+
+        return dependentQuestions;
+
     }
 
     public Question read(int questionId){

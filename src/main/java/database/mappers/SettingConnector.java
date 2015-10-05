@@ -27,10 +27,19 @@ public class SettingConnector extends DatabaseConnector{
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO settings (name, value) VALUES (" +
-                        "'" + setting.getName() + "'," +
+                        (setting.getName() == null ? null : "'" + setting.getName() + "'") + "," +
                         "'" + setting.getValue() + "');";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                setting.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -47,9 +56,9 @@ public class SettingConnector extends DatabaseConnector{
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE settings SET " +
-                    "name='" + setting.getName() + "'," +
+                    "name=" + (setting.getName() == null ? null : "'" + setting.getName() + "'") + "," +
                     " value='" + setting.getValue() +"',"+
-                    " WHERE id ='" + setting.getId() + "';";
+                    " WHERE id =" + setting.getId() + ";";
 
             stmt.execute(SQL);
         }

@@ -28,11 +28,20 @@ public class ActionSuggestionDescriptionConnector extends DatabaseConnector{
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO actionSuggestionDescription (description, language, action_suggestion) VALUES (" +
-                        "'" + actionSuggestionDescription.getDescription() + "'," +
-                        "'" + actionSuggestionDescription.getLanguage().getId() + "'," +
-                        "'" + actionSuggestionDescription.getActionSuggestion().getId() + "');";
+                        (actionSuggestionDescription.getDescription() == null ? null : "'" + actionSuggestionDescription.getDescription() + "'") + "," +
+                        "" + actionSuggestionDescription.getLanguage().getId() + "," +
+                        "" + actionSuggestionDescription.getActionSuggestion().getId() + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                actionSuggestionDescription.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -49,10 +58,10 @@ public class ActionSuggestionDescriptionConnector extends DatabaseConnector{
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE action_suggestion_descriptions SET " +
-                    "description='" + actionSuggestionDescription.getDescription() + "'," +
-                    " language='" + actionSuggestionDescription.getLanguage().getId() +"',"+
-                    " action_suggestion='" + actionSuggestionDescription.getActionSuggestion().getId() +"',"+
-                    " WHERE id ='" + actionSuggestionDescription.getId() + "';";
+                    "description=" + (actionSuggestionDescription.getDescription() == null ? null : "'" + actionSuggestionDescription.getDescription() + "'") + "," +
+                    " language=" + actionSuggestionDescription.getLanguage().getId() +","+
+                    " action_suggestion=" + actionSuggestionDescription.getActionSuggestion().getId() +","+
+                    " WHERE id =" + actionSuggestionDescription.getId() + ";";
 
             stmt.execute(SQL);
         }

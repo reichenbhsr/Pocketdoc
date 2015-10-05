@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Roman on 04.10.2015.
@@ -28,11 +29,20 @@ public class AnswerToActionSuggestionScoreDistributionConnector extends Database
 
                 stmt = connection.createStatement();
                 SQL = "INSERT INTO score_distribution_answers_to_action_suggestions (answer, action_suggestion, score) VALUES (" +
-                        "'" + atassd.getAnswer().getId() + "'," +
-                        "'" + atassd.getActionSuggestion().getId() + "'," +
-                        "'" + atassd.getScore() + "');";
+                        "" + atassd.getAnswer().getId() + "," +
+                        "" + atassd.getActionSuggestion().getId() + "," +
+                        "" + atassd.getScore() + ");";
 
-                return stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+                int id = 0;
+                if (rows > 0)
+                {
+                    ResultSet set = stmt.getGeneratedKeys();
+                    if (set.next())
+                        id = set.getInt(1);
+                }
+                atassd.setId(id);
+                return id;
             }
         }
         catch (SQLException ex){
@@ -49,10 +59,10 @@ public class AnswerToActionSuggestionScoreDistributionConnector extends Database
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE score_distribution_answers_to_action_suggestions SET " +
-                    "answer='" + atassd.getAnswer().getId() + "'," +
-                    " action_suggestion='" + atassd.getActionSuggestion().getId() +"',"+
-                    " score='" + atassd.getScore() +"',"+
-                    " WHERE id ='" + atassd.getId() + "';";
+                    "answer=" + atassd.getAnswer().getId() + "," +
+                    " action_suggestion=" + atassd.getActionSuggestion().getId() +","+
+                    " score=" + atassd.getScore() +
+                    " WHERE id =" + atassd.getId() + ";";
 
             stmt.execute(SQL);
         }
@@ -123,6 +133,39 @@ public class AnswerToActionSuggestionScoreDistributionConnector extends Database
         }
 
         return atassds;
+    }
+
+    public HashSet<AnswerToActionSuggestionScoreDistribution> readSetOfAnswer(int answerId){
+
+        HashSet<AnswerToActionSuggestionScoreDistribution> set = new HashSet<AnswerToActionSuggestionScoreDistribution>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM score_distribution_answers_to_action_suggestions WHERE answer= " + answerId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            AnswerToActionSuggestionScoreDistribution atassd;
+            while (res.next())
+            {
+                atassd = new AnswerToActionSuggestionScoreDistribution();
+                atassd.setId(res.getInt("id"));
+                atassd.setScore(res.getInt("score"));
+                atassd.setAnswerId(res.getInt("answer"));
+                atassd.setActionSuggestionId(res.getInt("action_suggestion"));
+
+                set.add(atassd);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read set of Answer to action suggestion score distributions");
+        }
+
+        return set;
     }
 
     public void delete(int atassdId){

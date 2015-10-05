@@ -1,5 +1,8 @@
 package models;
 
+import database.mappers.AnswerConnector;
+import managers.AnswerManager;
+import managers.HistoryManager;
 import org.hibernate.annotations.Sort;
 
 import javax.persistence.*;
@@ -50,8 +53,10 @@ public class History {
     public void setLastAnswerId(int lastAnswerId){ this.lastAnswerId = lastAnswerId;}
     public Answer getLastAnswer() {
 
-        if (lastAnswer == null)
-            System.out.println("Last Answer not implemented!");
+        if (lastAnswer == null){
+            AnswerConnector ac = new AnswerConnector();
+            lastAnswer =  ac.read(lastAnswerId);
+        }
 
         return lastAnswer;
     }

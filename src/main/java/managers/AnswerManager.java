@@ -41,7 +41,7 @@ public class AnswerManager implements BasicManager<Answer> {
     @Override
     public Answer add() {
         Answer answer = new Answer();
-        answerMapper.create(answer);
+        answer.setId(answerMapper.create(answer));
         return answer;
     }
 
