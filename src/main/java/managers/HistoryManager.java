@@ -1,6 +1,8 @@
 package managers;
 
 import database.mappers.HistoryConnector;
+import database.mappers.intermediateClassMappers.AnswerToHistoryConnector;
+import models.Answer;
 import models.History;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public class HistoryManager implements BasicManager<History> {
 
 //    private DatabaseMapper<History> historyMapper; FIXME
     private HistoryConnector historyMapper;
+    private AnswerToHistoryConnector answerToHistoryMapper;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -25,6 +28,7 @@ public class HistoryManager implements BasicManager<History> {
     public HistoryManager() {
 //        historyMapper = new HistoryMapper(); FIXME
         historyMapper = new HistoryConnector();
+        answerToHistoryMapper = new AnswerToHistoryConnector();
     }
 
     /**
@@ -58,6 +62,16 @@ public class HistoryManager implements BasicManager<History> {
                 history.setConsecutiveQuestions(oldHistory.getConsecutiveQuestions());
             }
             return historyMapper.update(history);
+        }
+    }
+
+    public void addAnswerToHistory(Answer answer, History history){
+
+        History oldHistory = historyMapper.read(history.getId());
+        if (oldHistory == null) {
+            throw new IllegalArgumentException("History " + history.getId() + " doesn't exist");
+        } else {
+            answerToHistoryMapper.create(answer, history);
         }
     }
 

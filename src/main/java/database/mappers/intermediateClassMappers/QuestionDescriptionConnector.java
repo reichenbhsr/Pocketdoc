@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Roman on 04.10.2015.
@@ -100,6 +101,38 @@ public class QuestionDescriptionConnector extends DatabaseConnector{
         }
 
         return null;
+    }
+
+    public HashSet<QuestionDescription> readSetOfQuestion(int questionId){
+        HashSet<QuestionDescription> set = new HashSet<QuestionDescription>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM question_descriptions WHERE question= " + questionId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            QuestionDescription description;
+            while (res.next())
+            {
+                description = new QuestionDescription();
+                description.setId(res.getInt("id"));
+                description.setLanguageId(res.getInt("language"));
+                description.setQuestionId(res.getInt("question"));
+                description.setDescription(res.getString("description"));
+
+                set.add(description);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read set of question descriptions");
+        }
+
+        return set;
     }
 
     public ArrayList<QuestionDescription> readAll(){

@@ -68,6 +68,9 @@ public class QuestionServlet extends ServletAbstract {
                 final ArrayList<Question> questions = new QuestionManager().getAll();
                 JsonArray array = new JsonArray();
 
+                for(Question q: questions)
+                    q.getDescriptions();
+
                 if (questions != null) {
                     for (Question question : questions) {
                         array.add(gson.toJsonTree(question));

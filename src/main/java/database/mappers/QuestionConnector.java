@@ -112,6 +112,70 @@ public class QuestionConnector extends DatabaseConnector{
 
     }
 
+    public Question readAnswerYesOf(int answerId){
+
+        try{
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM Questions WHERE answer_yes='"+ answerId + "';";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            if (set.next())
+            {
+                Question question = new Question();
+                question.setId(set.getInt("id"));
+                question.setName(set.getString("name"));
+                question.setSymptom(set.getBoolean("is_symptom"));
+                question.setAnswerNoId(set.getInt("answer_no"));
+                question.setAnswerYesId(set.getInt("answer_yes"));
+                question.setDependsOnId(set.getInt("depends_on"));
+
+                return question;
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read Question");
+        }
+
+        return null;
+
+    }
+
+    public Question readAnswerNoOf(int answerId){
+
+        try{
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM Questions WHERE answer_no='"+ answerId + "';";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            if (set.next())
+            {
+                Question question = new Question();
+                question.setId(set.getInt("id"));
+                question.setName(set.getString("name"));
+                question.setSymptom(set.getBoolean("is_symptom"));
+                question.setAnswerNoId(set.getInt("answer_no"));
+                question.setAnswerYesId(set.getInt("answer_yes"));
+                question.setDependsOnId(set.getInt("depends_on"));
+
+                return question;
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read Question");
+        }
+
+        return null;
+
+    }
+
     public Question read(int questionId){
 
         try{

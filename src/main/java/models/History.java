@@ -1,6 +1,7 @@
 package models;
 
 import database.mappers.AnswerConnector;
+import database.mappers.intermediateClassMappers.AnswerToHistoryConnector;
 import managers.AnswerManager;
 import managers.HistoryManager;
 import org.hibernate.annotations.Sort;
@@ -37,6 +38,11 @@ public class History {
     }
 
     public Set<Answer> getAnswers() {
+        if (answers == null){
+            AnswerToHistoryConnector ahc = new AnswerToHistoryConnector();
+            answers =  ahc.readGivenAnswersOfHistory(id);
+        }
+
         return answers;
     }
     public void setAnswers(Set<Answer> answers) {

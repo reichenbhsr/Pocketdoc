@@ -50,15 +50,14 @@ public class ActionSuggestionDescription {
 
     public void setLanguageId(int languageId) { this.languageId = languageId; }
     public Language getLanguage() {
-        return language;
-    }
-    public void setLanguage(Language language) {
 
         if (language == null){
             LanguageConnector con = new LanguageConnector();
             language = con.read(languageId);
         }
-
+        return language;
+    }
+    public void setLanguage(Language language) {
         this.language = language;
     }
 

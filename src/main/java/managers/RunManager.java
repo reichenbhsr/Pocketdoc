@@ -58,6 +58,7 @@ public class RunManager {
         history.setLastAnswer(newAnswer);
 
         userManager.update(user);
+        historyManager.addAnswerToHistory(newAnswer, history);
         historyManager.update(history);
     }
 

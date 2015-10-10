@@ -1,6 +1,7 @@
 package models;
 
 import database.mappers.AnswerConnector;
+import database.mappers.intermediateClassMappers.QuestionDescriptionConnector;
 import models.intermediateClassModels.QuestionDescription;
 
 import javax.persistence.*;
@@ -99,6 +100,10 @@ public class Question {
     }
 
     public Set<QuestionDescription> getDescriptions() {
+        if (descriptions == null){
+            QuestionDescriptionConnector qdc = new QuestionDescriptionConnector();
+            descriptions = qdc.readSetOfQuestion(id);
+        }
         return descriptions;
     }
 

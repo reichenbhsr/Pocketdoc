@@ -99,6 +99,13 @@ public class Answer {
     }
 
     public Question getAnswerYesOf() {
+
+        if (answerYesOf == null)
+        {
+            QuestionConnector qc = new QuestionConnector();
+            answerYesOf = qc.readAnswerYesOf(id);
+        }
+
         return answerYesOf;
     }
 
@@ -107,6 +114,13 @@ public class Answer {
     }
 
     public Question getAnswerNoOf() {
+
+        if (answerNoOf == null)
+        {
+            QuestionConnector qc = new QuestionConnector();
+            answerNoOf = qc.readAnswerNoOf(id);
+        }
+
         return answerNoOf;
     }
 
@@ -120,10 +134,10 @@ public class Answer {
      * @return Question
      */
     public Question getAnswerOf() {
-        if (answerYesOf == null) {
-            return answerNoOf;
+        if (getAnswerYesOf() == null) {
+            return getAnswerNoOf();
         } else {
-            return answerYesOf;
+            return getAnswerYesOf();
         }
     }
 }

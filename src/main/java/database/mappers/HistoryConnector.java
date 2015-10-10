@@ -64,6 +64,7 @@ public class HistoryConnector extends DatabaseConnector {
                     " WHERE id =" + history.getId() + ";";
 
             stmt.execute(SQL);
+
         }
         catch (SQLException ex){
             System.out.println("SQL Error update history");
