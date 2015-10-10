@@ -75,6 +75,10 @@ public class HistoryManager implements BasicManager<History> {
         }
     }
 
+    public void clearAnswersForHistory(History history){
+        answerToHistoryMapper.delete(history.getId());
+    }
+
     @Override
     public History get(int id) {
         return historyMapper.read(id);

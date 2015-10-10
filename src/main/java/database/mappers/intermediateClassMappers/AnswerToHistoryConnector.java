@@ -81,5 +81,21 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
         return answers;
     }
 
+    public void delete(int historyId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM answers_to_histories WHERE history =" + historyId + ";";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Question");
+        }
+
+    }
 
 }

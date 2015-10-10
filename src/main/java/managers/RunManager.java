@@ -99,8 +99,10 @@ public class RunManager {
         history.getAnswers().clear();
         history.setConsecutiveQuestions(0);
         history.setLastAnswer(null);
+        history.setLastAnswerId(0);
 
         userManager.update(user);
+        historyManager.clearAnswersForHistory(history);
         historyManager.update(history);
     }
 }
