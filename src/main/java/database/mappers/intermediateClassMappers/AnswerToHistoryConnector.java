@@ -40,7 +40,6 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
                     if (set.next())
                         id = set.getInt(1);
                 }
-                answer.setId(id);
                 return id;
             }
         }

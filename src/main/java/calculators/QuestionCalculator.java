@@ -352,15 +352,11 @@ public class QuestionCalculator {
         Question bestQuestion = null;
         int difference = 0;
 
-
-
+        TreeMap<Diagnosis, Integer> sortedList;
         for (Question question : questions) {
 
-            if (question.getName().compareTo("1234") == 0)
-                return question;
-
             //Check with Answer No
-            TreeMap<Diagnosis, Integer> sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
+            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
             if (sortedList.size() > 0) {
                 int tempDiff = checkDifference(sortedList, difference);
                 if (tempDiff >= 0) {
