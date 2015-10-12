@@ -1,0 +1,214 @@
+<form novalidate name="registrationForm" layout="column" flex>
+	<div class="partialContent makeSpaceForFixedFooter" flex ng-class="{'big': isProfile}">
+		<md-card>
+			<md-card-content>
+
+				<div class="profile-title" flex>{{ 'reg_profile' | translate }}:</div>
+
+				<md-input-container flex>
+					<label for="email">{{ 'reg_email' | translate }}:</label>
+					<input required="" ng-model="user.email" type="email" id="email" name="email" ng-blur="checkEmail(); checkValidity();" >
+					<div ng-messages="registrationForm.email.$error">
+						<div ng-message="required">{{ 'reg_mandatory' | translate }}!</div>
+						<div ng-message="used">{{ 'reg_alreadyRegistered' | translate }}!</div>
+					</div>
+				</md-input-container>
+
+				<md-input-container flex ng-hide="isProfile">
+					<label for="regPassword">{{ 'reg_password' | translate }}:</label>
+					<input ng-model="user.password" type="password" id="regPassword" name="regPassword" ng-blur="checkPassword(); checkValidity();">
+					<div ng-messages="registrationForm.regPassword.$error">
+						<div ng-message="req">{{ 'reg_mandatory' | translate }}!</div>
+					</div>
+				</md-input-container>
+				
+				<md-input-container flex ng-show="isProfile">
+					<label for="oldPassword">{{ 'reg_password_current' | translate }}</label>
+					<input ng-model="user.oldPassword" type="password" id="oldPassword" name="oldPassword" ng-blur="checkPassword(); checkValidity();">
+					<div ng-messages="registrationForm.oldPassword.$error">
+						<div ng-message="req">{{ 'reg_mandatory' | translate }}!</div>
+						<div ng-message="wrong">{{ 'reg_oldPassword_wrong' | translate }}</div>
+					</div>
+				</md-input-container>
+				
+				<md-input-container flex ng-show="isProfile">
+					<label for="newPassword">{{ 'reg_password_new' | translate }}:</label>
+					<input ng-model="user.newPassword" type="password" id="newPassword" name="newPassword" ng-blur="checkPassword(); checkValidity();">
+				</md-input-container>
+
+			</md-card-content>
+		</md-card>
+		
+		<md-card ng-hide="isProfile">
+			<md-card-content>
+
+				<div class="profile-title" flex>{{ 'reg_AGBs' | translate }}:</div>
+
+				<div layout="row" layout-sm="column">
+					<md-checkbox
+						class="md-primary acceptTermsCheckbox"
+						ng-model="acceptedTerms"
+						aria-label="{{ 'reg_AGBs' | translate }}"
+						type="checkbox"
+						ng-class="{ 'md-warn' : !acceptedTerms }">
+						{{ 'reg_AGBs_text' | translate }}
+					</md-checkbox>
+
+			        <md-button
+			        	ng-click="showTermsDialog()"
+			        	target="_blank"
+			        	class="md-primary"
+			        	type="button">
+			        	{{ 'reg_AGBs' | translate }}
+			        </md-button><!-- ng-href="#/terms" -->
+				</div>
+
+			</md-card-content>
+		</md-card>
+
+		<md-card>
+			<md-card-content>
+
+				<div class="profile-title" flex>{{ 'reg_personalInformation' | translate }}:</div>
+
+				<div flex layout="column">
+					<md-input-container>
+						<label for="name">{{ 'reg_name' | translate }}:</label>
+						<input ng-model="user.name" id="name" name="name" ng-change="checkValidity()" required="">
+						<div ng-messages="registrationForm.name.$error">
+							<div ng-message="required">{{ 'reg_mandatory' | translate }}!</div>
+						</div>
+					</md-input-container>
+
+					<div class="profile-subtitle">{{ 'reg_sex' | translate }}:</div>
+
+					<div layout="row" class="profile-row">
+						<md-button
+							id="gender-button-male"
+							flex
+							class="md-raised registration-button"
+							ng-click="setGender(0); checkValidity();"
+							type="button"
+							ng-class="{'md-primary': user.gender == 0}">
+							<md-icon md-svg-icon="images/icons/gender-male.svg"></md-icon>
+							<span>{{ 'reg_sex_male' | translate }}</span>
+						</md-button>
+
+						<md-button
+							id="gender-button-female"
+							flex
+							class="md-raised registration-button"
+							ng-click="setGender(1); checkValidity();"
+							type="button"
+							ng-class="{'md-primary': user.gender == 1}">
+							<md-icon md-svg-icon="images/icons/gender-female.svg"></md-icon>
+							<span>{{ 'reg_sex_female' | translate }}</span>
+						</md-button>
+					</div>
+
+					<div class="profile-subtitle">{{ 'reg_ageRange' | translate }}:</div>
+
+					<md-select placeholder="{{ 'reg_defaultValueSelect' | translate }}" ng-model="user.age_category" class="age-category" ng-change="checkValidity();">
+						<md-option
+							ng-repeat="AR in ageRanges"
+							value="{{AR.id}}">
+							{{AR.start}} - {{AR.end}} {{ 'common_years' | translate }}
+						</md-option>
+					</md-select>
+				</div>
+
+				<div flex layout="column">
+					<div class="profile-subtitle" >{{ 'reg_language' | translate }}:</div>
+
+					<div layout="row" layout-align="start center" class="profile-row">
+						<md-button
+							ng-repeat="language in languages"
+							id="language-button-{{language.locale}}"
+							type="button"
+							class="md-icon-button"
+							aria-label="{{language.nativeName}}"
+							ng-click="changeLanguage( language.locale )"
+							ng-class="{'md-primary md-raised': user.lang ==  language.locale }">
+							<md-icon md-svg-icon="images/icons/{{ language.locale }}.svg" class="s36"></md-icon>
+						</md-button>
+					</div>
+				</div>
+				 
+			</md-card-content>
+		</md-card>
+	
+		<!--
+		<md-card ng-show="isProfile" >
+			<md-card-content>
+
+				<div class="profile-title" flex>{{ 'reg_actions' | translate }}:</div>
+
+				<div flex layout="row" layout-align="center center">
+					<md-button
+						class="md-raised md-primary"
+						ng-click="logout()"
+						type="button"
+						flex>
+						{{ 'header_logout' | translate }}
+					</md-button>
+					
+					<md-button
+						class="md-raised md-warn"
+						ng-click="deleteClick()"
+						type="button"
+						flex>
+						{{ 'reg_deleteProfile' | translate }}
+					</md-button>
+				</div>
+
+			</md-card-content>
+		</md-card>
+		-->
+	</div>
+
+	<div class="fixedFooter">
+		<md-card>
+			<md-card-content layout="column">
+				<div layout="row" layout-sm="column" ng-show="isProfile">
+					<md-button
+						class="md-raised md-primary"
+						ng-click="logout()"
+						type="button"
+						flex-gt-sm>
+						{{ 'header_logout' | translate }}
+					</md-button>
+					
+					<md-button
+						class="md-raised md-warn"
+						ng-click="deleteClick()"
+						type="button"
+						flex-gt-sm>
+						{{ 'reg_deleteProfile' | translate }}
+					</md-button>
+				</div>
+				<div layout="row" layout-align="center center" >
+					<md-button
+						ng-hide="isProfile"
+						class="md-raised md-primary registration-button"
+						ng-click="registerClick()"
+						flex
+						type="submit"
+						ng-disabled="!acceptedTerms ||dataInvalid">
+						{{ 'reg_register' | translate }}
+					</md-button>
+
+					<md-button
+						ng-show="isProfile"
+						class="md-raised md-primary registration-button"
+						ng-click="saveClick()"
+						flex
+						type="submit"
+						ng-disabled="dataInvalid">
+						{{ 'reg_save' | translate }}
+					</md-button>
+				</div>
+				
+			</md-card-content>
+		</md-card>
+	</div>
+</form>
