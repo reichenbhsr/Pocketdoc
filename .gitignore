@@ -9,3 +9,4 @@ target/*
 #build files
 out/*
 classes/*
+node_modules
