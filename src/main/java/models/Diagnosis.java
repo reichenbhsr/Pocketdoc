@@ -1,5 +1,8 @@
 package models;
 
+import database.mappers.intermediateClassMappers.DiagnosisDescriptionConnector;
+import database.mappers.intermediateClassMappers.PerfectDiagnosisDiagnosesToAnswersConnector;
+import database.mappers.intermediateClassMappers.QuestionDescriptionConnector;
 import models.intermediateClassModels.AnswerToDiagnosisScoreDistribution;
 import models.intermediateClassModels.DiagnosisDescription;
 import org.hibernate.annotations.LazyCollection;
@@ -48,6 +51,12 @@ public class Diagnosis {
     }
 
     public Set<DiagnosisDescription> getDescriptions() {
+
+        if (descriptions == null){
+            DiagnosisDescriptionConnector ddc = new DiagnosisDescriptionConnector();
+            descriptions = ddc.readSetOfDiagnosisDescriptions(id);
+        }
+
         return descriptions;
     }
 
@@ -70,6 +79,10 @@ public class Diagnosis {
 
 
     public Set<Answer> getAnswersForPerfectDiagnosis() {
+        if (answersForPerfectDiagnosis == null){
+            PerfectDiagnosisDiagnosesToAnswersConnector pdac = new PerfectDiagnosisDiagnosesToAnswersConnector();
+            answersForPerfectDiagnosis = pdac.readPerfectAnswersForDiagnosis(id);
+        }
         return answersForPerfectDiagnosis;
     }
 

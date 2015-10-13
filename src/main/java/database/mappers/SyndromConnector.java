@@ -55,8 +55,8 @@ public class SyndromConnector extends DatabaseConnector {
 
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE syndroms SET " +
-                    "name=" + (syndrom.getName() == null ? null : "'" + syndrom.getName() + "'") + ";";
-
+                    "name=" + (syndrom.getName() == null ? null : "'" + syndrom.getName() + "'") + "" +
+                    " WHERE id =" + syndrom.getId() + ";";
             stmt.execute(SQL);
         }
         catch (SQLException ex){

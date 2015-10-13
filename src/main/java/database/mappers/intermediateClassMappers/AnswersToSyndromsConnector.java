@@ -2,35 +2,33 @@ package database.mappers.intermediateClassMappers;
 
 import database.mappers.DatabaseConnector;
 import models.Answer;
-import models.History;
-import models.User;
+import models.Syndrom;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Created by Roman on 10.10.2015.
+ * Created by Roman on 13.10.2015.
  */
-public class AnswerToHistoryConnector extends DatabaseConnector {
+public class AnswersToSyndromsConnector extends DatabaseConnector {
 
-    public int create(Answer answer, History history){
+    public int create(Answer answer, Syndrom syndrom){
 
         try{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT id FROM answers_to_histories WHERE answer = " + answer.getId() + " AND history = " + history.getId() +";";
+            String SQL = "SELECT id FROM answers_to_syndroms WHERE answer = " + answer.getId() + " AND syndrom = " + syndrom.getId() +";";
             ResultSet res = stmt.executeQuery(SQL);
 
             if (res.next())
-                System.out.println("Answer of history already exists!");
+                System.out.println("Answer of syndrom already exists!");
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO answers_to_histories (answer, history) VALUES("+ answer.getId() + ", " + history.getId() +");";
+                SQL = "INSERT INTO answers_to_syndroms (answer, syndrom) VALUES("+ answer.getId() + ", " + syndrom.getId() +");";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
                 int id = 0;
@@ -44,13 +42,13 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             }
         }
         catch (SQLException ex){
-            System.out.println("SQL Error create answer to history");
+            System.out.println("SQL Error create answer of syndrom");
         }
 
         return -1;
     }
 
-    public HashSet<Answer> readGivenAnswersOfHistory(int historyId){
+    public HashSet<Answer> readAnswersOfSyndrom(int syndromId){
 
         HashSet<Answer> answers = new HashSet<Answer>();
 
@@ -59,7 +57,7 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM answers WHERE answers_to_histories.answer == id AND answers_to_histories.history = " + historyId + ";";
+            String SQL = "SELECT answers.* FROM answers, answers_to_syndroms WHERE answers_to_syndroms.answer = answers.id AND answers_to_syndroms.syndrom = " + syndromId + ";";
 
             ResultSet set = stmt.executeQuery(SQL);
 
@@ -74,25 +72,25 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
 
         }
         catch (SQLException ex){
-            System.out.println("SQL Error read given answers of history");
+            System.out.println("SQL Error read answers of syndrom");
         }
 
         return answers;
     }
 
-    public void delete(int historyId){
+    public void delete(int syndromId){
 
         try{
 
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "DELETE FROM answers_to_histories WHERE history =" + historyId + ";";
+            String SQL = "DELETE FROM answers_to_syndroms WHERE syndrom =" + syndromId + ";";
 
             stmt.execute(SQL);
         }
         catch (SQLException ex){
-            System.out.println("SQL Error delete answer to history");
+            System.out.println("SQL Error delete answers to syndrom");
         }
 
     }

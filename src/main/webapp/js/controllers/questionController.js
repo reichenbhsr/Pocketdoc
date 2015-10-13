@@ -105,6 +105,7 @@ angular.module('pocketDocApp').controller('questionController', function($scope,
                 $scope.dependsOnQuestion.answer_no.has_dependency=true;
             }
             $scope.question.$update();
+            $scope.dependsYes = answerYes;
         }
     }
 

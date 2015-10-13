@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Roman on 04.10.2015.
@@ -19,7 +20,7 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT id FROM diagnosis_descripitons WHERE id = " + diagnosisDescription.getId() + ";";
+            String SQL = "SELECT id FROM diagnosis_descriptions WHERE id = " + diagnosisDescription.getId() + ";";
             ResultSet res = stmt.executeQuery(SQL);
 
             if (res.next())
@@ -57,7 +58,7 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "UPDATE diagnosis_descripitons SET " +
+            String SQL = "UPDATE diagnosis_descriptions SET " +
                     "description=" + (diagnosisDescription.getDescription() == null ? null : "'" + diagnosisDescription.getDescription() + "'") + "," +
                     " language=" + diagnosisDescription.getLanguage().getId() +","+
                     " diagnosis=" + diagnosisDescription.getDiagnosis().getId() +""+
@@ -78,7 +79,7 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM diagnoses_descriptions WHERE id='"+ diagnosisDescriptionId + "';";
+            String SQL = "SELECT * FROM diagnosis_descriptions WHERE id='"+ diagnosisDescriptionId + "';";
 
             ResultSet set = stmt.executeQuery(SQL);
 
@@ -101,6 +102,38 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
         return null;
     }
 
+    public HashSet<DiagnosisDescription> readSetOfDiagnosisDescriptions(int diagnosisId){
+        HashSet<DiagnosisDescription> set = new HashSet<DiagnosisDescription>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM diagnosis_descriptions WHERE diagnosis= " + diagnosisId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            DiagnosisDescription description;
+            while (res.next())
+            {
+                description = new DiagnosisDescription();
+                description.setId(res.getInt("id"));
+                description.setLanguageId(res.getInt("language"));
+                description.setDiagnosisId(res.getInt("diagnosis"));
+                description.setDescription(res.getString("description"));
+
+                set.add(description);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read set of diagnosis descriptions");
+        }
+
+        return set;
+    }
+
     public ArrayList<DiagnosisDescription> readAll(){
 
         ArrayList<DiagnosisDescription> diagnosisDescriptions = new ArrayList<DiagnosisDescription>();
@@ -110,7 +143,7 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM diagnoses_descriptions;";
+            String SQL = "SELECT * FROM diagnosis_descriptions;";
 
             ResultSet set = stmt.executeQuery(SQL);
 
@@ -141,7 +174,7 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "DELETE FROM diagnoses_descriptions WHERE id ='" + diagnosisDescriptionId + "';";
+            String SQL = "DELETE FROM diagnosis_descriptions WHERE id ='" + diagnosisDescriptionId + "';";
 
             stmt.execute(SQL);
         }

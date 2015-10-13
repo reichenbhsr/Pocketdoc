@@ -84,7 +84,7 @@
                             <i ng-show = "!question.distribution_yes" data-ng-click="addScoreToCurrentDiagnosis(question, question.answer_yes)" class="glyphicon glyphicon-plus"/>
                         </td>
                         <td>
-                            <input class="form-control" type="checkbox" ng-model="question.perfect_diagnosis_yes" ng-click="setPerfectDiagnosis(question, question.answer_yes)"/>
+                            <input class="form-control" type="checkbox" ng-model="question.answer_yes.perfect_diagnosis" ng-click="setPerfectDiagnosis(question.answer_yes, question.answer_no)"/>
                         </td>
                     </tr>
                     <tr ng-repeat-end>
@@ -96,7 +96,7 @@
                             <i ng-show = "!question.distribution_no" data-ng-click="addScoreToCurrentDiagnosis(question, question.answer_no)" class="glyphicon glyphicon-plus"/>
                         </td>
                         <td>
-                            <input class="form-control" type="checkbox" ng-model="question.perfect_diagnosis_no" ng-click="setPerfectDiagnosis(question, question.answer_no)"/>
+                            <input class="form-control" type="checkbox" ng-model="question.answer_no.perfect_diagnosis" ng-click="setPerfectDiagnosis(question.answer_no, question.answer_yes)"/>
                         </td>
                     </tr>
                 </table>

@@ -1,6 +1,8 @@
 package managers;
 
 import database.mappers.SyndromConnector;
+import database.mappers.intermediateClassMappers.AnswersToSyndromsConnector;
+import models.Answer;
 import models.Syndrom;
 
 import java.util.ArrayList;
@@ -18,12 +20,15 @@ public class SyndromManager implements BasicManager<Syndrom> {
 
 //    private DatabaseMapper<Syndrom> syndromMapper;
     private SyndromConnector syndromMapper;
+    private AnswersToSyndromsConnector answerToSyndromMapper;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
      */
     public SyndromManager() {
+
         syndromMapper = new SyndromConnector();
+        answerToSyndromMapper = new AnswersToSyndromsConnector();
     }
 
     /**
@@ -60,8 +65,20 @@ public class SyndromManager implements BasicManager<Syndrom> {
             if (syndrom.getSymptoms() == null) {
                 syndrom.setSymptoms(oldSyndrom.getSymptoms());
             }
+
+            addPerfectAnswersToDiagnosis(syndrom);
+
             return syndromMapper.update(syndrom);
         }
+    }
+
+    public void addPerfectAnswersToDiagnosis(Syndrom syndrom){
+
+        answerToSyndromMapper.delete(syndrom.getId());
+
+        for(Answer a: syndrom.getSymptoms())
+            answerToSyndromMapper.create(a, syndrom);
+
     }
 
     @Override

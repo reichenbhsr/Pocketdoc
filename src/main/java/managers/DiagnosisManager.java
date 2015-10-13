@@ -2,7 +2,9 @@ package managers;
 
 import calculators.DiagnosisCalculator;
 import database.mappers.DiagnosisConnector;
+import database.mappers.intermediateClassMappers.PerfectDiagnosisDiagnosesToAnswersConnector;
 import managers.intermediateClassManagers.DiagnosisDescriptionManager;
+import models.Answer;
 import models.Diagnosis;
 import models.Language;
 import models.User;
@@ -24,6 +26,7 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
 
 //    private DatabaseMapper<Diagnosis> diagnosisMapper; FIXME
     private DiagnosisConnector diagnosisMapper;
+    private PerfectDiagnosisDiagnosesToAnswersConnector perfectDiagnosisMapper;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -31,6 +34,7 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
     public DiagnosisManager() {
 //        diagnosisMapper = new DiagnosisMapper(); FIXME
         diagnosisMapper = new DiagnosisConnector();
+        perfectDiagnosisMapper = new PerfectDiagnosisDiagnosesToAnswersConnector();
     }
 
     /**
@@ -91,6 +95,9 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
             if (diagnosis.getName() == null) {
                 diagnosis.setName(oldDiagnosis.getName());
             }
+
+            addPerfectAnswersToDiagnosis(diagnosis);
+
             return diagnosisMapper.update(diagnosis);
         }
     }
@@ -113,6 +120,15 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
     public Diagnosis diagnose(User user) {
         DiagnosisCalculator calculator = new DiagnosisCalculator();
         return calculator.getDiagnosis(user);
+    }
+
+    public void addPerfectAnswersToDiagnosis(Diagnosis diagnosis){
+
+        perfectDiagnosisMapper.delete(diagnosis.getId());
+
+        for(Answer a: diagnosis.getAnswersForPerfectDiagnosis())
+            perfectDiagnosisMapper.create(a, diagnosis);
+
     }
 
     /**

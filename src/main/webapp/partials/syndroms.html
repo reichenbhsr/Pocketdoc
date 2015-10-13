@@ -46,9 +46,11 @@
                     <tr>
                         <th>ID</th>
                         <th>Symptom</th>
+                        <th>Antwort</th>
                         <th></th>
                     </tr>
-                    <tr ng-repeat="question in questions | orderBy:'name'">
+
+                    <tr ng-repeat-start="question in questions | orderBy:'name'">
                         <td>
                             <span>{{question.question_id}}</span>
                         </td>
@@ -56,7 +58,18 @@
                             <span>{{question.name}}</span>
                         </td>
                         <td>
-                            <input class="check-box" type="checkbox" ng-model="question.isRelevantForSyndrom" ng-click="addToSyndrom(question)"/>
+                            <span id="{{question.answer_yes.answer_id}}">Ja</span>
+                        </td>
+                        <td>
+                            <input class="form-control" type="checkbox" ng-model="question.answer_yes.isRelevantForSyndrom" ng-click="addToSyndrom(question.answer_yes, question.answer_no)"/>
+                        </td>
+                    </tr>
+                    <tr ng-repeat-end>
+                        <td></td>
+                        <td></td>
+                        <td>Nein</td>
+                        <td>
+                            <input class="form-control" type="checkbox" ng-model="question.answer_no.isRelevantForSyndrom" ng-click="addToSyndrom(question.answer_no, question.answer_yes)"/>
                         </td>
                     </tr>
                 </table>

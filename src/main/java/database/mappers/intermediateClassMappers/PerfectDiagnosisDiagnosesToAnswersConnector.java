@@ -2,35 +2,33 @@ package database.mappers.intermediateClassMappers;
 
 import database.mappers.DatabaseConnector;
 import models.Answer;
-import models.History;
-import models.User;
+import models.Diagnosis;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Created by Roman on 10.10.2015.
+ * Created by Roman on 13.10.2015.
  */
-public class AnswerToHistoryConnector extends DatabaseConnector {
+public class PerfectDiagnosisDiagnosesToAnswersConnector extends DatabaseConnector {
 
-    public int create(Answer answer, History history){
+    public int create(Answer answer, Diagnosis diagnosis){
 
         try{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT id FROM answers_to_histories WHERE answer = " + answer.getId() + " AND history = " + history.getId() +";";
+            String SQL = "SELECT id FROM perfect_diagnosis_diagnoses_to_answers WHERE answer = " + answer.getId() + " AND diagnosis = " + diagnosis.getId() +";";
             ResultSet res = stmt.executeQuery(SQL);
 
             if (res.next())
-                System.out.println("Answer of history already exists!");
+                System.out.println("Perfect diagnosis diagnoses to answers already exists!");
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO answers_to_histories (answer, history) VALUES("+ answer.getId() + ", " + history.getId() +");";
+                SQL = "INSERT INTO perfect_diagnosis_diagnoses_to_answers (answer, diagnosis) VALUES("+ answer.getId() + ", " + diagnosis.getId() +");";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
                 int id = 0;
@@ -44,13 +42,13 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             }
         }
         catch (SQLException ex){
-            System.out.println("SQL Error create answer to history");
+            System.out.println("SQL Error create perfect diagnosis to answer");
         }
 
         return -1;
     }
 
-    public HashSet<Answer> readGivenAnswersOfHistory(int historyId){
+    public HashSet<Answer> readPerfectAnswersForDiagnosis(int diagnosisId){
 
         HashSet<Answer> answers = new HashSet<Answer>();
 
@@ -59,7 +57,7 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM answers WHERE answers_to_histories.answer == id AND answers_to_histories.history = " + historyId + ";";
+            String SQL = "SELECT answers.* FROM answers, perfect_diagnosis_diagnoses_to_answers WHERE perfect_diagnosis_diagnoses_to_answers.answer = answers.id AND perfect_diagnosis_diagnoses_to_answers.diagnosis = " + diagnosisId + ";";
 
             ResultSet set = stmt.executeQuery(SQL);
 
@@ -74,25 +72,25 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
 
         }
         catch (SQLException ex){
-            System.out.println("SQL Error read given answers of history");
+            System.out.println("SQL Error read perfect answers of diagnosis");
         }
 
         return answers;
     }
 
-    public void delete(int historyId){
+    public void delete(int diagnosisId){
 
         try{
 
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "DELETE FROM answers_to_histories WHERE history =" + historyId + ";";
+            String SQL = "DELETE FROM perfect_diagnosis_diagnoses_to_answers WHERE diagnosis =" + diagnosisId + ";";
 
             stmt.execute(SQL);
         }
         catch (SQLException ex){
-            System.out.println("SQL Error delete answer to history");
+            System.out.println("SQL Error delete perfect answer to diagnosis");
         }
 
     }

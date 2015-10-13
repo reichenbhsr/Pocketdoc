@@ -93,7 +93,7 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
      * @param answer - Die Antwort welche als typisch gilt für die aktuelle Diagnose
      * @param question - Die zur Antwort gehörende Frage
      */
-    $scope.setPerfectDiagnosis = function(question, answer){
+    $scope.setPerfectDiagnosis = function(answer, negativAnswer){
         removeTheseDiagnoses = [];
         /**
          * $scope.perfect_diagnosis_yes bzw. $scope.perfect_diagnosis_no liefern den falschen bool Wert
@@ -104,49 +104,80 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
         /**
          * Handelt es sich um eine JA Antwort
          */
-        if(answer.answer_id === question.answer_yes.answer_id && angular.isDefined($scope.diagnosis.perfect_diagnosis)){
-            if(question.perfect_diagnosis_yes){ //Wir müssen löschen
+
+        // RE: Durchlauf für ja und nein Antworten vereinheitlicht
+        if (angular.isDefined($scope.diagnosis.perfect_diagnosis)){
+            if (answer.perfect_diagnosis){
                 $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-                    if(perfectDiagnosis.answer.answer_id === question.answer_yes.answer_id){
+                    if(perfectDiagnosis.answer.answer_id === answer.answer_id){
                         removeTheseDiagnoses.push(perfectDiagnosis);
                     }
                 });
             }
-            if(!question.perfect_diagnosis_yes){ //Existiert bereits? Wenn nein, hinzufügen!
+            else{
                 add = true;
                 $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-                    if(perfectDiagnosis.answer.answer_id === question.answer_yes.answer_id){
+                    if(perfectDiagnosis.answer.answer_id === answer.answer_id){
                         add = false;
                     }
                 });
                 if(add){
-                    $scope.diagnosis.perfect_diagnosis.push({answer:{answer_id:question.answer_yes.answer_id, has_dependency:question.answer_yes.has_dependency}});
+                    $scope.diagnosis.perfect_diagnosis.push({answer:{answer_id:answer.answer_id, has_dependency:answer.has_dependency}});
                 }
-            }
-        }
-        /**
-         * Handelt es sich um eine Nein Antwort
-         */
-        if(answer.answer_id === question.answer_no.answer_id && angular.isDefined($scope.diagnosis.perfect_diagnosis)){
-            if(question.perfect_diagnosis_no){ //Wir müssen löschen
+
+                // RE: Gegenteilige Antwort (Bei Ja nein und umgekehrt) wird deaktiviert
+                negativAnswer.perfect_diagnosis = false;
                 $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-                    if(perfectDiagnosis.answer.answer_id === question.answer_no.answer_id){
+                    if(perfectDiagnosis.answer.answer_id === negativAnswer.answer_id){
                         removeTheseDiagnoses.push(perfectDiagnosis);
                     }
                 });
             }
-            if(!question.perfect_diagnosis_no){ //Existiert bereits? Wenn nein, hinzufügen
-                add = true;
-                $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-                    if(perfectDiagnosis.answer.answer_id === question.answer_no.answer_id){
-                        add = false;
-                    }
-                });
-                if(add){
-                    $scope.diagnosis.perfect_diagnosis.push({answer:{answer_id:question.answer_no.answer_id, has_dependency:question.answer_no.has_dependency}});
-                }
-            }
         }
+
+        //if(answer.answer_id === question.answer_yes.answer_id && angular.isDefined($scope.diagnosis.perfect_diagnosis)){
+        //    if(question.perfect_diagnosis_yes){ //Wir müssen löschen
+        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
+        //            if(perfectDiagnosis.answer.answer_id === question.answer_yes.answer_id){
+        //                removeTheseDiagnoses.push(perfectDiagnosis);
+        //            }
+        //        });
+        //    }
+        //    if(!question.perfect_diagnosis_yes){ //Existiert bereits? Wenn nein, hinzufügen!
+        //        add = true;
+        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
+        //            if(perfectDiagnosis.answer.answer_id === question.answer_yes.answer_id){
+        //                add = false;
+        //            }
+        //        });
+        //        if(add){
+        //            $scope.diagnosis.perfect_diagnosis.push({answer:{answer_id:question.answer_yes.answer_id, has_dependency:question.answer_yes.has_dependency}});
+        //        }
+        //    }
+        //}
+        ///**
+        // * Handelt es sich um eine Nein Antwort
+        // */
+        //if(answer.answer_id === question.answer_no.answer_id && angular.isDefined($scope.diagnosis.perfect_diagnosis)){
+        //    if(question.perfect_diagnosis_no){ //Wir müssen löschen
+        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
+        //            if(perfectDiagnosis.answer.answer_id === question.answer_no.answer_id){
+        //                removeTheseDiagnoses.push(perfectDiagnosis);
+        //            }
+        //        });
+        //    }
+        //    if(!question.perfect_diagnosis_no){ //Existiert bereits? Wenn nein, hinzufügen
+        //        add = true;
+        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
+        //            if(perfectDiagnosis.answer.answer_id === question.answer_no.answer_id){
+        //                add = false;
+        //            }
+        //        });
+        //        if(add){
+        //            $scope.diagnosis.perfect_diagnosis.push({answer:{answer_id:question.answer_no.answer_id, has_dependency:question.answer_no.has_dependency}});
+        //        }
+        //    }
+        //}
 
         /**
          * Da wir über alle typischen Antworten einer Diagnose iterieren und mittels id Vergleich die zu löschende typische Antwort suchen
@@ -191,15 +222,15 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
      */
     function getPerfectDiagnosisForCurrentDiagnosis(){
         $scope.questions.forEach(function(question){
-            question.perfect_diagnosis_no = false; //reset
-            question.perfect_diagnosis_yes = false; //reset
+            question.answer_no.perfect_diagnosis = false; //reset
+            question.answer_yes.perfect_diagnosis = false; //reset
             if(angular.isDefined($scope.diagnosis.descriptions)){
                 $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
                     if(angular.equals(question.answer_yes.answer_id, perfectDiagnosis.answer.answer_id)){
-                        question.perfect_diagnosis_yes = true;
+                        question.answer_yes.perfect_diagnosis = true;
                     }
                     if(angular.equals(question.answer_no.answer_id, perfectDiagnosis.answer.answer_id)){
-                        question.perfect_diagnosis_no = true;
+                        question.answer_no.perfect_diagnosis = true;
                     }
                 });
             }

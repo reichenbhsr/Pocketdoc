@@ -18,7 +18,7 @@ public class DiagnosisConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT id FROM diagnosis WHERE id = " + diagnosis.getId() + ";";
+            String SQL = "SELECT id FROM diagnoses WHERE id = " + diagnosis.getId() + ";";
             ResultSet res = stmt.executeQuery(SQL);
 
             if (res.next())
@@ -26,7 +26,7 @@ public class DiagnosisConnector extends DatabaseConnector {
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO diagnosis (name) VALUES (" +
+                SQL = "INSERT INTO diagnoses (name) VALUES (" +
                         (diagnosis.getName() == null ? null : "'" + diagnosis.getName() + "'") + ");";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
@@ -54,8 +54,9 @@ public class DiagnosisConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "UPDATE diagnosis SET " +
-                    "name=" + (diagnosis.getName() == null ? null : "'" + diagnosis.getName() + "'") + "," +
+
+            String SQL = "UPDATE diagnoses SET " +
+                    "name=" + (diagnosis.getName() == null ? null : "'" + diagnosis.getName() + "'") + "" +
                     " WHERE id =" + diagnosis.getId() + ";";
 
             stmt.execute(SQL);

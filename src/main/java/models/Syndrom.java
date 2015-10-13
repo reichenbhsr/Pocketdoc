@@ -1,5 +1,6 @@
 package models;
 
+import database.mappers.intermediateClassMappers.AnswersToSyndromsConnector;
 import models.intermediateClassModels.SyndromToActionSuggestionScoreDistribution;
 
 import javax.persistence.*;
@@ -41,6 +42,12 @@ public class Syndrom {
     }
 
     public Set<Answer> getSymptoms() {
+
+        if (symptoms == null){
+            AnswersToSyndromsConnector asc = new AnswersToSyndromsConnector();
+            symptoms = asc.readAnswersOfSyndrom(id);
+        }
+
         return symptoms;
     }
     public void setSymptoms(Set<Answer> symptoms) {

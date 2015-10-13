@@ -85,13 +85,17 @@ angular.module('pocketDocApp').controller('syndromController', function($scope, 
      * Hier werden die zum syndrom gehörenden Fragen ermittelt zuerst müssen die bisherig gesetzten relevanten Fragen zurückgesetzt
      * werden damit nicht die relevanten Fragen des vorher ausgewählten Syndroms angezeigt werden.
      */
-    function getRelevantQuestionsForSyndrom(){
+    function getRelevantQuestionsForSyndrom(){  // FIXME RE: Setzt isRelevantForSyndrom nun auf Antwort anstatt auf die Frage
         $scope.questions.forEach(function(question){
-            question.isRelevantForSyndrom = false;
+            question.answer_yes.isRelevantForSyndrom = false;
+            question.answer_no.isRelevantForSyndrom = false;
             if(angular.isDefined($scope.syndrom.symptoms)){
                 $scope.syndrom.symptoms.forEach(function(symptom){
                     if(angular.equals(symptom.answer_id, question.answer_yes.answer_id)){
-                        question.isRelevantForSyndrom = true;
+                        question.answer_yes.isRelevantForSyndrom = true;
+                    }
+                    else if (angular.equals(symptom.answer_id, question.answer_no.answer_id)){
+                        question.answer_no.isRelevantForSyndrom = true;
                     }
                 });
             }
@@ -99,31 +103,35 @@ angular.module('pocketDocApp').controller('syndromController', function($scope, 
     }
 
 
-    $scope.addToSyndrom = function(question) {
-        removeTheseQuestions = [];
+    $scope.addToSyndrom = function(answer, negativeAnswer) { // FIXME RE: Liest isRelevantForSyndrom nun auf Antwort anstatt auf die Frage
+        removeTheseSymptoms = [];
         /**
          * question.isRelevantForSyndrom liefert den falschen bool Wert
          * wenn true dann ist der momentane inhalt false
          * wenn false dann ist der momentane inhalt true
          */
         if (angular.isDefined($scope.syndrom.symptoms)) {
-            if (question.isRelevantForSyndrom) { //wir müssen löschen
+            if (answer.isRelevantForSyndrom) { //wir müssen löschen
                 $scope.syndrom.symptoms.forEach(function (symptom) {
-                    if (symptom.answer_id === question.answer_yes.answer_id) {
-                        removeTheseQuestions.push(question);
+                    if (symptom.answer_id === answer.answer_id) {
+                        removeTheseSymptoms.push(answer);
                     }
                 });
             }
-            if (!question.isRelevantForSyndrom) { //Existiert bereits? Wenn nein hinzufügen!
+            else { //Existiert bereits? Wenn nein hinzufügen!
                 add = true;
                 $scope.syndrom.symptoms.forEach(function (symptom) {
-                    if (symptom.answer_id === question.answer_yes) {
+                    if (symptom.answer_id === answer.answer_id) {
                         add = false;
                     }
                 });
                 if (add) {
-                    $scope.syndrom.symptoms.push({answer_id: question.answer_yes.answer_id});
+                    $scope.syndrom.symptoms.push({answer_id: answer.answer_id});
                 }
+
+                // RE: Wenn bereits die alternative Antwort (Bei Ja Nein und umgekehrt) aktiv ist, wird jene deaktiviert
+                removeTheseSymptoms.push(negativeAnswer);
+                negativeAnswer.isRelevantForSyndrom = false;
             }
         }
 
@@ -136,8 +144,8 @@ angular.module('pocketDocApp').controller('syndromController', function($scope, 
         if (angular.isDefined($scope.syndrom.symptoms)) {
             $scope.syndrom.symptoms.forEach(function (symptom) {
                 add = true;
-                removeTheseQuestions.forEach(function (removeQuestion) {
-                    if (removeQuestion.answer_yes.answer_id === symptom.answer_id) {
+                removeTheseSymptoms.forEach(function (removeSymptom) {
+                    if (removeSymptom.answer_id === symptom.answer_id || removeSymptom.answer_id === symptom.answer_id) {    // RE: Answer_no hinzugefügt
                         add = false;
                     }
                 });
