@@ -56,6 +56,7 @@ public class QuestionManager implements BasicManager<Question> {
 
         Answer noAnswer = answerManager.add();
         question.setAnswerNo(noAnswer);
+        question.setSymptom(true);  // RE: Standardwert auf Symptom, da die meisten Fragen Symptome sind.
 
         questionMapper.create(question);
         addDescriptions(question);
