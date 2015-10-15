@@ -70,6 +70,10 @@ public class QuestionCalculator {
     public Question getNextQuestion(User user) {
         History history = historyManager.getAndFetch(user.getHistory());
 
+        // Antwort dem Calculator hinzufügen
+        if (history.getLastAnswer() != null)
+            diagnosisCalculator.addAnswerToRankingList(history.getLastAnswer());
+
         /*
         Wenn die letze gestellt Frage eine Abhängigkeit hat.
          */
@@ -82,7 +86,8 @@ public class QuestionCalculator {
         Alle Fragen reinigen
          */
         final ArrayList<Question> cleanQuestions = getCleanQuestions(history.getAnswers());
-        topDiagnosis = diagnosisCalculator.getDiagnosis(user);
+        //topDiagnosis = diagnosisCalculator.getDiagnosis(user);
+        topDiagnosis = diagnosisCalculator.getDiagnosis(); // RE
 
         if (cleanQuestions.isEmpty()) {
             return null;
@@ -131,7 +136,8 @@ public class QuestionCalculator {
         /*
         Aktuelle Diagnosen Rangliste holen
          */
-        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+//        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getSortedRankingList();
 
         if (diagnosisRankingList.size() > 0) {
             final int minDifference = settingManager.get(SettingManager.MIN_DIFFERENCE).getValue();
@@ -296,31 +302,31 @@ public class QuestionCalculator {
      * @return Die beste Frage oder null
      * @deprecated
      */
-    private Question getBestQuestionOld(final ArrayList<Question> questions, User user) {
-        Question bestQuestion = null;
-        //todo: getDiagnosis... wirft fehler wenn leer
-        int difference = checkDifference(diagnosisCalculator.getDiagnosisRankingList(user), 0);
-
-        for (Question question : questions) {
-
-            //Check with Answer No
-            TreeMap<Diagnosis, Integer> sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
-            int tempDiff = checkDifference(sortedList, difference);
-            if (tempDiff >= 0 && isDiagnosisOnTop(sortedList)) {
-                difference = tempDiff;
-                bestQuestion = question;
-            }
-
-            //Check with Answer Yes
-            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
-            tempDiff = checkDifference(sortedList, difference);
-            if (tempDiff >= 0 && isDiagnosisOnTop(sortedList)) {
-                difference = tempDiff;
-                bestQuestion = question;
-            }
-        }
-        return bestQuestion;
-    }
+//    private Question getBestQuestionOld(final ArrayList<Question> questions, User user) {
+//        Question bestQuestion = null;
+//        //todo: getDiagnosis... wirft fehler wenn leer
+//        int difference = checkDifference(diagnosisCalculator.getDiagnosisRankingList(user), 0);
+//
+//        for (Question question : questions) {
+//
+//            //Check with Answer No
+//            TreeMap<Diagnosis, Integer> sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
+//            int tempDiff = checkDifference(sortedList, difference);
+//            if (tempDiff >= 0 && isDiagnosisOnTop(sortedList)) {
+//                difference = tempDiff;
+//                bestQuestion = question;
+//            }
+//
+//            //Check with Answer Yes
+//            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
+//            tempDiff = checkDifference(sortedList, difference);
+//            if (tempDiff >= 0 && isDiagnosisOnTop(sortedList)) {
+//                difference = tempDiff;
+//                bestQuestion = question;
+//            }
+//        }
+//        return bestQuestion;
+//    }
 
     /**
      * Diese Methode gibt die nächste Frage, nach der reihenfolge der Ids
@@ -356,7 +362,8 @@ public class QuestionCalculator {
         for (Question question : questions) {
 
             //Check with Answer No
-            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
+//            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
+            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerNo()); // RE
             if (sortedList.size() > 0) {
                 int tempDiff = checkDifference(sortedList, difference);
                 if (tempDiff >= 0) {
@@ -366,7 +373,8 @@ public class QuestionCalculator {
             }
 
             //Check with Answer Yes
-            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
+//            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
+            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerYes()); // RE
             if (sortedList.size() > 0) {
                 int tempDiff = checkDifference(sortedList, difference);
                 if (tempDiff >= 0) {

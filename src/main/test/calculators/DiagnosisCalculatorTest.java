@@ -123,13 +123,15 @@ public class DiagnosisCalculatorTest {
 
     @Test
     public void testGetDiagnosis() throws Exception {
-        final Diagnosis diagnosis = diagnosisCalculator.getDiagnosis(user);
+ //       final Diagnosis diagnosis = diagnosisCalculator.getDiagnosis(user);
+        final Diagnosis diagnosis = diagnosisCalculator.getDiagnosis(); // RE
         assertEquals(diagnosis, diagnosisList.get(1));
     }
 
     @Test
     public void testFirstGetDiagnosisRankingList() throws Exception {
-        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+ //       final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getSortedRankingList(); // RE
         final Map.Entry<Diagnosis, Integer> firstEntry = diagnosisRankingList.firstEntry();
 
         assertEquals(firstEntry.getKey(), diagnosisList.get(1));
@@ -140,7 +142,8 @@ public class DiagnosisCalculatorTest {
 
     @Test
     public void testSecondGetDiagnosisRankingList() throws Exception {
-        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+//        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getSortedRankingList(); // RE
         final Iterator<Map.Entry<Diagnosis, Integer>> iterator = diagnosisRankingList.entrySet().iterator();
         iterator.next();
         Map.Entry<Diagnosis, Integer> entry = iterator.next();
@@ -155,7 +158,8 @@ public class DiagnosisCalculatorTest {
 
     @Test
     public void testThirdGetDiagnosisRankingList() throws Exception {
-        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+//        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
+        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getSortedRankingList();
         Map.Entry<Diagnosis, Integer> entry = diagnosisRankingList.lastEntry();
 
         assertEquals(entry.getKey(), diagnosisList.get(0));
@@ -171,7 +175,8 @@ public class DiagnosisCalculatorTest {
         extraAnswer.setId(4);
         distributeExtraAnswer(extraAnswer, extraScore);
 
-        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user, extraAnswer);
+//        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user, extraAnswer); // FIXME RE
+        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.calculateAnswerToRankingListSorted(extraAnswer);
         Map.Entry<Diagnosis, Integer> entry = diagnosisRankingList.firstEntry();
 
         assertEquals(diagnosisList.get(0), entry.getKey());

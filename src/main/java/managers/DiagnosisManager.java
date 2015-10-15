@@ -119,7 +119,8 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
 
     public Diagnosis diagnose(User user) {
         DiagnosisCalculator calculator = new DiagnosisCalculator();
-        return calculator.getDiagnosis(user);
+//        return calculator.getDiagnosis(user);
+        return calculator.getDiagnosis(); // RE
     }
 
     public void addPerfectAnswersToDiagnosis(Diagnosis diagnosis){
@@ -139,7 +140,8 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
      */
     public TreeMap<Diagnosis, Integer> getDiagnosesRankingList(User user) {
         DiagnosisCalculator calculator = new DiagnosisCalculator();
-        return calculator.getDiagnosisRankingList(user);
+//        return calculator.getDiagnosisRankingList(user);
+        return calculator.getSortedRankingList();
     }
 
     /**
