@@ -182,6 +182,11 @@ public class DiagnosisCalculator {
         return sortRankingList(perfectRanking);
     }
 
+    public static void reset(){ // RE
+        currentRanking = null;
+        currentSortedRanking = null;
+    }
+
     /**
      * Diese Methode wird gebraucht um die Diagnosenrangliste zurückzugeben
      * <p>

@@ -1,5 +1,6 @@
 package servlet;
 
+import calculators.DiagnosisCalculator;
 import calculators.QuestionCalculator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -95,6 +96,7 @@ public class RunServlet extends ServletAbstract {
             if (path != null) {
                 User user = new UserManager().get(getId(path));
                 QuestionCalculator.reset(); // RE
+                DiagnosisCalculator.reset(); // RE
                 new RunManager(user).deleteHistory();
             }
         }
