@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Roman on 04.10.2015.
@@ -99,6 +100,70 @@ public class SyndromToActionSuggestionScoreDistributionConnector extends Databas
         }
 
         return null;
+    }
+
+    public HashSet<SyndromToActionSuggestionScoreDistribution> readSetOfSyndromToActionSuggestionScoreDistribution(int actionSuggestionId){
+        HashSet<SyndromToActionSuggestionScoreDistribution> set = new HashSet<SyndromToActionSuggestionScoreDistribution>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM score_distribution_syndroms_to_action_suggestions WHERE action_suggestion= " + actionSuggestionId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            SyndromToActionSuggestionScoreDistribution syndromToActionSuggestionScores;
+            while (res.next())
+            {
+                syndromToActionSuggestionScores = new SyndromToActionSuggestionScoreDistribution();
+                syndromToActionSuggestionScores.setId(res.getInt("id"));
+                syndromToActionSuggestionScores.setSyndromId(res.getInt("syndrom"));
+                syndromToActionSuggestionScores.setActionSuggestionId(res.getInt("action_suggestion"));
+                syndromToActionSuggestionScores.setScore(res.getInt("score"));
+
+                set.add(syndromToActionSuggestionScores);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read set of Syndrom To ActionSuggestion Scores");
+        }
+
+        return set;
+    }
+
+    public HashSet<SyndromToActionSuggestionScoreDistribution> readSetOfActionSuggestionToSyndromScoreDistribution(int syndromId){
+        HashSet<SyndromToActionSuggestionScoreDistribution> set = new HashSet<SyndromToActionSuggestionScoreDistribution>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM score_distribution_syndroms_to_action_suggestions WHERE syndrom= " + syndromId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            SyndromToActionSuggestionScoreDistribution syndromToActionSuggestionScores;
+            while (res.next())
+            {
+                syndromToActionSuggestionScores = new SyndromToActionSuggestionScoreDistribution();
+                syndromToActionSuggestionScores.setId(res.getInt("id"));
+                syndromToActionSuggestionScores.setSyndromId(res.getInt("syndrom"));
+                syndromToActionSuggestionScores.setActionSuggestionId(res.getInt("action_suggestion"));
+                syndromToActionSuggestionScores.setScore(res.getInt("score"));
+
+                set.add(syndromToActionSuggestionScores);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read set of ActionSuggestion to Syndrom Scores");
+        }
+
+        return set;
     }
 
     public ArrayList<SyndromToActionSuggestionScoreDistribution> readAll(){

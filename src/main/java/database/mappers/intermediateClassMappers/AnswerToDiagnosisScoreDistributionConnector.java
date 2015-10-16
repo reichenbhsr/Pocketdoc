@@ -168,6 +168,39 @@ public class AnswerToDiagnosisScoreDistributionConnector extends DatabaseConnect
         return set;
     }
 
+    public HashSet<AnswerToDiagnosisScoreDistribution> readSetOfDiagnosis(int diagnosisId){
+
+        HashSet<AnswerToDiagnosisScoreDistribution> set = new HashSet<AnswerToDiagnosisScoreDistribution>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM score_distribution_answers_to_diagnoses WHERE diagnosis = " + diagnosisId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            AnswerToDiagnosisScoreDistribution atdsd;
+            while (res.next())
+            {
+                atdsd = new AnswerToDiagnosisScoreDistribution();
+                atdsd.setId(res.getInt("id"));
+                atdsd.setScore(res.getInt("score"));
+                atdsd.setDiagnosisId(res.getInt("diagnosis"));
+                atdsd.setAnswerId(res.getInt("answer"));
+
+                set.add(atdsd);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read all Diagnosis to answer score distribution");
+        }
+
+        return set;
+    }
+
     public void delete(int atdsdId){
 
         try{

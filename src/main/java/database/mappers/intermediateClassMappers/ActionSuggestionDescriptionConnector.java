@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Roman on 04.10.2015.
@@ -99,6 +100,38 @@ public class ActionSuggestionDescriptionConnector extends DatabaseConnector{
         }
 
         return null;
+    }
+
+    public HashSet<ActionSuggestionDescription> readSetOfActionSuggestionDescriptions(int actionSuggestionId){
+        HashSet<ActionSuggestionDescription> set = new HashSet<ActionSuggestionDescription>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM action_suggestion_descriptions WHERE action_suggestion= " + actionSuggestionId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            ActionSuggestionDescription description;
+            while (res.next())
+            {
+                description = new ActionSuggestionDescription();
+                description.setId(res.getInt("id"));
+                description.setLanguageId(res.getInt("language"));
+                description.setActionSuggestionId(res.getInt("action_suggestion"));
+                description.setDescription(res.getString("description"));
+
+                set.add(description);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read set of action_suggestion descriptions");
+        }
+
+        return set;
     }
 
     public ArrayList<ActionSuggestionDescription> readAll(){

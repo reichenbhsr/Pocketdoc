@@ -168,6 +168,39 @@ public class AnswerToActionSuggestionScoreDistributionConnector extends Database
         return set;
     }
 
+    public HashSet<AnswerToActionSuggestionScoreDistribution> readSetOfAnswerToActionSuggestionScores(int actionSuggestionId){
+
+        HashSet<AnswerToActionSuggestionScoreDistribution> set = new HashSet<AnswerToActionSuggestionScoreDistribution>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM score_distribution_answers_to_action_suggestions WHERE action_suggestion= " + actionSuggestionId + " ;";
+
+            ResultSet res = stmt.executeQuery(SQL);
+
+            AnswerToActionSuggestionScoreDistribution atassd;
+            while (res.next())
+            {
+                atassd = new AnswerToActionSuggestionScoreDistribution();
+                atassd.setId(res.getInt("id"));
+                atassd.setScore(res.getInt("score"));
+                atassd.setAnswerId(res.getInt("answer"));
+                atassd.setActionSuggestionId(res.getInt("action_suggestion"));
+
+                set.add(atassd);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read set of Answer to action suggestion score distributions");
+        }
+
+        return set;
+    }
+
     public void delete(int atassdId){
 
         try{

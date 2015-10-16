@@ -99,10 +99,14 @@ public class DiagnosisCalculator {
         if (currentRanking == null)
             currentRanking = new HashMap<Diagnosis, Integer>();
 
-        currentRanking = calculateAnswerToRankingList(currentRanking, answer);
+        currentRanking = (HashMap<Diagnosis, Integer>) calculateAnswerToRankingList(currentRanking, answer);
         currentSortedRanking = sortRankingList(currentRanking);
 
         return (TreeMap<Diagnosis, Integer>) currentSortedRanking.clone();
+    }
+
+    public TreeMap<Diagnosis, Integer> calculateAnswerToRankingList(Answer answer){
+        return (TreeMap<Diagnosis, Integer>) calculateAnswerToRankingList(currentSortedRanking, answer);
     }
 
     public TreeMap<Diagnosis, Integer> calculateAnswerToRankingListSorted(Answer answer){    // RE
@@ -110,21 +114,19 @@ public class DiagnosisCalculator {
         if (currentRanking == null)
             currentRanking = new HashMap<Diagnosis, Integer>();
 
-        return sortRankingList(calculateAnswerToRankingList(currentRanking, answer));
+        return (TreeMap<Diagnosis, Integer>) sortRankingList((HashMap<Diagnosis, Integer>) calculateAnswerToRankingList(currentRanking, answer));
     }
 
-    private TreeMap<Diagnosis, Integer> sortRankingList(HashMap<Diagnosis, Integer> rankingList) {    // RE
-        TreeMap<Diagnosis, Integer> sortedRankingList;
-        final MapComparator<Diagnosis> comparator = new MapComparator(rankingList);
-        sortedRankingList = new TreeMap(comparator);
-        sortedRankingList.putAll(rankingList);
+    private Map<Diagnosis, Integer> calculateAnswerToRankingList(Map<Diagnosis, Integer> ranking, Answer answer){    // RE
 
-        return sortedRankingList;
-    }
+        Map<Diagnosis, Integer> rankingList = null;
 
-    private HashMap<Diagnosis, Integer> calculateAnswerToRankingList(HashMap<Diagnosis, Integer> ranking, Answer answer){    // RE
-
-        HashMap<Diagnosis, Integer> rankingList = (HashMap<Diagnosis, Integer>) ranking.clone();
+        if (ranking instanceof HashMap)
+            rankingList = (Map<Diagnosis, Integer>) ((HashMap<Diagnosis, Integer>) ranking).clone();
+        else if (ranking instanceof TreeMap)
+            rankingList = (Map<Diagnosis, Integer>) ((TreeMap<Diagnosis, Integer>) ranking).clone();
+        else
+            return null;
 
         if (answer.getAnswerToDiagnosisScoreDistributions() == null) {
             return rankingList;
@@ -143,6 +145,15 @@ public class DiagnosisCalculator {
 
         return rankingList;
 
+    }
+
+    private TreeMap<Diagnosis, Integer> sortRankingList(HashMap<Diagnosis, Integer> rankingList) {    // RE
+        TreeMap<Diagnosis, Integer> sortedRankingList;
+        final MapComparator<Diagnosis> comparator = new MapComparator(rankingList);
+        sortedRankingList = new TreeMap(comparator);
+        sortedRankingList.putAll(rankingList);
+
+        return sortedRankingList;
     }
 
     public TreeMap<Diagnosis, Integer> getPerfectDiagnosis(Diagnosis perfectDiagnosis) {    // RE

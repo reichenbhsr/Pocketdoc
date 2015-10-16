@@ -20,6 +20,7 @@ public class QuestionCalculator {
     private Diagnosis topDiagnosis;
     private SettingManager settingManager;
     private static Stack<Question> questionsToAsk;
+    private static ArrayList<Question> remainingQuestions;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -70,9 +71,14 @@ public class QuestionCalculator {
     public Question getNextQuestion(User user) {
         History history = historyManager.getAndFetch(user.getHistory());
 
+        if (remainingQuestions == null)
+            remainingQuestions = getQuestionsToAsk(); // RE
+
         // Antwort dem Calculator hinzufügen
-        if (history.getLastAnswer() != null)
+        if (history.getLastAnswer() != null) {
             diagnosisCalculator.addAnswerToRankingList(history.getLastAnswer());
+            remainingQuestions.remove(history.getLastAnswer().getAnswerOf()); // RE
+        }
 
         /*
         Wenn die letze gestellt Frage eine Abhängigkeit hat.
@@ -85,21 +91,21 @@ public class QuestionCalculator {
         /*
         Alle Fragen reinigen
          */
-        final ArrayList<Question> cleanQuestions = getCleanQuestions(history.getAnswers());
+        //final ArrayList<Question> cleanQuestions = getCleanQuestions(history.getAnswers());
         //topDiagnosis = diagnosisCalculator.getDiagnosis(user);
         topDiagnosis = diagnosisCalculator.getDiagnosis(); // RE
 
-        if (cleanQuestions.isEmpty()) {
-            return null;
-        }
+//        if (cleanQuestions.isEmpty()) {
+//            return null;
+//        }
 
         /*
         Beste Frage herausfinden
          */
-        Question bestQuestion = getBestQuestion(cleanQuestions, user);
+        Question bestQuestion = getBestQuestion(remainingQuestions, user);
 
         if (bestQuestion == null) {
-            bestQuestion = cleanQuestions.get(0);
+            bestQuestion = remainingQuestions.get(0);
         }
 
         /*
@@ -269,6 +275,23 @@ public class QuestionCalculator {
         return questions;
     }
 
+    private ArrayList<Question> getQuestionsToAsk(){    // FIXME RE
+        ArrayList<Question> questions = questionManager.getAll();
+        ArrayList<Question> questionsToAsk = new ArrayList<Question>();
+
+        if (questions == null) {
+            return new ArrayList<Question>();
+        }
+
+        for(Question question: questions){
+            if (question.getDependsOn() == null)
+                questionsToAsk.add(question);
+        }
+
+        return questionsToAsk;
+
+    }
+
     /**
      * Diese Methode entfernt einer Liste mit Fragen die Kette von Fragen die von einer Anwort abhängig sind.
      * <p>
@@ -356,34 +379,75 @@ public class QuestionCalculator {
      */
     private Question getBestQuestion(final ArrayList<Question> questions, User user) {
         Question bestQuestion = null;
-        int difference = 0;
+        int highestDifference = 0;
+
+        // RE: Prüft, ob es Informative Fragen hat. diese zu Erst stellen
+        for(Question question: questions)
+            if (!question.isSymptom())
+                return question;
 
         TreeMap<Diagnosis, Integer> sortedList;
-        for (Question question : questions) {
 
-            //Check with Answer No
-//            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
-            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerNo()); // RE
-            if (sortedList.size() > 0) {
-                int tempDiff = checkDifference(sortedList, difference);
-                if (tempDiff >= 0) {
-                    difference = tempDiff;
-                    bestQuestion = question;
-                }
+        int difference;
+        for(Question question: questions){
+
+            difference = calculateDifference(question);
+
+            if (highestDifference < difference){
+                highestDifference = difference;
+                bestQuestion = question;
             }
 
-            //Check with Answer Yes
-//            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
-            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerYes()); // RE
-            if (sortedList.size() > 0) {
-                int tempDiff = checkDifference(sortedList, difference);
-                if (tempDiff >= 0) {
-                    difference = tempDiff;
-                    bestQuestion = question;
-                }
-            }
+            System.out.println("Question: " + question.getName() + " - " + difference);
         }
+
+
+//        for (Question question : questions) {
+//
+//            //Check with Answer No
+////            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
+//            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerNo()); // RE
+//
+//            if (sortedList.size() > 0) {
+//                int tempDiff = checkDifference(sortedList, difference);
+//                if (tempDiff >= 0) {
+//                    difference = tempDiff;
+//                    bestQuestion = question;
+//                }
+//            }
+//
+//            //Check with Answer Yes
+////            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
+//            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerYes()); // RE
+//            if (sortedList.size() > 0) {
+//                int tempDiff = checkDifference(sortedList, difference);
+//                if (tempDiff >= 0) {
+//                    difference = tempDiff;
+//                    bestQuestion = question;
+//                }
+//            }
+//        }
         return bestQuestion;
+    }
+
+    private int calculateDifference(Question question){ // FIXME RE
+        int tempDiff = 0;
+        TreeMap<Diagnosis, Integer> sortedListNo = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerNo()); // RE
+        TreeMap<Diagnosis, Integer> sortedListYes = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerYes()); // RE
+
+        if (sortedListNo.size() > 0)
+            tempDiff += checkDifference(sortedListNo);
+
+        if (sortedListYes.size() > 0)
+            tempDiff += checkDifference(sortedListNo);
+
+        for(Question q: question.getAnswerNo().getDependencyFrom())
+            tempDiff += calculateDifference(q);
+
+        for(Question q: question.getAnswerYes().getDependencyFrom())
+            tempDiff += calculateDifference(q);
+
+        return tempDiff;
     }
 
     /**
@@ -396,26 +460,47 @@ public class QuestionCalculator {
      * @param difference Der bisherige Unterschied
      * @return Der unterschied oder -1 wenn difference grösser ist.
      */
-    private int checkDifference(final TreeMap<Diagnosis, Integer> sortedList, int difference) {
+//    private int checkDifference(final TreeMap<Diagnosis, Integer> sortedList, int difference) {
+//        final Iterator<Map.Entry<Diagnosis, Integer>> iterator = sortedList.entrySet().iterator();
+//        try {
+//            final Map.Entry<Diagnosis, Integer> firstEntry = iterator.next();
+//            int tempDiff;
+//            if (iterator.hasNext()) {
+//                final Map.Entry<Diagnosis, Integer> secondEntry = iterator.next();
+//                tempDiff = firstEntry.getValue() - secondEntry.getValue();
+//            } else {
+//                tempDiff = firstEntry.getValue();
+//            }
+//
+//            if (tempDiff > difference) {
+//                return tempDiff;
+//            } else {
+//                return -1;
+//            }
+//        } catch (NullPointerException e) {
+//            e.printStackTrace();
+//            return -1;
+//        }
+//    }
+
+    private int checkDifference(final TreeMap<Diagnosis, Integer> sortedList){ // FIXME RE
         final Iterator<Map.Entry<Diagnosis, Integer>> iterator = sortedList.entrySet().iterator();
         try {
             final Map.Entry<Diagnosis, Integer> firstEntry = iterator.next();
             int tempDiff;
             if (iterator.hasNext()) {
                 final Map.Entry<Diagnosis, Integer> secondEntry = iterator.next();
+
                 tempDiff = firstEntry.getValue() - secondEntry.getValue();
             } else {
                 tempDiff = firstEntry.getValue();
             }
 
-            if (tempDiff > difference) {
-                return tempDiff;
-            } else {
-                return -1;
-            }
+            return Math.abs(tempDiff);
+
         } catch (NullPointerException e) {
             e.printStackTrace();
-            return -1;
+            return 0;
         }
     }
 
@@ -436,5 +521,12 @@ public class QuestionCalculator {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static void reset(){ // FIXME RE
+
+        questionsToAsk = null;
+        remainingQuestions = null;
+
     }
 }

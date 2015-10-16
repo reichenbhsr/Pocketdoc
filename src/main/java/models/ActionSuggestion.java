@@ -1,5 +1,9 @@
 package models;
 
+import database.mappers.ActionSuggestionConnector;
+import database.mappers.intermediateClassMappers.ActionSuggestionDescriptionConnector;
+import database.mappers.intermediateClassMappers.AnswerToActionSuggestionScoreDistributionConnector;
+import database.mappers.intermediateClassMappers.SyndromToActionSuggestionScoreDistributionConnector;
 import models.intermediateClassModels.ActionSuggestionDescription;
 import models.intermediateClassModels.AnswerToActionSuggestionScoreDistribution;
 import models.intermediateClassModels.SyndromToActionSuggestionScoreDistribution;
@@ -47,6 +51,13 @@ public class ActionSuggestion {
     }
 
     public Set<ActionSuggestionDescription> getDescriptions() {
+
+        if (descriptions == null)
+        {
+            ActionSuggestionDescriptionConnector asc = new ActionSuggestionDescriptionConnector();
+            descriptions = asc.readSetOfActionSuggestionDescriptions(id);
+        }
+
         return descriptions;
     }
 
@@ -68,6 +79,12 @@ public class ActionSuggestion {
     }
 
     public Set<SyndromToActionSuggestionScoreDistribution> getSyndromToActionSuggestionScoreDistributions() {
+
+        if (syndromToActionSuggestionScoreDistributions == null){
+            SyndromToActionSuggestionScoreDistributionConnector stasc = new SyndromToActionSuggestionScoreDistributionConnector();
+            syndromToActionSuggestionScoreDistributions = stasc.readSetOfSyndromToActionSuggestionScoreDistribution(id);
+        }
+
         return syndromToActionSuggestionScoreDistributions;
     }
 
@@ -76,6 +93,12 @@ public class ActionSuggestion {
     }
 
     public Set<AnswerToActionSuggestionScoreDistribution> getAnswerToActionSuggestionScoreDistributions() {
+
+        if (answerToActionSuggestionScoreDistributions == null){
+            AnswerToActionSuggestionScoreDistributionConnector stasc = new AnswerToActionSuggestionScoreDistributionConnector();
+            answerToActionSuggestionScoreDistributions = stasc.readSetOfAnswerToActionSuggestionScores(id);
+        }
+
         return answerToActionSuggestionScoreDistributions;
     }
 

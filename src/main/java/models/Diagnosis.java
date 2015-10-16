@@ -1,5 +1,6 @@
 package models;
 
+import database.mappers.intermediateClassMappers.AnswerToDiagnosisScoreDistributionConnector;
 import database.mappers.intermediateClassMappers.DiagnosisDescriptionConnector;
 import database.mappers.intermediateClassMappers.PerfectDiagnosisDiagnosesToAnswersConnector;
 import database.mappers.intermediateClassMappers.QuestionDescriptionConnector;
@@ -91,6 +92,12 @@ public class Diagnosis {
     }
 
     public Set<AnswerToDiagnosisScoreDistribution> getAnswerToDiagnosisScoreDistributions() {
+
+        if (answerToDiagnosisScoreDistributions == null){
+            AnswerToDiagnosisScoreDistributionConnector atdsc = new AnswerToDiagnosisScoreDistributionConnector();
+            answerToDiagnosisScoreDistributions = atdsc.readSetOfDiagnosis(id);
+        }
+
         return answerToDiagnosisScoreDistributions;
     }
 

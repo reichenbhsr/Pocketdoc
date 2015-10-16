@@ -1,6 +1,7 @@
 package models;
 
 import database.mappers.intermediateClassMappers.AnswersToSyndromsConnector;
+import database.mappers.intermediateClassMappers.SyndromToActionSuggestionScoreDistributionConnector;
 import models.intermediateClassModels.SyndromToActionSuggestionScoreDistribution;
 
 import javax.persistence.*;
@@ -55,6 +56,12 @@ public class Syndrom {
     }
 
     public Set<SyndromToActionSuggestionScoreDistribution> getScoreDistributions() {
+
+        if (scoreDistributions == null){
+            SyndromToActionSuggestionScoreDistributionConnector stasc = new SyndromToActionSuggestionScoreDistributionConnector();
+            scoreDistributions = stasc.readSetOfActionSuggestionToSyndromScoreDistribution(id);
+        }
+
         return scoreDistributions;
     }
     public void setScoreDistributions(Set<SyndromToActionSuggestionScoreDistribution> scoreDistributions) {
