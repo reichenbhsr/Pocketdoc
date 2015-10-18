@@ -111,6 +111,13 @@ public class Question {
         this.descriptions = descriptions;
     }
 
+    public Answer getNegativeAnswer(Answer answer){
+        if (answer.equals(getAnswerYes()))
+            return getAnswerNo();
+        else
+            return getAnswerYes();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Question) {

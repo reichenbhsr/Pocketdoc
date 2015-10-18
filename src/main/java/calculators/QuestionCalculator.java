@@ -19,7 +19,7 @@ public class QuestionCalculator {
     private HistoryManager historyManager;
     private Diagnosis topDiagnosis;
     private SettingManager settingManager;
-    private static Stack<Question> questionsToAsk;
+    private static ArrayList<Question> informationQuestions;
     private static ArrayList<Question> remainingQuestions;
 
     /**
@@ -71,22 +71,27 @@ public class QuestionCalculator {
     public Question getNextQuestion(User user) {
         History history = historyManager.getAndFetch(user.getHistory());
 
-        if (remainingQuestions == null)
+        if (remainingQuestions == null){
+            informationQuestions = getInformaticQuestions(); // RE
             remainingQuestions = getQuestionsToAsk(); // RE
+        }
 
         // Antwort dem Calculator hinzufügen
         if (history.getLastAnswer() != null) {
             diagnosisCalculator.addAnswerToRankingList(history.getLastAnswer());
-            remainingQuestions.remove(history.getLastAnswer().getAnswerOf()); // RE
+            if (informationQuestions.size() > 0)
+                informationQuestions = cleanOutDependentQuestions(informationQuestions, history.getLastAnswer());
+
+            remainingQuestions = cleanOutDependentQuestions(remainingQuestions, history.getLastAnswer());
         }
 
         /*
         Wenn die letze gestellt Frage eine Abhängigkeit hat.
          */
-        final Question dependentQuestion = getDependentQuestion(history);
-        if (dependentQuestion != null) {
-            return dependentQuestion;
-        }
+//        final Question dependentQuestion = getDependentQuestion(history);
+//        if (dependentQuestion != null) {
+//            return dependentQuestion;
+//        }
 
         /*
         Alle Fragen reinigen
@@ -209,7 +214,7 @@ public class QuestionCalculator {
         }
 
         Question question = answer.getAnswerOf();
-        if (question == null) {
+        if (question == null || (!remainingQuestions.contains(question) && !informationQuestions.contains(question))) {
             return bestQuestion;
         }
 
@@ -224,23 +229,23 @@ public class QuestionCalculator {
      * @param history Der Verlauf des Fragelaufs
      * @return Die Frage von der die letze Antowrt abhängig ist oder null
      */
-    private Question getDependentQuestion(History history) {
-        final Answer answer = history.getLastAnswer();
-
-        if (QuestionCalculator.questionsToAsk == null)
-            QuestionCalculator.questionsToAsk = new Stack<Question>();
-
-        if (answer != null) {
-            for(Question q: answer.getDependencyFrom())
-                if (q != null)
-                    QuestionCalculator.questionsToAsk.push(q);
-        }
-
-        if (QuestionCalculator.questionsToAsk.size() >  0)
-            return QuestionCalculator.questionsToAsk.pop();
-
-        return null;
-    }
+//    private Question getDependentQuestion(History history) {
+//        final Answer answer = history.getLastAnswer();
+//
+//        if (QuestionCalculator.questionsToAsk == null)
+//            QuestionCalculator.questionsToAsk = new Stack<Question>();
+//
+//        if (answer != null) {
+//            for(Question q: answer.getDependencyFrom())
+//                if (q != null)
+//                    QuestionCalculator.questionsToAsk.push(q);
+//        }
+//
+//        if (QuestionCalculator.questionsToAsk.size() >  0)
+//            return QuestionCalculator.questionsToAsk.pop();
+//
+//        return null;
+//    }
 
     /**
      * Die Methode sucht alle Questions die schon gestellt wurden.
@@ -284,12 +289,44 @@ public class QuestionCalculator {
         }
 
         for(Question question: questions){
-            if (question.getDependsOn() == null)
+            if (question.isSymptom())
                 questionsToAsk.add(question);
         }
 
         return questionsToAsk;
 
+    }
+
+    private ArrayList<Question> getInformaticQuestions(){   // FIXME RE
+        ArrayList<Question> questions = questionManager.getAll();
+        ArrayList<Question> questionsToAsk = new ArrayList<Question>();
+
+        if (questions == null) {
+            return new ArrayList<Question>();
+        }
+
+        for(Question question: questions){
+            if (!question.isSymptom())
+                questionsToAsk.add(question);
+        }
+
+        return questionsToAsk;
+    }
+
+    private ArrayList<Question> cleanOutDependentQuestions(ArrayList<Question> questions, Answer givenAnswer){
+
+        ArrayList<Question> questionsToCheck = (ArrayList<Question>) questions.clone();
+        Answer answerDependencyToRemove = givenAnswer.getAnswerOf().getNegativeAnswer(givenAnswer);
+
+        questionsToCheck.remove(givenAnswer.getAnswerOf());
+
+        for(Question q: answerDependencyToRemove.getDependencyFrom()){
+            questionsToCheck.remove(q);
+            questionsToCheck = cleanOutDependentQuestions(questionsToCheck, q.getAnswerYes());
+            questionsToCheck = cleanOutDependentQuestions(questionsToCheck, q.getAnswerNo());
+        }
+
+        return questionsToCheck;
     }
 
     /**
@@ -382,7 +419,7 @@ public class QuestionCalculator {
         int highestDifference = 0;
 
         // RE: Prüft, ob es Informative Fragen hat. diese zu Erst stellen
-        for(Question question: questions)
+        for(Question question: informationQuestions)
             if (!question.isSymptom())
                 return question;
 
@@ -439,13 +476,13 @@ public class QuestionCalculator {
             tempDiff += checkDifference(sortedListNo);
 
         if (sortedListYes.size() > 0)
-            tempDiff += checkDifference(sortedListNo);
+            tempDiff += checkDifference(sortedListYes);
 
-        for(Question q: question.getAnswerNo().getDependencyFrom())
-            tempDiff += calculateDifference(q);
-
-        for(Question q: question.getAnswerYes().getDependencyFrom())
-            tempDiff += calculateDifference(q);
+//        for(Question q: question.getAnswerNo().getDependencyFrom())
+//            tempDiff += calculateDifference(q);
+//
+//        for(Question q: question.getAnswerYes().getDependencyFrom())
+//            tempDiff += calculateDifference(q);
 
         return tempDiff;
     }
@@ -525,7 +562,8 @@ public class QuestionCalculator {
 
     public static void reset(){ // FIXME RE
 
-        questionsToAsk = null;
+//        questionsToAsk = null;
+        informationQuestions = null;
         remainingQuestions = null;
 
     }
