@@ -109,6 +109,12 @@ angular.module('pocketDocApp').controller('questionController', function($scope,
         }
     }
 
+    $scope.setForceDependentAsking = function (){ // RE
+        $scope.question.force_dependent_asking = !$scope.question.force_dependent_asking;
+        console.log($scope.question.force_dependent_asking);
+        $scope.question.$update();
+    }
+
     /**
      * Auf einen Knopfklick soll die Abhängigkeit gelöscht werden
      * 1. Überprüfen ob die aktuelle Frage auf die Ja oder Nein Antwort der $scope.dependsOnQuestion verlinkt, dann den Bool

@@ -85,6 +85,7 @@ public class QuestionCalculator {
             remainingQuestions = cleanOutDependentQuestions(remainingQuestions, history.getLastAnswer());
         }
 
+
         /*
         Wenn die letze gestellt Frage eine Abhängigkeit hat.
          */
@@ -103,6 +104,15 @@ public class QuestionCalculator {
 //        if (cleanQuestions.isEmpty()) {
 //            return null;
 //        }
+
+        // Gibts abhängige Fragen, die als nächsts gestellt werden müssen?
+        if (user.getHistory().getLastAnswer() != null){
+            Question forcedQuestion = checkForceDependentQuestion(user.getHistory().getLastAnswer());
+
+            if (forcedQuestion != null)
+                return forcedQuestion;
+        }
+
 
         /*
         Beste Frage herausfinden
@@ -327,6 +337,16 @@ public class QuestionCalculator {
         }
 
         return questionsToCheck;
+    }
+
+    private Question checkForceDependentQuestion(Answer givenAnswer){   // RE
+
+        for(Question q: givenAnswer.getDependencyFrom()){
+            if (q.getForceDependentAsking())
+                return q;
+        }
+
+        return null;
     }
 
     /**

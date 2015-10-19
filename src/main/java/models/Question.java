@@ -28,6 +28,8 @@ public class Question {
     private int dependsOnId;
     private Answer dependsOn;
 
+    private boolean forceDependentAsking; // RE
+
     private boolean isSymptom;
 
     private Set<QuestionDescription> descriptions;
@@ -90,6 +92,13 @@ public class Question {
     }
     public void setDependsOn(Answer dependsOn) {
         this.dependsOn = dependsOn;
+    }
+
+    public boolean getForceDependentAsking(){   // RE
+        return forceDependentAsking;
+    }
+    public void setForceDependentAsking(boolean forceDependentAsking){  // RE
+        this.forceDependentAsking = forceDependentAsking;
     }
 
     public boolean isSymptom() {

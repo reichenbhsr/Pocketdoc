@@ -25,6 +25,7 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
     final String NAME = "name";
     final String DEPENDENCE_ID = "dependence";
     final String IS_SYMPTOM = "is_symptom";
+    final String FORCE_DEPENDENT_ASKING = "force_dependent_asking"; // RE
 
 
     @Override
@@ -36,6 +37,7 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
         setDependence(jsonObject, question, jsonDeserializationContext);
         setIsSymptom(jsonObject, question);
         setName(jsonObject, question);
+        setForceDependentAsking(jsonObject, question);
         return question;
 
     }
@@ -66,6 +68,13 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
         if (jsonObject.has(NAME)) {
             final String name = jsonObject.getAsJsonPrimitive(NAME).getAsString();
             question.setName(name);
+        }
+    }
+
+    private void setForceDependentAsking(final JsonObject jsonObject, final Question question) { // RE
+        if (jsonObject.has(FORCE_DEPENDENT_ASKING)) {
+            final boolean forceDependentAsking = jsonObject.getAsJsonPrimitive(FORCE_DEPENDENT_ASKING).getAsBoolean();
+            question.setForceDependentAsking(forceDependentAsking);
         }
     }
 }

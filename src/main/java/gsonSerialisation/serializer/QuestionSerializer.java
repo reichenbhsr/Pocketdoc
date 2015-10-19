@@ -42,6 +42,7 @@ public class QuestionSerializer implements JsonSerializer<Question> {
     final String IS_SYMPTOM = "is_symptom";
     final String ANSWER_YES = "answer_yes";
     final String ANSWER_NO = "answer_no";
+    final String FORCE_DEPENDENT_ASKING = "force_dependent_asking"; // RE
 
     final String DESCRIPTIONS = "descriptions";
 
@@ -58,6 +59,7 @@ public class QuestionSerializer implements JsonSerializer<Question> {
         object.addProperty(ID, question.getId());
         object.addProperty(NAME, question.getName());
         object.addProperty(IS_SYMPTOM, question.isSymptom());
+        object.addProperty(FORCE_DEPENDENT_ASKING, question.getForceDependentAsking()); // RE
         setDescriptions(object, question);
         setDependence(object, question, jsonSerializationContext);
         setNoAnswer(object, question, jsonSerializationContext);

@@ -27,11 +27,12 @@ public class QuestionConnector extends DatabaseConnector{
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO Questions (name, is_symptom, answer_yes, answer_no, depends_on) VALUES (" +
+                SQL = "INSERT INTO Questions (name, is_symptom, answer_yes, answer_no, force_dependent_asking, depends_on) VALUES (" +
                         (question.getName() == null ? null : "'" + question.getName() + "'") + "," +
                         "'" + question.isSymptom() + "'," +
                         "" + question.getAnswerYes().getId() + "," +
                         "" + question.getAnswerNo().getId() + "," +
+                        "" + question.getForceDependentAsking() + "," +
                         "" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) + ");";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
@@ -64,6 +65,7 @@ public class QuestionConnector extends DatabaseConnector{
                             " is_symptom='" + question.isSymptom() +"',"+
                             " answer_yes=" + question.getAnswerYes().getId() +","+
                             " answer_no=" + question.getAnswerNo().getId() +","+
+                            " force_dependent_asking=" + question.getForceDependentAsking() +","+
                             " depends_on=" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) +" "+
                             " WHERE id =" + question.getId() + ";";
 
@@ -99,6 +101,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerNoId(set.getInt("answer_no"));
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
+                question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
 
                 dependentQuestions.add(question);
             }
@@ -131,6 +134,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerNoId(set.getInt("answer_no"));
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
+                question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
 
                 return question;
             }
@@ -163,6 +167,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerNoId(set.getInt("answer_no"));
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
+                question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
 
                 return question;
             }
@@ -195,6 +200,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerNoId(set.getInt("answer_no"));
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
+                question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
 
                 return question;
             }
@@ -230,6 +236,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerNoId(set.getInt("answer_no"));
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
+                question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
 
                 questions.add(question);
             }
