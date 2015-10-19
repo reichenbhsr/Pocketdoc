@@ -2,6 +2,7 @@ package calculators;
 
 import managers.*;
 import models.*;
+import models.intermediateClassModels.AnswerToDiagnosisScoreDistribution;
 
 import java.util.*;
 
@@ -21,6 +22,7 @@ public class QuestionCalculator {
     private SettingManager settingManager;
     private static ArrayList<Question> informationQuestions;
     private static ArrayList<Question> remainingQuestions;
+    private static Stack<Question> remainingForcedQuestions;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -74,6 +76,7 @@ public class QuestionCalculator {
         if (remainingQuestions == null){
             informationQuestions = getInformaticQuestions(); // RE
             remainingQuestions = getQuestionsToAsk(); // RE
+            remainingForcedQuestions = new Stack<Question>();
         }
 
         // Antwort dem Calculator hinzufügen
@@ -489,14 +492,37 @@ public class QuestionCalculator {
 
     private int calculateDifference(Question question){ // FIXME RE
         int tempDiff = 0;
-        TreeMap<Diagnosis, Integer> sortedListNo = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerNo()); // RE
-        TreeMap<Diagnosis, Integer> sortedListYes = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerYes()); // RE
+        Map.Entry<Diagnosis, Integer> top = diagnosisCalculator.getTopDiagnosis();
+        Map.Entry<Diagnosis, Integer> second = diagnosisCalculator.getSecondDiagnosis();
 
-        if (sortedListNo.size() > 0)
-            tempDiff += checkDifference(sortedListNo);
+        int topValue = top.getValue();
+        int secondValue = second.getValue();
 
-        if (sortedListYes.size() > 0)
-            tempDiff += checkDifference(sortedListYes);
+        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerNo().getAnswerToDiagnosisScoreDistributions()){
+            if (dist.getDiagnosis().equals(top.getKey()))
+                topValue += dist.getScore();
+            else if (dist.getDiagnosis().equals(second.getKey()))
+                secondValue += dist.getScore();
+        }
+
+        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerYes().getAnswerToDiagnosisScoreDistributions()){
+            if (dist.getDiagnosis().equals(top.getKey()))
+                topValue += dist.getScore();
+            else if (dist.getDiagnosis().equals(second.getKey()))
+                secondValue += dist.getScore();
+        }
+
+        return Math.abs(topValue - secondValue);
+
+
+//        TreeMap<Diagnosis, Integer> sortedListNo = diagnosisCalculator.calculateAnswerToRankingList(question.getAnswerNo()); // RE
+//        TreeMap<Diagnosis, Integer> sortedListYes = diagnosisCalculator.calculateAnswerToRankingList(question.getAnswerYes()); // RE
+
+//        if (sortedListNo.size() > 0)
+//            tempDiff += checkDifference(sortedListNo);
+//
+//        if (sortedListYes.size() > 0)
+//            tempDiff += checkDifference(sortedListYes);
 
 //        for(Question q: question.getAnswerNo().getDependencyFrom())
 //            tempDiff += calculateDifference(q);
@@ -504,7 +530,7 @@ public class QuestionCalculator {
 //        for(Question q: question.getAnswerYes().getDependencyFrom())
 //            tempDiff += calculateDifference(q);
 
-        return tempDiff;
+//        return tempDiff;
     }
 
     /**

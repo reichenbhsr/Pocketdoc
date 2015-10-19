@@ -117,6 +117,20 @@ public class DiagnosisCalculator {
         return (TreeMap<Diagnosis, Integer>) sortRankingList((HashMap<Diagnosis, Integer>) calculateAnswerToRankingList(currentRanking, answer));
     }
 
+    public Map.Entry<Diagnosis, Integer> getTopDiagnosis(){
+        return currentSortedRanking.firstEntry();
+    }
+
+    public Map.Entry<Diagnosis, Integer> getSecondDiagnosis(){
+
+        int i = 0;
+        for(Map.Entry<Diagnosis, Integer> e: currentSortedRanking.entrySet()){
+            if (++i == 2)
+                return e;
+        }
+        return null;
+    }
+
     private Map<Diagnosis, Integer> calculateAnswerToRankingList(Map<Diagnosis, Integer> ranking, Answer answer){    // RE
 
         Map<Diagnosis, Integer> rankingList = null;
