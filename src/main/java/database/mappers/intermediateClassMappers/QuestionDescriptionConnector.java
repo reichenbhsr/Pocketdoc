@@ -185,4 +185,34 @@ public class QuestionDescriptionConnector extends DatabaseConnector{
 
     }
 
+    public void deleteFromLanguage(int languageId){
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM question_descriptions WHERE language ='" + languageId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Question description from language");
+        }
+    }
+
+    public void deleteFromQuestion(int questionId){
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM question_descriptions WHERE question ='" + questionId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Question description from question");
+        }
+    }
+
 }

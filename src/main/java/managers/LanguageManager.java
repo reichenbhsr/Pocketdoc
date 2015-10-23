@@ -1,6 +1,9 @@
 package managers;
 
 import database.mappers.LanguageConnector;
+import database.mappers.intermediateClassMappers.ActionSuggestionDescriptionConnector;
+import database.mappers.intermediateClassMappers.DiagnosisDescriptionConnector;
+import database.mappers.intermediateClassMappers.QuestionDescriptionConnector;
 import models.Language;
 
 import java.util.ArrayList;
@@ -18,6 +21,9 @@ public class LanguageManager implements BasicManager<Language> {
 
 //    private DatabaseMapper<Language> languageMapper; FIXME
     private LanguageConnector languageMapper;
+    private QuestionDescriptionConnector    questionDescriptionMapper;
+    private DiagnosisDescriptionConnector   diagnosisDescriptionConnector;
+    private ActionSuggestionDescriptionConnector    actionSuggestionDescriptionConnector;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -25,6 +31,9 @@ public class LanguageManager implements BasicManager<Language> {
     public LanguageManager() {
 //        languageMapper = new LanguageMapper(); FIXME
         languageMapper = new LanguageConnector();
+        questionDescriptionMapper = new QuestionDescriptionConnector();
+        diagnosisDescriptionConnector = new DiagnosisDescriptionConnector();
+        actionSuggestionDescriptionConnector = new ActionSuggestionDescriptionConnector();
     }
 
     /**
@@ -70,6 +79,10 @@ public class LanguageManager implements BasicManager<Language> {
 
     @Override
     public void remove(int id) {
+
+        questionDescriptionMapper.deleteFromLanguage(id);
+        diagnosisDescriptionConnector.deleteFromLanguage(id);
+        actionSuggestionDescriptionConnector.deleteFromLanguage(id);
         languageMapper.delete(id);
     }
 }

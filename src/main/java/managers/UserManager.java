@@ -88,6 +88,8 @@ public class UserManager implements BasicManager<User> {
 
     @Override
     public void remove(int id) {
+
+        historyManager.remove(get(id).getHistory().getId());
         userMapper.delete(id);
     }
 }

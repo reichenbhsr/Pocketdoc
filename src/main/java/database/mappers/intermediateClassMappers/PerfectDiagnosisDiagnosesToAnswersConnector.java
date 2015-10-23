@@ -95,4 +95,38 @@ public class PerfectDiagnosisDiagnosesToAnswersConnector extends DatabaseConnect
 
     }
 
+    public void deleteFromDiagnosis(int diagnosisId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM perfect_diagnosis_diagnoses_to_answers WHERE diagnosis =" + diagnosisId + ";";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete perfect answer to diagnosis from diagnosis");
+        }
+
+    }
+
+    public void deleteFromAnswer(int answerId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM perfect_diagnosis_diagnoses_to_answers WHERE answer =" + answerId + ";";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete perfect answer to diagnosis from answer");
+        }
+
+    }
+
 }

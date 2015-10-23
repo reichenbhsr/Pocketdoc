@@ -218,4 +218,38 @@ public class AnswerToDiagnosisScoreDistributionConnector extends DatabaseConnect
 
     }
 
+    public void deleteFromDiagnosis(int diagnosisId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM score_distribution_answers_to_diagnoses WHERE diagnosis ='" + diagnosisId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Answer to diagnosis score distribution from diagnosis");
+        }
+
+    }
+
+    public void deleteFromAnswer(int answerId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM score_distribution_answers_to_diagnoses WHERE answer ='" + answerId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Answer to diagnosis score distribution from answer");
+        }
+
+    }
+
 }

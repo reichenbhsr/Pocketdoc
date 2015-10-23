@@ -199,6 +199,36 @@ public class SyndromToActionSuggestionScoreDistributionConnector extends Databas
         return stassds;
     }
 
+    public void deleteSyndroms(int  syndromId){
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM score_distribution_syndroms_to_action_suggestions WHERE syndrom ='" + syndromId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Syndrom to action suggestions score distribution syndroms");
+        }
+    }
+
+    public void deleteFromActionSuggestion(int  actionSuggestionId){
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM score_distribution_syndroms_to_action_suggestions WHERE acton_suggestion ='" + actionSuggestionId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Syndrom to action suggestions score distribution from action suggestion");
+        }
+    }
+
     public void delete(int stassdId){
 
         try{

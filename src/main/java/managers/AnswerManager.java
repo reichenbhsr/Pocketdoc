@@ -1,6 +1,11 @@
 package managers;
 
 import database.mappers.AnswerConnector;
+import database.mappers.QuestionConnector;
+import database.mappers.intermediateClassMappers.AnswerToActionSuggestionScoreDistributionConnector;
+import database.mappers.intermediateClassMappers.AnswerToDiagnosisScoreDistributionConnector;
+import database.mappers.intermediateClassMappers.AnswersToSyndromsConnector;
+import database.mappers.intermediateClassMappers.PerfectDiagnosisDiagnosesToAnswersConnector;
 import models.Answer;
 
 import java.util.ArrayList;
@@ -18,6 +23,11 @@ public class AnswerManager implements BasicManager<Answer> {
 
 //    private DatabaseMapper<Answer> answerMapper; FIXME
     private AnswerConnector answerMapper;
+    private AnswersToSyndromsConnector  answerToSyndromsMapper;
+    private AnswerToDiagnosisScoreDistributionConnector atdsdc;
+    private PerfectDiagnosisDiagnosesToAnswersConnector pddtac;
+    private AnswerToActionSuggestionScoreDistributionConnector  atassdc;
+    private QuestionConnector questionMapper;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -25,6 +35,11 @@ public class AnswerManager implements BasicManager<Answer> {
     public AnswerManager() {
 //        answerMapper = new AnswerMapper(); FIXME
         answerMapper = new AnswerConnector();
+        answerToSyndromsMapper = new AnswersToSyndromsConnector();
+        atdsdc = new AnswerToDiagnosisScoreDistributionConnector();
+        pddtac = new PerfectDiagnosisDiagnosesToAnswersConnector();
+        atassdc = new AnswerToActionSuggestionScoreDistributionConnector();
+        questionMapper = new QuestionConnector();
     }
 
     /**
@@ -73,6 +88,12 @@ public class AnswerManager implements BasicManager<Answer> {
 
     @Override
     public void remove(int id) {
+
+        answerToSyndromsMapper.deleteFromAnswer(id);
+        atdsdc.deleteFromAnswer(id);
+        pddtac.deleteFromAnswer(id);
+        atassdc.deleteFromAnswer(id);
+        questionMapper.deleteDependencyToAnswer(id);
         answerMapper.delete(id);
     }
 

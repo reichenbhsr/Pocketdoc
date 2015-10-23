@@ -2,6 +2,7 @@ package managers;
 
 import database.mappers.SyndromConnector;
 import database.mappers.intermediateClassMappers.AnswersToSyndromsConnector;
+import database.mappers.intermediateClassMappers.SyndromToActionSuggestionScoreDistributionConnector;
 import models.Answer;
 import models.Syndrom;
 
@@ -21,6 +22,7 @@ public class SyndromManager implements BasicManager<Syndrom> {
 //    private DatabaseMapper<Syndrom> syndromMapper;
     private SyndromConnector syndromMapper;
     private AnswersToSyndromsConnector answerToSyndromMapper;
+    private SyndromToActionSuggestionScoreDistributionConnector syndromToActionSuggestionMapper;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -29,6 +31,7 @@ public class SyndromManager implements BasicManager<Syndrom> {
 
         syndromMapper = new SyndromConnector();
         answerToSyndromMapper = new AnswersToSyndromsConnector();
+        syndromToActionSuggestionMapper = new SyndromToActionSuggestionScoreDistributionConnector();
     }
 
     /**
@@ -93,7 +96,11 @@ public class SyndromManager implements BasicManager<Syndrom> {
 
     @Override
     public void remove(int id) {
+
         syndromMapper.delete(id);
+        syndromToActionSuggestionMapper.deleteSyndroms(id);
+        answerToSyndromMapper.delete(id);
+
     }
 
     /**

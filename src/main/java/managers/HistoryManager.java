@@ -103,5 +103,6 @@ public class HistoryManager implements BasicManager<History> {
     @Override
     public void remove(int id) {
         historyMapper.delete(id);
+        answerToHistoryMapper.delete(id);
     }
 }

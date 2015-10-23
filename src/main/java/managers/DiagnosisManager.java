@@ -2,6 +2,8 @@ package managers;
 
 import calculators.DiagnosisCalculator;
 import database.mappers.DiagnosisConnector;
+import database.mappers.intermediateClassMappers.AnswerToDiagnosisScoreDistributionConnector;
+import database.mappers.intermediateClassMappers.DiagnosisDescriptionConnector;
 import database.mappers.intermediateClassMappers.PerfectDiagnosisDiagnosesToAnswersConnector;
 import managers.intermediateClassManagers.DiagnosisDescriptionManager;
 import models.Answer;
@@ -27,6 +29,8 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
 //    private DatabaseMapper<Diagnosis> diagnosisMapper; FIXME
     private DiagnosisConnector diagnosisMapper;
     private PerfectDiagnosisDiagnosesToAnswersConnector perfectDiagnosisMapper;
+    private AnswerToDiagnosisScoreDistributionConnector atdsdc;
+    private DiagnosisDescriptionConnector diagnosisDescriptionConnector;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -35,6 +39,8 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
 //        diagnosisMapper = new DiagnosisMapper(); FIXME
         diagnosisMapper = new DiagnosisConnector();
         perfectDiagnosisMapper = new PerfectDiagnosisDiagnosesToAnswersConnector();
+        atdsdc = new AnswerToDiagnosisScoreDistributionConnector();
+        diagnosisDescriptionConnector = new DiagnosisDescriptionConnector();
     }
 
     /**
@@ -114,6 +120,10 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
 
     @Override
     public void remove(int id) {
+
+        atdsdc.deleteFromDiagnosis(id);
+        perfectDiagnosisMapper.deleteFromDiagnosis(id);
+        diagnosisDescriptionConnector.deleteFromDiagnosis(id);
         diagnosisMapper.delete(id);
     }
 

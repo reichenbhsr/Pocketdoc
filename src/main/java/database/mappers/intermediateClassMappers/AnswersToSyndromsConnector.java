@@ -95,4 +95,21 @@ public class AnswersToSyndromsConnector extends DatabaseConnector {
 
     }
 
+    public void deleteFromAnswer(int answerId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM answers_to_syndroms WHERE answer =" + answerId + ";";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete answers to syndrom from answer");
+        }
+
+    }
+
 }

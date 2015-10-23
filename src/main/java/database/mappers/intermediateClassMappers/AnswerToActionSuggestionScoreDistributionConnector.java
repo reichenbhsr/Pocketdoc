@@ -218,4 +218,38 @@ public class AnswerToActionSuggestionScoreDistributionConnector extends Database
 
     }
 
+    public void deleteFromActionSuggestion(int actionSuggestionId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM score_distribution_answers_to_action_suggestions WHERE action_suggestion ='" + actionSuggestionId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Answer to action suggestion score distributions from action suggestion");
+        }
+
+    }
+
+    public void deleteFromAnswer(int answerId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM score_distribution_answers_to_action_suggestions WHERE answer ='" + answerId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Answer to action suggestion score distributions from answer");
+        }
+
+    }
+
 }

@@ -28,7 +28,7 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO Questions (description, language, diagnosis) VALUES (" +
+                SQL = "INSERT INTO diagnosis_descriptions (description, language, diagnosis) VALUES (" +
                         "" + (diagnosisDescription.getDescription() == null ? null : "'" + diagnosisDescription.getDescription() + "'") + "," +
                         "" + diagnosisDescription.getLanguage().getId() + "," +
                         "" + diagnosisDescription.getDiagnosis().getId() + ");";
@@ -180,6 +180,40 @@ public class DiagnosisDescriptionConnector extends DatabaseConnector{
         }
         catch (SQLException ex){
             System.out.println("SQL Error delete Diagnosis description");
+        }
+
+    }
+
+    public void deleteFromDiagnosis(int diagnosisId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM diagnosis_descriptions WHERE diagnosis ='" + diagnosisId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Diagnosis description from diagnosis");
+        }
+
+    }
+
+    public void deleteFromLanguage(int languageId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM diagnosis_descriptions WHERE langauge ='" + languageId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete Diagnosis description from language");
         }
 
     }

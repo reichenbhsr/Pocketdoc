@@ -26,6 +26,7 @@ public class QuestionManager implements BasicManager<Question> {
 //    private DatabaseMapper<Question> questionMapper; FIXME
     private QuestionConnector questionMapper;
     private AnswerManager answerManager;
+    private QuestionDescriptionManager questionDescriptionManager;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -34,6 +35,7 @@ public class QuestionManager implements BasicManager<Question> {
 //        questionMapper = new QuestionMapper();
         questionMapper = new QuestionConnector();
         answerManager = new AnswerManager();
+        questionDescriptionManager = new QuestionDescriptionManager();
     }
 
     /**
@@ -76,7 +78,7 @@ public class QuestionManager implements BasicManager<Question> {
                 diagnosisDescription.setDescription("");
                 diagnosisDescription.setQuestion(question);
                 diagnosisDescription.setLanguage(language);
-                new QuestionDescriptionManager().add(diagnosisDescription);
+                questionDescriptionManager.add(diagnosisDescription);
             }
         }
     }
@@ -160,6 +162,10 @@ public class QuestionManager implements BasicManager<Question> {
 
     @Override
     public void remove(int id) {
+        Question q = get(id);
+        questionDescriptionManager.removeFromQuestion(id);
+        answerManager.remove(q.getAnswerNo().getId());
+        answerManager.remove(q.getAnswerYes().getId());
         questionMapper.delete(id);
     }
 

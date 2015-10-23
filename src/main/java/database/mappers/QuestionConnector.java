@@ -265,6 +265,24 @@ public class QuestionConnector extends DatabaseConnector{
         }
 
     }
+
+    public void deleteDependencyToAnswer(int answerId){
+
+        try {
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "UPDATE Questions SET " +
+                    " depends_on=" + null +" "+
+                    " WHERE depends_on =" + answerId + ";";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error remove dependency to answer");
+        }
+
+    }
 }
 
 

@@ -2,6 +2,9 @@ package managers;
 
 import calculators.ActionSuggestionCalculator;
 import database.mappers.ActionSuggestionConnector;
+import database.mappers.intermediateClassMappers.ActionSuggestionDescriptionConnector;
+import database.mappers.intermediateClassMappers.AnswerToActionSuggestionScoreDistributionConnector;
+import database.mappers.intermediateClassMappers.SyndromToActionSuggestionScoreDistributionConnector;
 import managers.intermediateClassManagers.ActionSuggestionDescriptionManager;
 import models.ActionSuggestion;
 import models.Language;
@@ -24,6 +27,9 @@ public class ActionSuggestionManager implements BasicManager<ActionSuggestion> {
 
 //    private DatabaseMapper<ActionSuggestion> actionSuggestionMapper; FIXME
     private ActionSuggestionConnector actionSuggestionMapper;
+    private AnswerToActionSuggestionScoreDistributionConnector  atassdc;
+    private SyndromToActionSuggestionScoreDistributionConnector stassdc;
+    private ActionSuggestionDescriptionConnector actionSuggestionDescriptionConnector;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -31,6 +37,9 @@ public class ActionSuggestionManager implements BasicManager<ActionSuggestion> {
     public ActionSuggestionManager() {
 //        actionSuggestionMapper = new ActionSuggestionMapper();
         actionSuggestionMapper = new ActionSuggestionConnector();
+        atassdc = new AnswerToActionSuggestionScoreDistributionConnector();
+        stassdc = new SyndromToActionSuggestionScoreDistributionConnector();
+        actionSuggestionDescriptionConnector = new ActionSuggestionDescriptionConnector();
     }
 
     /**
@@ -99,6 +108,10 @@ public class ActionSuggestionManager implements BasicManager<ActionSuggestion> {
 
     @Override
     public void remove(int id) {
+
+        atassdc.deleteFromActionSuggestion(id);
+        stassdc.deleteFromActionSuggestion(id);
+        actionSuggestionDescriptionConnector.deleteFromActionSuggestion(id);
         actionSuggestionMapper.delete(id);
     }
 

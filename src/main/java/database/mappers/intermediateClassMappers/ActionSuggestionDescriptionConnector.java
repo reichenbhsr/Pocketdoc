@@ -20,7 +20,7 @@ public class ActionSuggestionDescriptionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT id FROM actionSuggestionDescription WHERE id = " + actionSuggestionDescription.getId() + ";";
+            String SQL = "SELECT id FROM action_suggestion_descriptions WHERE id = " + actionSuggestionDescription.getId() + ";";
             ResultSet res = stmt.executeQuery(SQL);
 
             if (res.next())
@@ -28,7 +28,7 @@ public class ActionSuggestionDescriptionConnector extends DatabaseConnector{
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO actionSuggestionDescription (description, language, action_suggestion) VALUES (" +
+                SQL = "INSERT INTO action_suggestion_descriptions (description, language, action_suggestion) VALUES (" +
                         (actionSuggestionDescription.getDescription() == null ? null : "'" + actionSuggestionDescription.getDescription() + "'") + "," +
                         "" + actionSuggestionDescription.getLanguage().getId() + "," +
                         "" + actionSuggestionDescription.getActionSuggestion().getId() + ");";
@@ -61,7 +61,7 @@ public class ActionSuggestionDescriptionConnector extends DatabaseConnector{
             String SQL = "UPDATE action_suggestion_descriptions SET " +
                     "description=" + (actionSuggestionDescription.getDescription() == null ? null : "'" + actionSuggestionDescription.getDescription() + "'") + "," +
                     " language=" + actionSuggestionDescription.getLanguage().getId() +","+
-                    " action_suggestion=" + actionSuggestionDescription.getActionSuggestion().getId() +","+
+                    " action_suggestion=" + actionSuggestionDescription.getActionSuggestion().getId() +""+
                     " WHERE id =" + actionSuggestionDescription.getId() + ";";
 
             stmt.execute(SQL);
@@ -174,12 +174,46 @@ public class ActionSuggestionDescriptionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "DELETE FROM action_suggestion_description WHERE id ='" + actionSuggestionDescriptionId + "';";
+            String SQL = "DELETE FROM action_suggestion_descriptions WHERE id ='" + actionSuggestionDescriptionId + "';";
 
             stmt.execute(SQL);
         }
         catch (SQLException ex){
             System.out.println("SQL Error delete action suggestion description");
+        }
+
+    }
+
+    public void deleteFromActionSuggestion(int actionSuggestionId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM action_suggestion_descriptions WHERE action_suggestion ='" + actionSuggestionId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete action suggestion description from action suggestion");
+        }
+
+    }
+
+    public void deleteFromLanguage(int languageId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM action_suggestion_descriptions WHERE language ='" + languageId + "';";
+
+            stmt.execute(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete action suggestion description from language");
         }
 
     }

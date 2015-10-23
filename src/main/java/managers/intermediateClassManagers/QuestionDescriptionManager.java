@@ -78,4 +78,8 @@ public class QuestionDescriptionManager implements IntermediateManager<QuestionD
     public void remove(int id) {
         questionDescriptionMapper.delete(id);
     }
+
+    public void removeFromQuestion(int questionId){
+        questionDescriptionMapper.deleteFromQuestion(questionId);
+    }
 }
