@@ -14,7 +14,7 @@ import java.util.Set;
  * @author Oliver Frischknecht
  */
 
-public class Question {
+public class Question implements    Comparable<Question>{
 
     private int id;
     private String name;
@@ -138,5 +138,15 @@ public class Question {
     @Override
     public int hashCode() {
         return id;
+    }
+
+    @Override
+    public int compareTo(Question o) {
+        if (id < o.getId())
+            return 1;
+        else if (id > o.getId())
+            return -1;
+
+        return 0;
     }
 }

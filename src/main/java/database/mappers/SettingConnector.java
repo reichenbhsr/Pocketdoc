@@ -57,7 +57,7 @@ public class SettingConnector extends DatabaseConnector{
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE settings SET " +
                     "name=" + (setting.getName() == null ? null : "'" + setting.getName() + "'") + "," +
-                    " value='" + setting.getValue() +"',"+
+                    " value='" + setting.getValue() +"'"+
                     " WHERE id =" + setting.getId() + ";";
 
             stmt.execute(SQL);
