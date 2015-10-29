@@ -11,57 +11,71 @@
     <link rel="stylesheet" href="css/style.css" />
 </head>
 <body ng-controller="loginController">
-	<div class="container-fluid">
-		<div class="row">
-			<nav class="navbar navbar-default" role="navigation">
-				<div class="container-fluid">
-					<!-- Brand and toggle get grouped for better mobile display -->
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<a class="navbar-brand" href="#">PocketDoc</a>
-					</div>
+    <div id="mainNav">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">PocketDoc</a>
+                </div>
 
-					<!-- Collect the nav links, forms, and other content for toggling -->
-					<div class="collapse navbar-collapse" id="navbar-collapse">
-						<ul class="nav navbar-nav" ng-show="user.isLogged">
-							<li><a href="#">Diagnosen<span class="sr-only">Link zu den Diagnosen</span></a></li>
-							<li><a href="/#/action_suggestions">Handlungsempfehlungen</a></li>
-							<li><a href="/#/questions">Fragen/Antworten</a></li>
-							<li><a href="/#/syndroms">Syndrome</a></li>
-						</ul>
-					  	<ul class="nav navbar-nav navbar-right">
-							<li ng-show="user.isLogged"><a href="/#/run" class="test-link glyphicon glyphicon-play-circle"></a></li>
-							<li ng-show="user.isLogged"><a href="/#/settings" class="setting-link glyphicon glyphicon-cog"></a></li>
-							<li ng-show="user.isLogged"><button class="btn navbar-btn btn-primary" type="submit" ng-click="logout()">Abmelden</button></li>
-								
-						</ul>
-					</div><!-- /.navbar-collapse -->
-				</div><!-- /.container-fluid -->
-			</nav>	
-		</div>
-		
-		<div class="row" id="left-nav-plus-content">
-            <ng-view ng-show="user.isLogged"></ng-view>
-			<div ng-show="!user.isLogged">
-				<div class="col-md-4 col-md-offset-4" id="content">
-					<form class="form-signin" role="form">
-						<h2 class="form-signin-heading">Please sign in</h2>
-						<label for="inputName" class="sr-only">User</label>
-						<input type="user" ng-model="user.name" id="inputName" class="form-control" placeholder="User" required autofocus>
-						<label for="inputPassword" class="sr-only">Passwort</label>
-						<input type="password" ng-model="user.password" id="inputPassword" class="form-control" placeholder="Password" required>
-						<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">Anmelden</button>
-					</form>
-				</div>
-			</div>
-        </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="navbar-collapse">
+                    <ul class="nav navbar-nav" ng-show="user.isLogged">
+                        <li><a href="#">Diagnosen<span class="sr-only">Link zu den Diagnosen</span></a></li>
+                        <li><a href="/#/action_suggestions">Handlungsempfehlungen</a></li>
+                        <li><a href="/#/questions">Fragen/Antworten</a></li>
+                        <li><a href="/#/syndroms">Syndrome</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li ng-show="user.isLogged"><a href="/#/run" class="test-link glyphicon glyphicon-play-circle"></a></li>
+                        <li ng-show="user.isLogged"><a href="/#/settings" class="setting-link glyphicon glyphicon-cog"></a></li>
+                        <li ng-show="user.isLogged"><button class="btn navbar-btn btn-primary" type="submit" ng-click="logout()">Abmelden</button></li>
 
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
     </div>
+    <ng-view ng-show="user.isLogged" id="mainContent"></ng-view>
+    <div ng-show="!user.isLogged" id="loginContent">
+        <div id="content">
+            <div style="flex: 1;"></div>
+            <form class="form-signin" role="form" style="flex: 2;">
+                <h2 class="form-signin-heading">Please sign in</h2>
+                <label for="inputName" class="sr-only">User</label>
+                <input type="user" ng-model="user.name" id="inputName" class="form-control" placeholder="User" required autofocus>
+                <label for="inputPassword" class="sr-only">Passwort</label>
+                <input type="password" ng-model="user.password" id="inputPassword" class="form-control" placeholder="Password" required>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">Anmelden</button>
+            </form>
+            <div style="flex: 1;"></div>
+        </div>
+    </div>
+    <!--
+    <div id="left-nav-plus-content">
+        <ng-view ng-show="user.isLogged"></ng-view>
+        <div ng-show="!user.isLogged">
+            <div class="col-md-4 col-md-offset-4" id="content">
+                <form class="form-signin" role="form">
+                    <h2 class="form-signin-heading">Please sign in</h2>
+                    <label for="inputName" class="sr-only">User</label>
+                    <input type="user" ng-model="user.name" id="inputName" class="form-control" placeholder="User" required autofocus>
+                    <label for="inputPassword" class="sr-only">Passwort</label>
+                    <input type="password" ng-model="user.password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">Anmelden</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    -->
+
 
     <script type="text/javascript" src="js/jquery.js" ></script>
     <script type="text/javascript" src="js/bootstrap.js" ></script>

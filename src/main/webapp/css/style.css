@@ -1,6 +1,87 @@
+
+#mainNav{
+    position: fixed;
+    height: 52px;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+
+#mainContent, #loginContent{
+    position: fixed;
+    top: 52px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+#loginContent > #content{
+    left: 0;
+    display: flex;
+}
+
 #leftNav{
-	height: 100%;
-	padding: 0 0 0 0;
+	position: fixed;
+    overflow: auto;
+    top: 52px;
+    bottom: 0;
+    left: 0;
+    width: 250px;
+}
+
+#content, #runContent, #settingsContent{
+    position: fixed;
+    top: 52px;
+    left: 250px;
+    right: 0;
+    bottom: 0;
+}
+
+#settingsContent{
+    right: 250px;
+}
+
+#runContent{
+    left: 0px;
+    overflow: auto;
+}
+
+#data, #dataSyndrom{
+    position: fixed;
+    top: 52px;
+    left: 250px;
+    right: 0px;
+    height: 298px;
+    display: flex;
+    flex-direction: column;
+    padding: 0 5px;
+}
+
+.dataRow{
+    display: flex;
+}
+
+.dataRow > *{
+    flex: 1;
+}
+
+#tables, #tablesSyndrom{
+    position: fixed;
+    top: 350px;
+    left: 250px;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    display: flex;
+    padding: 5px;
+}
+
+#dataSyndrom{
+    height: 198px;
+}
+
+#tablesSyndrom{
+    top: 250px;
 }
 
 .list-group ul{

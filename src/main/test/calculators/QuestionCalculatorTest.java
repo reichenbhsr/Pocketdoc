@@ -111,6 +111,7 @@ public class QuestionCalculatorTest {
         question1.setId(1);
         question1.setAnswerNo(answerList.get(0));
         question1.setAnswerYes(answerList.get(1));
+        question1.setSymptom(true);
         answerList.get(0).setAnswerNoOf(question1);
         answerList.get(1).setAnswerYesOf(question1);
 
@@ -118,6 +119,7 @@ public class QuestionCalculatorTest {
         question2.setId(2);
         question2.setAnswerNo(answerList.get(2));
         question2.setAnswerYes(answerList.get(3));
+        question2.setSymptom(true);
         answerList.get(2).setAnswerNoOf(question2);
         answerList.get(3).setAnswerYesOf(question2);
 
@@ -125,6 +127,7 @@ public class QuestionCalculatorTest {
         question3.setId(3);
         question3.setAnswerNo(answerList.get(4));
         question3.setAnswerYes(answerList.get(5));
+        question3.setSymptom(true);
         answerList.get(4).setAnswerNoOf(question3);
         answerList.get(5).setAnswerYesOf(question3);
 
@@ -132,6 +135,7 @@ public class QuestionCalculatorTest {
         question4.setId(4);
         question4.setAnswerNo(answerList.get(6));
         question4.setAnswerYes(answerList.get(7));
+        question4.setSymptom(true);
         answerList.get(6).setAnswerNoOf(question4);
         answerList.get(7).setAnswerYesOf(question4);
 
@@ -140,6 +144,7 @@ public class QuestionCalculatorTest {
         question5.setAnswerNo(answerList.get(8));
         question5.setAnswerYes(answerList.get(9));
         question5.setDependsOn(answerList.get(7));
+        question5.setSymptom(true);
         answerList.get(8).setAnswerNoOf(question5);
         answerList.get(9).setAnswerYesOf(question5);
 
@@ -201,7 +206,9 @@ public class QuestionCalculatorTest {
         user.getHistory().setLastAnswer(answerList.get(2));
 
         final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
+        questionCalculator.reset();
         final Question nextQuestion = questionCalculator.getNextQuestion(user);
+
 
         assertEquals(questionList.get(2),nextQuestion);
     }
@@ -212,28 +219,32 @@ public class QuestionCalculatorTest {
         HashSet<Answer> hashSet = new HashSet<Answer>();
         hashSet.add(answerList.get(5));
         user.getHistory().setAnswers(hashSet);
-        user.getHistory().setLastAnswer(answerList.get(1));
-
+        user.getHistory().setLastAnswer(answerList.get(5));
 
         final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
+        questionCalculator.reset();
         final Question nextQuestion = questionCalculator.getNextQuestion(user);
 
-        assertEquals(questionList.get(1),nextQuestion);
+        assertEquals(questionList.get(1), nextQuestion);
     }
 
     @Test
     public void testDependence() throws Exception {
-        //Antwortet auf Answer 8 (question 5 ist auf diese dependent)
+        // Durch die Beatnwortung von Frage 3 wird Frage 5 als nächstes Gewählt. Da diese Abhängig von Frage 4 ist, muss letztere als erstes Beantwortet werden.
+        distributeScore(6000, 1, 1, 8);
+        distributeScore(1, 1, 1, 9);
+
         HashSet<Answer> hashSet = new HashSet<Answer>();
-        hashSet.add(answerList.get(7));
+        hashSet.add(answerList.get(4));
         user.getHistory().setAnswers(hashSet);
-        user.getHistory().setLastAnswer(answerList.get(7));
+        user.getHistory().setLastAnswer(answerList.get(4));
 
 
         final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
+        questionCalculator.reset();
         final Question nextQuestion = questionCalculator.getNextQuestion(user);
 
-        assertEquals(questionList.get(4),nextQuestion);
+        assertEquals(questionList.get(3),nextQuestion);
     }
 
     @Test
@@ -246,6 +257,7 @@ public class QuestionCalculatorTest {
 
 
         final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
+        questionCalculator.reset();
         final Question nextQuestion = questionCalculator.getNextQuestion(user);
 
         assertNotEquals(questionList.get(2),nextQuestion);
@@ -266,6 +278,7 @@ public class QuestionCalculatorTest {
 
 
         final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
+        questionCalculator.reset();
         final Question nextQuestion = questionCalculator.getNextQuestion(user);
 
         //da question 5 auf question 4 abhängig ist, wird diese gefragt.
@@ -286,16 +299,19 @@ public class QuestionCalculatorTest {
         das resultat sollte question 5 sein, dies ist aber abhängig von question 4
         und da question 4 schon gefragt wurde, wird diese frage übersprungen
          */
+        final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
+        questionCalculator.reset();
         HashSet<Answer> hashSet = new HashSet<Answer>();
         hashSet.add(answerList.get(7));
-        hashSet.add(answerList.get(1));
+        user.getHistory().setLastAnswer(answerList.get(7));
         user.getHistory().setAnswers(hashSet);
+
+        Question nextQuestion = questionCalculator.getNextQuestion(user);
+        hashSet.add(answerList.get(1));
         user.getHistory().setLastAnswer(answerList.get(1));
 
+        nextQuestion = questionCalculator.getNextQuestion(user);
 
-
-        final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
-        final Question nextQuestion = questionCalculator.getNextQuestion(user);
 
         //darf nicht question 4 sein
         assertNotEquals(questionList.get(3), nextQuestion);

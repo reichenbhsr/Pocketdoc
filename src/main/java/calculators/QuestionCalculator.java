@@ -611,6 +611,6 @@ public class QuestionCalculator {
 //        questionsToAsk = null;
         informationQuestions = null;
         remainingQuestions = null;
-
+        DiagnosisCalculator.reset();
     }
 }
