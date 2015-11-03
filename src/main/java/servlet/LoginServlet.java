@@ -38,7 +38,7 @@ public class LoginServlet extends ServletAbstract {
 
         ArrayList<User> users = new UserManager().getAll();
         for (User user : users) {
-            if (user.getEmail() != null && user.getEmail().equals(parsedUser.getEmail()) && user.getPassword().equals(parsedUser.getPassword())) {
+            if (user.getEmail() != null && (user.getEmail().equals(parsedUser.getEmail()) || user.getName().equals(parsedUser.getEmail())) && user.getPassword().equals(parsedUser.getPassword())) {
                 id = user.getId();
                 currentUser = user;
                 req.getSession().setAttribute("user", id );
