@@ -104,7 +104,7 @@ public class ActionSuggestionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM action_suggestions;";
+            String SQL = "SELECT * FROM action_suggestions ORDER BY name;";
 
             ResultSet set = stmt.executeQuery(SQL);
 

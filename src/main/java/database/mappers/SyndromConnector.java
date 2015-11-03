@@ -102,7 +102,7 @@ public class SyndromConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM syndroms;";
+            String SQL = "SELECT * FROM syndroms ORDER BY name;";
 
             ResultSet set = stmt.executeQuery(SQL);
 

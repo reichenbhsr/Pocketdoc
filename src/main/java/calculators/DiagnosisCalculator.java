@@ -173,6 +173,8 @@ public class DiagnosisCalculator {
     public TreeMap<Diagnosis, Integer> getPerfectDiagnosis(Diagnosis perfectDiagnosis) {    // RE
         HashMap<Diagnosis, Integer> perfectRanking = new HashMap<Diagnosis, Integer>();
 
+        reset();
+
         //Antworten abholen
         perfectDiagnosis = diagnosisManager.getAndFetch(perfectDiagnosis);
         final Set<Answer> answers = perfectDiagnosis.getAnswersForPerfectDiagnosis();
@@ -189,11 +191,11 @@ public class DiagnosisCalculator {
 
         //Durch Antworten durchiterieren und Score verteilen
         for (Answer answer : answers) {
-            calculateAnswerToRankingList(perfectRanking, answer);
+            addAnswerToRankingList(answer);
         }
 
         //Map sortieren und zurückgeben
-        return sortRankingList(perfectRanking);
+        return getSortedRankingList();
     }
 
     public static void reset(){ // RE

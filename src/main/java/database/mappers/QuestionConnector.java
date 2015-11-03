@@ -222,7 +222,7 @@ public class QuestionConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM Questions;";
+            String SQL = "SELECT * FROM Questions ORDER BY name;";
 
             ResultSet set = stmt.executeQuery(SQL);
 

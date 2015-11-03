@@ -104,7 +104,7 @@ public class DiagnosisConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM diagnoses;";
+            String SQL = "SELECT * FROM diagnoses ORDER BY name;";
 
             ResultSet set = stmt.executeQuery(SQL);
 
