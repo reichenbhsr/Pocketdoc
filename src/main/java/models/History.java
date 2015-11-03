@@ -21,7 +21,7 @@ public class History {
 
    private Set<Answer> answers;
 
-    private Integer consecutiveQuestions;
+    private int consecutiveQuestions;
 
     private int lastAnswerId;
     private Answer lastAnswer;

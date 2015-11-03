@@ -181,7 +181,7 @@
             $scope.loading = false;
             $mdDialog.show({
                 controller: DialogController,
-                templateUrl: '../partials/diagDialog.html',
+                templateUrl: 'partials/diagDialog.html',
                 targetEvent: ev,
                 resolve: {
                     diagnosis: function(){ return diagnosis; },
@@ -348,7 +348,7 @@
          */
         $scope.showLoginDialog = function() {
             $mdDialog.show({
-                templateUrl: '../partials/loginDialog.html',
+                templateUrl: 'partials/loginDialog.html',
                 clickOutsideToClose: true
             })
             .then( function( goToRegistration ) {
@@ -448,7 +448,7 @@
             $mdDialog.hide();
             $mdDialog.show({
                 controller: ForgotPasswordController,
-                templateUrl: '../partials/forgotPasswordDialog.html',
+                templateUrl: 'partials/forgotPasswordDialog.html',
                 resolve: {
                 }
             })
@@ -468,7 +468,7 @@
     function( $scope ,  $location ,  $translate ,  $window ,  $mdDialog ,  FollowUpData ,  UserService ,  FollowupService ,  MetaDataService ) {
 		
         $scope.acceptedTerms = false;
-		$scope.isProfile = UserService.getCurrentUser().id >= 0;
+		$scope.isProfile = UserService.getCurrentUser().user_id >= 0;
         $scope.languages = MetaDataService.getLanguages();
         $scope.ageRanges = MetaDataService.getAgeRanges();
         
@@ -728,7 +728,7 @@
         $scope.showTermsDialog = function() {
             $mdDialog.show({
                 controller: DialogController,
-                templateUrl: '../partials/TermsDialog.html',
+                templateUrl: 'partials/TermsDialog.html',
                 clickOutsideToClose: true
             });
         };
@@ -883,7 +883,7 @@
 
         $translate.use( currentUser.lang );
         
-        if ( currentUser.id !== -1 ) {
+        if ( currentUser.user_id !== -1 ) {
             $scope.handleLogin( currentUser );
         } else {
             $scope.handleLogout();
@@ -1025,7 +1025,7 @@
                 $scope.profile();
             } else {
                 $mdDialog.show({
-                    templateUrl: '../partials/loginDialog.html',
+                    templateUrl: 'partials/loginDialog.html',
                     clickOutsideToClose: true
                 })
                 .then( function( goToRegistration) {

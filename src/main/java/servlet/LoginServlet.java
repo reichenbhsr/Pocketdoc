@@ -32,13 +32,15 @@ public class LoginServlet extends ServletAbstract {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean status = false;
         int id = -1;
+        User currentUser = null;
         JsonObject paramValues = getRequest(req);
         User parsedUser = gson.fromJson(paramValues, User.class);
 
         ArrayList<User> users = new UserManager().getAll();
         for (User user : users) {
-            if (user.getName().equals(parsedUser.getName()) && user.getPassword().equals(parsedUser.getPassword())) {
+            if (user.getEmail() != null && user.getEmail().equals(parsedUser.getEmail()) && user.getPassword().equals(parsedUser.getPassword())) {
                 id = user.getId();
+                currentUser = user;
                 req.getSession().setAttribute("user", id );
                 status = true;
             }
@@ -73,6 +75,11 @@ public class LoginServlet extends ServletAbstract {
         jsonResponse.addProperty("status", status);
         jsonResponse.addProperty("id", id);
         jsonResponse.addProperty("debug",  incomingURLs.contains( clientOrigin) ? "yes" : "no" );
+
+        if (currentUser != null) {
+            currentUser.setPassword("");
+            jsonResponse.addProperty("user", gson.toJson(currentUser));
+        }
 
         String response = gson.toJson(jsonResponse);
         sendResponse(response, resp);

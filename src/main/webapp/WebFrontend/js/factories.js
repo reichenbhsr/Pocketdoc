@@ -27,17 +27,25 @@ pocketdocFactories.factory("runFactory", function($http, $resource){
     );
 });
 
-pocketdocFactories.factory("User", function() {
-    var user = {
-        name: "admin",
-        id: 3,
-        loggedIn: false,
-        run: {
-            diagnosis: "",
-            recommendation: ""
+pocketdocFactories.factory("loginFactory", function($http, $resource){
+
+    var baseUrl = "../login";
+
+    return $resource(baseUrl);
+
+});
+
+pocketdocFactories.factory("userFactory", function($http, $resource){
+    var baseUrl = "../user";
+
+    return $resource(
+        baseUrl, {},{
+            'createUser': {method: 'POST'},
+            'updateUser': {method: 'PUT'},
+            'getUser': {method: 'GET'},
+            'deleteUser': {method: 'DELETE'}
         }
-    };
-    return user;
+    );
 });
 
 pocketdocFactories.factory('_', function() {

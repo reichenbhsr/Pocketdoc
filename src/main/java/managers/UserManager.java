@@ -1,6 +1,5 @@
 package managers;
 
-import database.mappers.DatabaseMapper;
 import database.mappers.UserConnector;
 import models.History;
 import models.User;
@@ -28,18 +27,6 @@ public class UserManager implements BasicManager<User> {
     public UserManager() {
 //        userMapper = new UserMapper(); FIXME
         userMapper = new UserConnector(); // FIXME
-        historyManager = new HistoryManager();
-    }
-
-    /**
-     * Dieser Konstruktor wird zum Testen gebraucht.
-     * <p>
-     * Damit können die Mapper gefaked werden, somit wird nicht wirklich auf die Datenbank zugegriffen
-     *
-     * @param mapper Ein DatabaseMapper oder eine Ableitung davon.
-     */
-    public UserManager(DatabaseMapper mapper) {
-//        userMapper = mapper; FIXME
         historyManager = new HistoryManager();
     }
 

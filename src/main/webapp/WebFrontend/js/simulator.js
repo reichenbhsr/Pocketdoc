@@ -758,7 +758,7 @@
 			},
 			
 			delay : function(call, param){
-				setTimeout(function(){call(param);}, 2000);
+				setTimeout(function(){call(param);}, 500);
 			}
 			
 		};

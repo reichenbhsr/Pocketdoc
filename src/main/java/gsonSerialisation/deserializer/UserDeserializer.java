@@ -26,6 +26,9 @@ public class UserDeserializer implements JsonDeserializer<User> {
     final String ID = "user_id";
     final String NAME = "name";
     final String PASSWORD = "password";
+    final String EMAIL = "email";
+    final String GENDER = "gender";
+    final String AGE_CATEGORY = "age_category";
     final String HISTORY_ID = "history_id";
 
 
@@ -38,6 +41,9 @@ public class UserDeserializer implements JsonDeserializer<User> {
         setId(jsonObject, user);
         setName(jsonObject, user);
         setPassword(jsonObject, user);
+        setEmail(jsonObject, user);
+        setGender(jsonObject, user);
+        setAgeCategory(jsonObject, user);
         setHistory(jsonObject, user);
         return user;
 
@@ -61,6 +67,27 @@ public class UserDeserializer implements JsonDeserializer<User> {
         if (jsonObject.has(PASSWORD)) {
             final String password = jsonObject.getAsJsonPrimitive(PASSWORD).getAsString();
             user.setPassword(password);
+        }
+    }
+
+    private void setEmail(final JsonObject jsonObject, final User user) {
+        if (jsonObject.has(EMAIL)) {
+            final String email = jsonObject.getAsJsonPrimitive(EMAIL).getAsString();
+            user.setEmail(email);
+        }
+    }
+
+    private void setGender(final JsonObject jsonObject, final User user) {
+        if (jsonObject.has(GENDER)) {
+            final int gender = jsonObject.getAsJsonPrimitive(GENDER).getAsInt();
+            user.setGender(gender);
+        }
+    }
+
+    private void setAgeCategory(final JsonObject jsonObject, final User user) {
+        if (jsonObject.has(AGE_CATEGORY)) {
+            final int age_category = jsonObject.getAsJsonPrimitive(AGE_CATEGORY).getAsInt();
+            user.setAgeCategory(age_category);
         }
     }
 

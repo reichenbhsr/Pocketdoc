@@ -36,12 +36,14 @@ angular.module('pocketDocApp').controller('questionController', function($scope,
      * Löschen einer Frage
      * @param question - zu löschende Frage
      */
-    $scope.removeQuestion = function (question){
+    $scope.removeQuestion = function (){ // question
         /**
          * Da wir über alle Frage iterieren und mittels ID vergleich die zu löschende Frage suchen
          * können wir nicht splice auf das array anwenden deshalb müssen wir ein neues erstellen und die nicht zu löschenden
          * Fragen dort hinein verschieben.
          */
+        var question = $scope.question;
+
         newQuestions = []
         $scope.questions.forEach(function(oldQuestion){
             if(!angular.equals(oldQuestion.question_id,question.question_id)){
@@ -50,10 +52,6 @@ angular.module('pocketDocApp').controller('questionController', function($scope,
         });
         $scope.questions = angular.copy(newQuestions);
 
-
-        if($scope.questions.length !== 0){
-            $scope.setQuestion($scope.questions[0]);
-        }
 
         /**
          * Da wir über alle Score Verteilungen iterieren und mittels id Vergleich die zu löschende Score Verteilung suchen
@@ -70,6 +68,10 @@ angular.module('pocketDocApp').controller('questionController', function($scope,
         $scope.allDiagnosisScoreDistributions= newScores;
         //Hier wird nun der DELETE REQUEST abgefeuert.
         question.$delete();
+
+        if($scope.questions.length !== 0){
+            $scope.setQuestion($scope.questions[0]);
+        }
     }
 
     /**

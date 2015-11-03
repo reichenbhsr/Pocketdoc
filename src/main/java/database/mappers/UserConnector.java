@@ -17,7 +17,7 @@ public class UserConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT id FROM User where id = " + user.getId() + ";";
+            String SQL = "SELECT id FROM Users where id = " + user.getId() + ";";
             ResultSet res = stmt.executeQuery(SQL);
 
             if (res.next())
@@ -25,9 +25,13 @@ public class UserConnector extends DatabaseConnector {
             else{
                 // Create User
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO Users (name, password, history) VALUES (" +
+                SQL = "INSERT INTO Users (name, password, email, gender, age_category, is_admin, history) VALUES (" +
                         (user.getName() == null ? null : "'" + user.getName() + "'") + "," +
                         (user.getPassword() == null ? null : "'" + user.getPassword() + "'") + "," +
+                        (user.getEmail() == null ? null : "'" + user.getPassword() + "'") + "," +
+                        "'" + user.getGender() + "'" + "," +
+                        "'" + user.getAgeCategory() + "'" + "," +
+                        "'" + false + "'" + "," +
                         "'" + user.getHistory().getId() + "');";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
@@ -57,7 +61,10 @@ public class UserConnector extends DatabaseConnector {
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE Users SET " +
                             " name=" + (user.getName() == null ? null : "'" + user.getName() + "'") + "," +
-                            " password=" + (user.getPassword() == null ? null : "'" + user.getPassword() + "'") +","+
+                            ((user.getPassword() == null || user.getPassword().equals("")) ? "" : " password=" + "'" + user.getPassword() + "'" +",") +
+                            " email=" + "'" + user.getEmail() + "'" +","+
+                            " gender=" + "'" + user.getGender() + "'" +","+
+                            " age_category=" + "'" + user.getAgeCategory() + "'" +","+
                             " history='" + user.getHistory().getId() +"' "+
                             " WHERE id =" + user.getId() + ";";
 
@@ -86,6 +93,9 @@ public class UserConnector extends DatabaseConnector {
                 user.setId(set.getInt("id"));
                 user.setName(set.getString("name"));
                 user.setPassword(set.getString("password"));
+                user.setEmail(set.getString("email"));
+                user.setGender(set.getInt("gender"));
+                user.setAgeCategory(set.getInt("age_category"));
                 user.setHistoryId(set.getInt("history"));
 
                 return user;
@@ -119,6 +129,9 @@ public class UserConnector extends DatabaseConnector {
                 user.setId(set.getInt("id"));
                 user.setName(set.getString("name"));
                 user.setPassword(set.getString("password"));
+                user.setEmail(set.getString("email"));
+                user.setGender(set.getInt("gender"));
+                user.setAgeCategory(set.getInt("age_category"));
                 user.setHistoryId(set.getInt("history"));
 
                 users.add(user);
