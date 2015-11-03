@@ -1,6 +1,5 @@
 package managers;
 
-import database.mappers.DatabaseMapper;
 
 import java.util.ArrayList;
 
