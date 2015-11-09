@@ -2,7 +2,7 @@
 
     var backend = angular.module('pocketdocBackend', ['pocketdocData', 'pocketdocFactories']);
 
-    backend.factory('UserService', ['_', 'DataService', 'UtilService', '$cookies', 'loginFactory', 'userFactory', function( _ ,  DataService, UtilService, $cookies, loginFactory, userFactory ){
+    backend.factory('UserService', ['_', 'DataService', 'UtilService', '$cookies', 'loginFactory', 'logoutFactory', 'userFactory', function( _ ,  DataService, UtilService, $cookies, loginFactory, logoutFactory, userFactory ){
 
         var isLoggedIn = function() { // MODIFIED
             return currentUser.user_id !== -1;
@@ -41,15 +41,25 @@
         var update = function( data, success, error ) { // MODIFIED
 
             var user = buildUserObject(data);
+            user.oldPassword = data.oldPassword;
+            user.newPassword = data.newPassword;
+
             userFactory.updateUser(user, function(result){
 
-                currentUser = JSON.parse(result.user);
-                success({name: result.name, lang: result.lang});
+                if (result.errorType == -1)
+                {
+                    currentUser = JSON.parse(result.user);
+                    success({name: result.name, lang: result.lang});
+                }
+                else if (result.errorType = 1)
+                {
+                    error({errorType: 1, message: "Passwort ist fehlerhaft!"})
+                }
 
             });
         };
 
-        var del = function( data, success, error ) {
+        var del = function( data, success, error ) { //  MODIFIED
 
             var user = buildUserObject(currentUser);
             var name = user.name;
@@ -79,17 +89,21 @@
             }
 
             console.log(data);
-            loginFactory.save(data, function(result){
+            loginFactory.login(data, function(result){
                 console.log(result);
-
-                if (typeof(result.user) !== "undefined"){
+                if (result.errorType == -1){
                     currentUser = JSON.parse(result.user);
 
                     saveUserSession(currentUser);
                     success(currentUser);
                 }
-                else{
-                    error({errorType: 1, message: "Benutzereingaben falsch"});
+                else if (result.errorType == 0)
+                {
+                    error({errorType: 0, message: "Email Adresse ist nicht registriert!"})
+                }
+                else if (result.errorType == 1)
+                {
+                    error({errorType: 1, message: "Password ist fehlerhaft!"})
                 }
 
             });
@@ -98,16 +112,18 @@
 
         var logout = function( data, success, error ) {
 
-            var userName = currentUser.name;
+            logoutFactory.logout(data, function(result){
+                var userName = currentUser.name;
 
-            currentUser = {
-                user_id : -1,
-                lang : currentUser.lang
-            };
+                currentUser = {
+                    user_id : -1,
+                    lang : currentUser.lang
+                };
 
-            clearSession();
+                clearSession();
 
-            UtilService.delay(success,{name : userName});
+                success({name: userName});
+            });
         };
 
         var checkData = function( data, success, error ) {
@@ -127,16 +143,12 @@
             );
         };
 
-        var isInUse = function( data, success, error ) {
-            var users = JSON.parse(localStorage.getItem("users"));
+        var isInUse = function( data, success, error ) { // MODIFIED
 
-            if (users == null)
-                UtilService.delay(success,{inUse: false});
-            else {
-                var user = $.grep(users, function(e){ return e.email == data.email; });
+            userFactory.isInUse({checkInUse: data.email}, function(result){
+                success({inUse: result.inUse});
+            });
 
-                UtilService.delay(success,{ inUse: user.length !== 0 });
-            }
         };
 
         /**
@@ -281,8 +293,8 @@
     });
 
     backend.factory('RunService', [
-        'UserService', 'DataService', 'UtilService', '$translate',
-        function( UserService,   DataService,   UtilService ,  $translate ){
+        'UserService', 'DataService', 'UtilService', '$translate', 'nextQuestionFactory', 'runFactory',
+        function( UserService,   DataService,   UtilService ,  $translate, nextQuestionFactory, runFactory ){
 
             var run = {};
             var	nextQuestions = [];
@@ -304,16 +316,11 @@
              * @author Philipp Christen
              */
             var start = function( userData, success, error ) {
-                var startQuestionID = 0,
-                    qData = {};
                 user = userData;
+                runFactory.resetRun({Id: userData.user_id}, userData, function(result){
 
-                if ( followUp !== null ) {
-                    startQuestionID = followUp.startQuestion;
-                }
-
-                qData.id = startQuestionID;
-                getQ( qData, success, error );
+                    getQ( userData, success, error );
+                })
             };
 
             /**
@@ -324,54 +331,80 @@
              * @param  {Function} error
              * @author Roman Eichenberger, Philipp Christen
              */
-            var answerQ = function( data, success, error ) {
-                var currQuestion = currentQuestion;
-                var answerObj = UtilService.getElementById(data.answerId, currQuestion.answers );
+            var answerQ = function( data, success, error ) {    // MODIFIED
 
-                nextQuestions = answerObj.next_questions;
+                runFactory.sendAnswer({Id: user.user_id}, data.answer, function(result){
+                    console.log(result);
+                    if (result.ErrorCode == -1){
+                        getQ({user_id: user.user_id}, success, error);
+                    }
+                    else if (result.ErrorCode == 0){
+                        error("Fehler beim Speichern der Antwort");
+                    }
+                });
 
-                if ( nextQuestions.length === 0 || nextQuestions[0] === -1 ) {
-                    UtilService.delay(error, $translate.instant('error_noMoreQuestions') );
-                } else {
-                    getQ( { id: nextQuestions.pop() }, success, error );
-                }
             };
 
-            var getQ = function( questionData, success, error ) {
+            var getQ = function( questionData, success, error ) { // MODIFIED
 
-                var allQuestions = DataService.questions();
-                var firstQuestion = UtilService.getElementById( questionData.id, allQuestions );
+                console.log(questionData);
+                nextQuestionFactory.getNextQuestion(buildUserObject(user), function(result){
+                    console.log(result);
+                    currentQuestion = result.question;
 
-                var questionResult = {};
+                    if (user.user_id == -1)
+                        user.user_id = result.user.user_id;
 
-                var answerTexts = [];
+                    if (typeof(currentQuestion) == "undefined"){
+                        success({diagnosis: result.diagnosis, action_suggestion: result.action_suggestion});
+                    }
+                    else{
+                        var questionResult = {};
 
-                currentQuestion = firstQuestion;
+                        questionResult.id = currentQuestion.question_id;
+                        for (var i = 0; i < currentQuestion.descriptions.length; i++)
+                            if(currentQuestion.descriptions[i].language_id ==1)
+                                questionResult.description = currentQuestion.descriptions[i].description;
 
-                // Set Question Text
-                var langId = UtilService.getIdByLocale(UserService.getLang(), DataService.languages());
-                var questionText = UtilService.getCurrentLanguageObject(langId, firstQuestion.description);
-                questionResult.id = questionData.id;
-                questionResult.description = questionText.text;
+                        var answerTexts = [];
 
-                // Set Answer Texts
-                for(var i = 0; i < firstQuestion.answers.length; i++)
-                {
-                    var desc = UtilService.getCurrentLanguageObject(langId, firstQuestion.answers[i].desc);
-                    answerTexts.push(
-                        {
-                            id : firstQuestion.answers[i].id,
-                            desc : desc.text,
-                            style: firstQuestion.answers[i].style || "",
-                            diagnosis: firstQuestion.answers[i].diagnosis,
-                            action_suggestion: firstQuestion.answers[i].action_suggestion
-                        }
-                    );
-                }
+                        answerTexts.push(
+                            {
+                                id : currentQuestion.answer_yes.answer_id,
+                                desc : "Ja",
+                                style: "md-accent",
+                                answer: currentQuestion.answer_yes,
+                                type: 0
+                            }
+                        );
 
-                questionResult.answers = answerTexts;
+                        answerTexts.push(
+                            {
+                                id : currentQuestion.answer_yes.answer_id,
+                                desc : "Weiss nicht",
+                                style: "md-primary",
+                                answer: currentQuestion.answer_yes,
+                                type: 2
+                            }
+                        );
 
-                UtilService.delay(success, questionResult);
+                        answerTexts.push(
+                            {
+                                id : currentQuestion.answer_no.answer_id,
+                                desc : "Nein",
+                                style: "md-warn",
+                                answer: currentQuestion.answer_no,
+                                type: 1
+                            }
+                        );
+
+                        questionResult.answers = answerTexts;
+
+                        success({question: questionResult});
+                    }
+
+                });
+
             };
 
             var addDiagnosis = function( data, success, error ) {
@@ -431,6 +464,18 @@
 
             var getUser = function(){
                 return user;
+            };
+
+            var buildUserObject = function( data ) {
+                return {
+                    user_id: data.user_id,
+                    password: data.password,
+                    lang: data.lang || 'de',
+                    email: data.email,
+                    name: data.name,
+                    gender: data.gender,
+                    age_category: data.age_category
+                }
             };
 
             return {

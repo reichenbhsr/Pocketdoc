@@ -27,12 +27,13 @@ public class QuestionConnector extends DatabaseConnector{
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO Questions (name, is_symptom, answer_yes, answer_no, force_dependent_asking, depends_on) VALUES (" +
+                SQL = "INSERT INTO Questions (name, is_symptom, answer_yes, answer_no, force_dependent_asking, type, depends_on) VALUES (" +
                         (question.getName() == null ? null : "'" + question.getName() + "'") + "," +
                         "'" + question.isSymptom() + "'," +
                         "" + question.getAnswerYes().getId() + "," +
                         "" + question.getAnswerNo().getId() + "," +
                         "" + question.getForceDependentAsking() + "," +
+                        "" + question.getType() + "," +
                         "" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) + ");";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
@@ -66,7 +67,8 @@ public class QuestionConnector extends DatabaseConnector{
                             " answer_yes=" + question.getAnswerYes().getId() +","+
                             " answer_no=" + question.getAnswerNo().getId() +","+
                             " force_dependent_asking=" + question.getForceDependentAsking() +","+
-                            " depends_on=" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) +" "+
+                            " depends_on=" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) +", "+
+                            " type=" + question.getType() +""+
                             " WHERE id =" + question.getId() + ";";
 
             stmt.execute(SQL);
@@ -102,6 +104,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
                 question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
+                question.setType(set.getInt("type"));
 
                 dependentQuestions.add(question);
             }
@@ -135,6 +138,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
                 question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
+                question.setType(set.getInt("type"));
 
                 return question;
             }
@@ -168,6 +172,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
                 question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
+                question.setType(set.getInt("type"));
 
                 return question;
             }
@@ -201,6 +206,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
                 question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
+                question.setType(set.getInt("type"));
 
                 return question;
             }
@@ -237,6 +243,7 @@ public class QuestionConnector extends DatabaseConnector{
                 question.setAnswerYesId(set.getInt("answer_yes"));
                 question.setDependsOnId(set.getInt("depends_on"));
                 question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
+                question.setType(set.getInt("type"));
 
                 questions.add(question);
             }

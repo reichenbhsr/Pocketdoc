@@ -11,15 +11,19 @@ public class User {
 
     private int id;
 
-    private String name;
+    private String name = "";
 
-    private String password;
+    private String password = "";
 
-    private String email;
+    private String email = "";
 
     private int gender;
 
     private int ageCategory;
+
+    private boolean isAdmin;
+
+    private boolean isTemporary;
 
     private int historyId;
     private History history;
@@ -57,6 +61,12 @@ public class User {
 
     public int getAgeCategory(){ return ageCategory; }
     public void setAgeCategory(int ageCategory) { this.ageCategory = ageCategory; }
+
+    public boolean isAdmin(){ return isAdmin; }
+    public void setIsAdmin(boolean isAdmin){ this.isAdmin = isAdmin; }
+
+    public boolean isTemporary(){ return isTemporary; }
+    public void setTemporary(boolean isTemporary){ this.isTemporary = isTemporary; }
 
     public void setHistoryId(int historyId){ this.historyId = historyId; }
     public History getHistory() {

@@ -65,6 +65,7 @@ public class UserConnector extends DatabaseConnector {
                             " email=" + "'" + user.getEmail() + "'" +","+
                             " gender=" + "'" + user.getGender() + "'" +","+
                             " age_category=" + "'" + user.getAgeCategory() + "'" +","+
+                            " is_temporary=" + "'" + user.isTemporary() + "'" +","+
                             " history='" + user.getHistory().getId() +"' "+
                             " WHERE id =" + user.getId() + ";";
 
@@ -97,6 +98,8 @@ public class UserConnector extends DatabaseConnector {
                 user.setGender(set.getInt("gender"));
                 user.setAgeCategory(set.getInt("age_category"));
                 user.setHistoryId(set.getInt("history"));
+                user.setIsAdmin(set.getBoolean("is_admin"));
+                user.setTemporary(set.getBoolean("is_temporary"));
 
                 return user;
             }
@@ -133,6 +136,8 @@ public class UserConnector extends DatabaseConnector {
                 user.setGender(set.getInt("gender"));
                 user.setAgeCategory(set.getInt("age_category"));
                 user.setHistoryId(set.getInt("history"));
+                user.setIsAdmin(set.getBoolean("is_admin"));
+                user.setTemporary(set.getBoolean("is_temporary"));
 
                 users.add(user);
             }
@@ -143,6 +148,51 @@ public class UserConnector extends DatabaseConnector {
         }
 
         return users;
+    }
+
+    public boolean hasMailAdress(String address){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT name FROM users WHERE email='" + address + "';";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            if(set.next())
+                return true;
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error has mailaddress");
+        }
+
+        return false;
+    }
+
+    public boolean checkPassword(String address, String password)
+    {
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT name FROM users WHERE email='" + address + "' AND " +
+                         "password = '" + password  + "';";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            if(set.next())
+                return true;
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error has mailaddress");
+        }
+
+        return false;
     }
 
     public void delete(int userId)

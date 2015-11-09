@@ -30,51 +30,51 @@ import java.util.List;
 public class LoginServlet extends ServletAbstract {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        login(req, resp, true);
+
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        login(req, resp, false);
+
+    }
+
+    private void login(HttpServletRequest req, HttpServletResponse resp, boolean adminRequired) throws ServletException, IOException {
+
         boolean status = false;
         int id = -1;
         User currentUser = null;
         JsonObject paramValues = getRequest(req);
         User parsedUser = gson.fromJson(paramValues, User.class);
+        int errorType = 0;
+
 
         ArrayList<User> users = new UserManager().getAll();
         for (User user : users) {
-            if (user.getEmail() != null && (user.getEmail().equals(parsedUser.getEmail()) || user.getName().equals(parsedUser.getEmail())) && user.getPassword().equals(parsedUser.getPassword())) {
-                id = user.getId();
-                currentUser = user;
-                req.getSession().setAttribute("user", id );
-                status = true;
+            if (user.getEmail().equals(parsedUser.getEmail()))
+            {
+                errorType = 1;
+                if (user.getPassword().equals(parsedUser.getPassword()))
+                {
+                    errorType = 2;
+                    if ((user.isAdmin() && adminRequired) || !adminRequired) {
+                        errorType = -1;
+                        id = user.getId();
+                        currentUser = user;
+                        req.getSession().setAttribute("user", id);
+                        status = true;
+                    }
+                }
             }
         }
-
-
-
-        // Get client's origin
-        String clientOrigin = req.getHeader("origin");
-        
-        //List of allowed origins
-        //List<String> incomingURLs = Arrays.asList(getServletContext().getInitParameter("incomingURLs").trim().split(","));
-        List<String> incomingURLs = Arrays.asList("http://angularplayground.herokuapp.com");
-
-
-        //if the client origin is found in our list then give access
-        //if you don't want to check for origin and want to allow access 
-        //to all incoming request then change the line to this
-        //response.setHeader("Access-Control-Allow-Origin", "*");
-        if( incomingURLs.contains(clientOrigin) ){
-            //resp.setHeader("Access-Control-Allow-Origin", clientOrigin);
-            resp.addHeader("Access-Control-Allow-Origin", "*");
-            //resp.setHeader("Access-Control-Allow-Methods", "POST");
-            resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-            resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
-            resp.setHeader("Access-Control-Max-Age", "86400");
-        }
-
-
 
         JsonObject jsonResponse = new JsonObject();
         jsonResponse.addProperty("status", status);
         jsonResponse.addProperty("id", id);
-        jsonResponse.addProperty("debug",  incomingURLs.contains( clientOrigin) ? "yes" : "no" );
+        jsonResponse.addProperty("errorType", errorType);
 
         if (currentUser != null) {
             currentUser.setPassword("");
@@ -83,5 +83,6 @@ public class LoginServlet extends ServletAbstract {
 
         String response = gson.toJson(jsonResponse);
         sendResponse(response, resp);
+
     }
 }

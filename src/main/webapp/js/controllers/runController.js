@@ -25,6 +25,13 @@ angular.module('pocketDocApp').controller('runController', function ($scope, $ht
          */
         var loadQuestion = function () {
             return nextQuestionFactory.get({Id: $scope.userId}, function (result) {
+                result.answer_no = result.question.answer_no;
+                result.answer_yes = result.question.answer_yes;
+                result.question_id = result.question.question_id;
+                result.descriptions = result.question.descriptions;
+                result.name = result.question.name;
+                result.is_symptom = result.question.is_symptom;
+
                 if (angular.isUndefined(result.descriptions)) {
                     finish();
                 }

@@ -79,4 +79,13 @@ public class UserManager implements BasicManager<User> {
         historyManager.remove(get(id).getHistory().getId());
         userMapper.delete(id);
     }
+
+    public boolean  hasMailAddress(String address){
+        return userMapper.hasMailAdress(address);
+    }
+
+    public boolean checkPassword(String address, String password)
+    {
+        return userMapper.checkPassword(address, password);
+    }
 }

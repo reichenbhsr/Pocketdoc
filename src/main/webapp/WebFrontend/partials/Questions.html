@@ -96,13 +96,13 @@
 		<md-list-item class="answeredQuestion" ng-repeat="question in answeredQuestions | reverse" ng-click="reviseQuestion(question, $event)">
 			<h3 flex>{{question.question.description}}</h3>
 
-			<div ng-show="question.answer.id === 0">
+			<div ng-show="question.answer.type === 0">
 				<md-icon md-svg-icon="images/icons/yes.svg" class="s36 md-accent"></md-icon>
 			</div>
-			<div ng-show="question.answer.id === 1">
+			<div ng-show="question.answer.type === 1">
 				<md-icon md-svg-icon="images/icons/no.svg" class="s36 md-warn"></md-icon>
 			</div>
-			<div ng-show="question.answer.id > 1">
+			<div ng-show="question.answer.type > 1">
 				<md-icon md-svg-icon="images/icons/dontknow.svg" class="s36 md-primary"></md-icon>
 			</div>
 
@@ -147,13 +147,13 @@
 							ng-repeat="answer in currentQuestion.answers"
 							aria-label="{{answer.desc}}">
 
-							<div ng-show="answer.id === 0">
+							<div ng-show="answer.type === 0">
 								<md-icon md-svg-icon="images/icons/yes.svg" class="s36 md-accent"></md-icon>
 							</div>
-							<div ng-show="answer.id === 1">
+							<div ng-show="answer.type === 1">
 								<md-icon md-svg-icon="images/icons/no.svg" class="s36 md-warn"></md-icon>
 							</div>
-							<div ng-show="answer.id > 1">
+							<div ng-show="answer.type > 1">
 								<md-icon md-svg-icon="images/icons/dontknow.svg" class="s36 md-primary"></md-icon>
 							</div>
 						</md-button>

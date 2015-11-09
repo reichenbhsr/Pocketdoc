@@ -45,6 +45,7 @@ public class RunServlet extends ServletAbstract {
             resp.getWriter().println("You are not authorized to view this data.");
         } else {
             String path = req.getPathInfo();
+            int errorCode = 0;
             if (path != null) {
                 User user = new UserManager().get(getId(path));
 
@@ -52,7 +53,14 @@ public class RunServlet extends ServletAbstract {
                 Answer answer = gson.fromJson(paramValue, Answer.class);
 
                 new RunManager(user).addAnswer(answer);
+
+                errorCode = -1;
             }
+
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.addProperty("ErrorCode", errorCode);
+            String response = gson.toJson(jsonResponse);
+            sendResponse(response, resp);
         }
     }
 
@@ -94,10 +102,12 @@ public class RunServlet extends ServletAbstract {
         } else {
             String path = req.getPathInfo();
             if (path != null) {
+                int id = getId(path);
                 User user = new UserManager().get(getId(path));
                 QuestionCalculator.reset(); // RE
-                DiagnosisCalculator.reset(); // RE
-                new RunManager(user).deleteHistory();
+                if (id > -1){
+                    new RunManager(user).deleteHistory();
+                }
             }
         }
     }

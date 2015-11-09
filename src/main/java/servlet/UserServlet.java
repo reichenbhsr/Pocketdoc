@@ -1,6 +1,7 @@
 package servlet;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import managers.UserManager;
 import models.User;
@@ -30,29 +31,43 @@ public class UserServlet extends ServletAbstract {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        if (req.getSession().getAttribute("user") == null) {
-//            resp.getWriter().println("You are not authorized to view this data.");
-//        } else {
-        final User user = new UserManager().add();
 
         JsonObject paramValue = getRequest(req);
-        User data = gson.fromJson(paramValue, User.class);
+        JsonElement email = paramValue.get("checkInUse");
 
-        user.setName(data.getName());
-        user.setPassword(data.getPassword());
-        user.setAgeCategory(data.getAgeCategory());
-        user.setEmail(data.getEmail());
-        user.setGender(data.getGender());
+        if (email != null)
+        {
+            boolean inUse = new UserManager().hasMailAddress(email.getAsString());
 
-        new UserManager().update(user);
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.addProperty("inUse", inUse);
 
-        user.setPassword("");
+            final String answer = gson.toJson(jsonResponse);
+            sendResponse(answer, resp);
+        }
+        else
+        {
+            final User user = new UserManager().add();
+            User data = gson.fromJson(paramValue, User.class);
 
-        JsonObject jsonResponse = new JsonObject();
-        jsonResponse.addProperty("user", gson.toJson(user));
+            user.setName(data.getName());
+            user.setPassword(data.getPassword());
+            user.setAgeCategory(data.getAgeCategory());
+            user.setEmail(data.getEmail());
+            user.setGender(data.getGender());
 
-        final String answer = gson.toJson(jsonResponse);
-        sendResponse(answer, resp);
+            new UserManager().update(user);
+
+            user.setPassword("");
+
+            JsonObject jsonResponse = new JsonObject();
+            jsonResponse.addProperty("user", gson.toJson(user));
+
+            final String answer = gson.toJson(jsonResponse);
+            sendResponse(answer, resp);
+        }
+
+
 //        }
     }
 
@@ -63,11 +78,36 @@ public class UserServlet extends ServletAbstract {
         } else {
             JsonObject paramValue = getRequest(req);
             User user = gson.fromJson(paramValue, User.class);
+            int errorType = -1;
 
-            new UserManager().update(user);
+            JsonElement oldPassword = paramValue.get("oldPassword");
+            JsonElement newPassword = paramValue.get("newPassword");
+
+            if (oldPassword != null && newPassword != null)
+            {
+                boolean valid = new UserManager().checkPassword(user.getEmail(), oldPassword.getAsString());
+
+                if (valid)
+                {
+                    String newPw = newPassword.getAsString();
+
+                    if (!newPw.equals(""))
+                        user.setPassword(newPw);
+                }
+                else
+                {
+                    errorType = 1;
+                }
+            }
 
             JsonObject jsonResponse = new JsonObject();
-            jsonResponse.addProperty("user", gson.toJson(user));
+
+            if (errorType == -1){
+                new UserManager().update(user);
+                jsonResponse.addProperty("user", gson.toJson(user));
+            }
+
+            jsonResponse.addProperty("errorType", errorType);
 
             final String answer = gson.toJson(jsonResponse);
             sendResponse(answer, resp);

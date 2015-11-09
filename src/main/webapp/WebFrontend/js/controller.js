@@ -38,7 +38,7 @@
                 $scope.user = UserService.getCurrentUser();
             } else {
                 // Remove Data from the currentUser
-                $scope.user = {}
+                $scope.user = { user_id: -1 }
             }
         };
 
@@ -101,7 +101,7 @@
                 $scope.user,
                 function( questionData ) {
                     // Success
-                    $scope.currentQuestion = questionData;
+                    $scope.currentQuestion = questionData.question;
                     $scope.loading = false;
                     $scope.hidden = false;
                 },
@@ -125,29 +125,8 @@
                 }
             );
 
-            // then, check if the answer had a diagnosis/actionSuggestion attached to it
-            if ( typeof( givenAnswer.diagnosis ) !== "undefined" &&
-                 typeof( givenAnswer.action_suggestion ) !== "undefined" ) {
-
-                DiagnosisService.getByID(
-                    givenAnswer.diagnosis,
-                    givenAnswer.action_suggestion,
-                    function( diag ) {
-                        $scope.showDialog(
-                            givenAnswer,
-                            diag.diagnosis,
-                            diag.action_suggestion
-                        );
-                    },
-                    function( error ) {
-                        alert( error );
-                    }
-                );
-
-            } else {
-                $scope.givenAnswer = undefined;
-                $scope.showNewQuestion( givenAnswer );
-            }
+            $scope.givenAnswer = undefined;
+            $scope.showNewQuestion( givenAnswer );
 		};
 
         /**
@@ -177,8 +156,9 @@
          * @param  {jQuery.Event} ev [description]
          * @author Philipp Christen, Roman Eichenberger
          */
-        $scope.showDialog = function( givenAnswer, diagnosis, actionSuggestion, ev ) {
+        $scope.showDialog = function( diagnosis, actionSuggestion, ev ) {
             $scope.loading = false;
+
             $mdDialog.show({
                 controller: DialogController,
                 templateUrl: 'partials/diagDialog.html',
@@ -202,7 +182,17 @@
                     }
                 );
             }, function() {
-                $scope.showNewQuestion( givenAnswer );
+                RunService.getQuestionData({user_id: 6},
+                    function(questionData){
+
+                        $scope.currentQuestion = questionData.question;
+                        $scope.loading = false;
+                        $scope.hidden = false;
+                    },
+                    function(error){
+                        console.log("error in get Question after diagnosis decline");
+                    }
+                );
             });
         };
 
@@ -210,9 +200,31 @@
             
             var success = function( questionData ) {
                 // Show new question
-                $scope.currentQuestion = questionData;
-                $scope.loading = false;
-                $scope.hidden = false;
+
+                // then, check if the answer had a diagnosis/actionSuggestion attached to it
+                if (typeof(questionData.question) == "undefined" &&
+                    typeof( questionData.diagnosis ) !== "undefined" &&
+                    typeof( questionData.action_suggestion ) !== "undefined" ) {
+
+                    for(var i = 0; i < questionData.diagnosis.descriptions.length; i++)
+                        if (questionData.diagnosis.descriptions[i].language_id == 1)
+                            questionData.diagnosis.description = questionData.diagnosis.descriptions[i].description;
+
+                    for(var i = 0; i < questionData.action_suggestion.descriptions.length; i++)
+                        if (questionData.action_suggestion.descriptions[i].language_id == 1)
+                            questionData.action_suggestion.description = questionData.action_suggestion.descriptions[i].description;
+
+                    $scope.showDialog(
+                        questionData.diagnosis,
+                        questionData.action_suggestion
+                    );
+
+                }
+                else{
+                    $scope.currentQuestion = questionData.question;
+                    $scope.loading = false;
+                    $scope.hidden = false;
+                }
             };
             
             var error = function( message ) {
@@ -233,7 +245,8 @@
                 RunService.answerQuestion(
                     {
                         question: $scope.currentQuestion,
-                        answerId : givenAnswer.id
+                        answerId : givenAnswer.id,
+                        answer: givenAnswer.answer
                     },
                     success,
                     error
@@ -391,7 +404,7 @@
         
         $scope.loginDialogCancel = function() { $mdDialog.cancel(); };
             
-        $scope.loginDialogRegister = function() { $mdDialog.hide( true ); };
+        $scope.loginDialogRegister = function() { $mdDialog.hide( 1 ); };
 
         $scope.loginDialogSubmit = function() {
             
@@ -408,7 +421,7 @@
                     $scope.loggedIn = true;
                     $scope.$root.$broadcast("login", data);
                     $scope.user = {};
-                    $mdDialog.hide( false );
+                    $mdDialog.hide( 0 );
                 },
                 function( error ) {
                     if (error.errorType == 0)
@@ -1029,7 +1042,7 @@
                     clickOutsideToClose: true
                 })
                 .then( function( goToRegistration) {
-                    if ( goToRegistration ) {
+                    if ( goToRegistration == 1 ) {
                         $location.url("/registration");
                     }
                 }, function() {

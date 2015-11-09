@@ -1,8 +1,11 @@
 package servlet;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import managers.RunManager;
 import managers.UserManager;
+import models.ActionSuggestion;
+import models.Diagnosis;
 import models.Question;
 import models.User;
 
@@ -28,18 +31,69 @@ import java.io.IOException;
 public class NextQuestionServlet extends ServletAbstract {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("user") == null) {
-            resp.getWriter().println("You are not authorized to view this data.");
-        } else {
-            String path = req.getPathInfo();
-            if (path != null) {
-                User user = new UserManager().get(getId(path));
-                final Question question = new RunManager(user).getNextQuestion();
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-                final String answer = gson.toJson(question);
-                sendResponse(answer, resp);
-            }
+        JsonObject paramValue = getRequest(req);
+        User user = gson.fromJson(paramValue, User.class);
+        UserManager userManager = new UserManager();
+
+        if (user.getId() == -1){
+
+            User createdUser = userManager.add();
+            user.setId(createdUser.getId());
+            user.setTemporary(true);
+            userManager.update(user);
+
+            user = userManager.get(user.getId());
+            req.getSession().setAttribute("user", user.getId());
+        }
+
+        user = userManager.get(user.getId());
+
+        RunManager manager = new RunManager(user);
+        final Question question = manager.getNextQuestion();
+        final Diagnosis diagnosis = manager.getDiagnosis();
+        ActionSuggestion  actionSuggestion = null;
+        if (manager.getActionSuggestion().size() > 0)
+            actionSuggestion = manager.getActionSuggestion().firstKey();
+
+        JsonObject response = new JsonObject();
+        response.add("action_suggestion", gson.toJsonTree(actionSuggestion));
+        response.add("question", gson.toJsonTree(question));
+        response.add("diagnosis", gson.toJsonTree(diagnosis));
+        response.add("user", gson.toJsonTree(user));
+
+        final String answer = gson.toJson(response);
+        sendResponse(answer, resp);
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String path = req.getPathInfo();
+        if (path != null) {
+            int id = getId(path);
+            User user;
+
+
+            user = new UserManager().get(id);
+
+
+            RunManager manager = new RunManager(user);
+            final Question question = manager.getNextQuestion();
+            final Diagnosis diagnosis = manager.getDiagnosis();
+            ActionSuggestion  actionSuggestion = null;
+            if (manager.getActionSuggestion().size() > 0)
+                actionSuggestion = manager.getActionSuggestion().firstKey();
+
+            JsonObject response = new JsonObject();
+            response.add("action_suggestion", gson.toJsonTree(actionSuggestion));
+            response.add("question", gson.toJsonTree(question));
+            response.add("diagnosis", gson.toJsonTree(diagnosis));
+
+            final String answer = gson.toJson(response);
+            sendResponse(answer, resp);
         }
     }
 

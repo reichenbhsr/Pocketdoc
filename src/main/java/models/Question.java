@@ -32,6 +32,8 @@ public class Question implements    Comparable<Question>{
 
     private boolean isSymptom;
 
+    private int type;
+
     private Set<QuestionDescription> descriptions;
 
     public Question() {
@@ -115,6 +117,9 @@ public class Question implements    Comparable<Question>{
         }
         return descriptions;
     }
+
+    public int getType(){ return type; }
+    public void setType(int type){ this.type = type; }
 
     public void setDescriptions(Set<QuestionDescription> descriptions) {
         this.descriptions = descriptions;
