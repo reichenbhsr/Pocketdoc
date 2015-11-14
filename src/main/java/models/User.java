@@ -1,6 +1,9 @@
 package models;
 
 import database.mappers.HistoryConnector;
+import database.mappers.LanguageConnector;
+
+import java.util.Date;
 
 /**
  * Entity, also eins zu eins Abbildung der Datenbanktabelle users
@@ -24,6 +27,9 @@ public class User {
     private boolean isAdmin;
 
     private boolean isTemporary;
+
+    private int languageId = 1;
+    private Language language;
 
     private int historyId;
     private History history;
@@ -78,7 +84,21 @@ public class User {
 
         return history;
     }
+
     public void setHistory(History history) {
         this.history = history;
     }
+
+    public void setLanguageId(int languageId){ this.languageId = languageId; }
+    public Language getLanguage() {
+
+        if (language == null){
+            LanguageConnector con = new LanguageConnector();
+            language = con.read(languageId);
+        }
+
+        return language;
+    }
+
+    public void setLanguage(Language language) { this.language = language; }
 }

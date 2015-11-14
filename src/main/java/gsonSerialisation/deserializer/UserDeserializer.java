@@ -2,8 +2,10 @@ package gsonSerialisation.deserializer;
 
 import com.google.gson.*;
 import managers.HistoryManager;
+import managers.LanguageManager;
 import models.Answer;
 import models.History;
+import models.Language;
 import models.User;
 
 import java.lang.reflect.Type;
@@ -30,6 +32,7 @@ public class UserDeserializer implements JsonDeserializer<User> {
     final String GENDER = "gender";
     final String AGE_CATEGORY = "age_category";
     final String HISTORY_ID = "history_id";
+    final String LANGUAGE_ID = "lang";
 
 
     @Override
@@ -45,6 +48,7 @@ public class UserDeserializer implements JsonDeserializer<User> {
         setGender(jsonObject, user);
         setAgeCategory(jsonObject, user);
         setHistory(jsonObject, user);
+        setLanguage(jsonObject, user);
         return user;
 
     }
@@ -96,6 +100,14 @@ public class UserDeserializer implements JsonDeserializer<User> {
             final int id = jsonObject.getAsJsonPrimitive(HISTORY_ID).getAsInt();
             final History history = new HistoryManager().get(id);
             user.setHistory(history);
+        }
+    }
+
+    private void setLanguage(final JsonObject jsonObject, final User user) {
+        if (jsonObject.has(LANGUAGE_ID)) {
+            final int id = jsonObject.getAsJsonPrimitive(LANGUAGE_ID).getAsInt();
+            final Language language = new LanguageManager().get(id);
+            user.setLanguage(language);
         }
     }
 

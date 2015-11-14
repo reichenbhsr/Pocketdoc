@@ -27,6 +27,15 @@ var pocketdocFactories = angular.module('pocketdocFactories', []),
 //    );
 //});
 
+pocketdocFactories.factory("languageFactory", function ($resource) {
+    var baseUrl = "../language";
+    return $resource(
+        baseUrl, {},{
+            'getLanguages': { method: 'GET'}
+        }
+    );
+});
+
 pocketdocFactories.factory("runFactory", function($http, $resource){
     var factory = {};
 

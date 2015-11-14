@@ -2,7 +2,7 @@
 
     var backend = angular.module('pocketdocBackend', ['pocketdocData', 'pocketdocFactories']);
 
-    backend.factory('UserService', ['_', 'DataService', 'UtilService', '$cookies', 'loginFactory', 'logoutFactory', 'userFactory', function( _ ,  DataService, UtilService, $cookies, loginFactory, logoutFactory, userFactory ){
+    backend.factory('UserService', ['_', 'DataService', 'UtilService', 'LanguageService', '$cookies', 'loginFactory', 'logoutFactory', 'userFactory', function( _ ,  DataService, UtilService, LanguageService, $cookies, loginFactory, logoutFactory, userFactory ){
 
         var isLoggedIn = function() { // MODIFIED
             return currentUser.user_id !== -1;
@@ -49,7 +49,8 @@
                 if (result.errorType == -1)
                 {
                     currentUser = JSON.parse(result.user);
-                    success({name: result.name, lang: result.lang});
+                    currentUser.code = LanguageService.getCodeById(currentUser);
+                    success({name: result.name, lang: LanguageService.getCodeById(result)});
                 }
                 else if (result.errorType = 1)
                 {
@@ -67,7 +68,8 @@
 
                 currentUser = {
                     user_id: -1,
-                    lang: currentUser.lang
+                    lang: currentUser.lang,
+                    code: currentUser.code
                 }
 
                 clearSession();
@@ -93,6 +95,7 @@
                 console.log(result);
                 if (result.errorType == -1){
                     currentUser = JSON.parse(result.user);
+                    currentUser.code = LanguageService.getCodeById(currentUser);
 
                     saveUserSession(currentUser);
                     success(currentUser);
@@ -134,13 +137,14 @@
             return Object.create(currentUser);
         };
 
-        var updateLang = function( data, success, error ) {
+        var updateLang = function( data, success, error ) { //  MODIFIED
             currentUser.lang = data.lang;
-            UtilService.delay(success,
-                {
-                    lang: currentUser.lang
-                }
-            );
+            update(currentUser, function(){
+                success({lang: LanguageService.getCodeById(data)});
+            }, function(){
+                error("Fehler beim Wechsel der Sprache");
+            });
+
         };
 
         var isInUse = function( data, success, error ) { // MODIFIED
@@ -199,8 +203,8 @@
          * @author Philipp Christen
          */
         var getLang = function() {
-            if ( currentUser.lang && typeof( currentUser.lang ) !== "undefined" ) {
-                return currentUser.lang;
+            if ( currentUser.code && typeof( currentUser.code ) !== "undefined" ) {
+                return currentUser.code;
             } else {
                 return getDefaultLang();
             }
@@ -220,7 +224,8 @@
             return {
                 user_id: data.user_id,
                 password: data.password,
-                lang: data.lang || getDefaultLang(),
+                lang: data.lang,
+                code: data.code || getDefaultLang(),
                 email: data.email,
                 name: data.name,
                 gender: data.gender,
@@ -266,31 +271,42 @@
         };
     }]);
 
-    backend.factory('HistoryService', function(){
+    backend.factory('LanguageService',[ 'languageFactory', function(languageFactory){
+
+        var languages;
 
         var get = function( data, success, error ) {
 
-        };
-
-        var getEntry = function( data, success, error ) {
-
-        };
-
-        var del = function( data, success, error ) {
+            if (angular.isUndefined(languages))
+                getFromServer(data, success, error);
+            else
+                success(languages);
 
         };
 
-        var create = function( data, success, error ) {
+        var getCode = function(data){
+            var res;
+            for(var i = 0; i < languages.length; i++){
+                if (languages[i].id == data.lang)
+                    res = languages[i].code;
+            }
+            return res;
+        };
+
+        var getFromServer = function(data, success, error){
+
+            languageFactory.getLanguages(data, function(result){
+                languages = result.languages;
+                success(languages);
+            });
 
         };
 
         return {
-            getUserHistory : get,
-            getHistoryEntry : getEntry,
-            deleteHistoryEntry : del,
-            createHistoryEntry : create
+            getLanguages : get,
+            getCodeById : getCode
         };
-    });
+    }]);
 
     backend.factory('RunService', [
         'UserService', 'DataService', 'UtilService', '$translate', 'nextQuestionFactory', 'runFactory',
@@ -301,8 +317,6 @@
             var	currentQuestion = null;
             var	followUp = null;
             var	user = null;
-
-
 
             /**
              * First question of a run is the question with the ID 0.
@@ -363,7 +377,7 @@
 
                         questionResult.id = currentQuestion.question_id;
                         for (var i = 0; i < currentQuestion.descriptions.length; i++)
-                            if(currentQuestion.descriptions[i].language_id ==1)
+                            if(currentQuestion.descriptions[i].language_id == UserService.getCurrentUser().lang)
                                 questionResult.description = currentQuestion.descriptions[i].description;
 
                         var answerTexts = [];
@@ -470,7 +484,8 @@
                 return {
                     user_id: data.user_id,
                     password: data.password,
-                    lang: data.lang || 'de',
+                    lang: data.lang,
+                    code: data.code || 'de',
                     email: data.email,
                     name: data.name,
                     gender: data.gender,

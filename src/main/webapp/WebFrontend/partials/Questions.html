@@ -65,12 +65,12 @@
 					<div layout="row" layout-align="start center" class="profile-row">
 						<md-button
 							ng-repeat="language in languages"
-							id="language-button-{{language.locale}}"
+							id="language-button-{{language.code}}"
 							class="md-icon-button"
-							aria-label="{{language.nativeName}}"
-							ng-click="changeLanguage( language.locale )"
-							ng-class="{'md-primary md-raised': user.lang ==  language.locale }">
-							<md-icon md-svg-icon="images/icons/{{ language.locale }}.svg" class="s36"></md-icon>
+							aria-label="{{language.name}}"
+							ng-click="changeLanguage( language.id )"
+							ng-class="{'md-primary md-raised': user.lang ==  language.id }">
+							<md-icon md-svg-icon="images/icons/{{ language.code }}.svg" class="s36"></md-icon>
 						</md-button>
 					</div>
 				</div>

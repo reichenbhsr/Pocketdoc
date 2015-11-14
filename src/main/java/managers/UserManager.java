@@ -88,4 +88,9 @@ public class UserManager implements BasicManager<User> {
     {
         return userMapper.checkPassword(address, password);
     }
+
+    public void deleteTemporaryUsers()
+    {
+        userMapper.deleteTemporaryUsers();
+    }
 }

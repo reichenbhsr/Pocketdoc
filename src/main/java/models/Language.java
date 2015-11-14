@@ -18,6 +18,8 @@ public class Language {
 
     private String name;
 
+    private String code;
+
     public Language() {
 
     }
@@ -36,5 +38,11 @@ public class Language {
         this.name = name;
     }
 
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
 }

@@ -499,8 +499,6 @@ public class QuestionCalculator {
 
     }
 
-
-
     private int checkDifference(final TreeMap<Diagnosis, Integer> sortedList){ // FIXME RE
         final Iterator<Map.Entry<Diagnosis, Integer>> iterator = sortedList.entrySet().iterator();
         try {

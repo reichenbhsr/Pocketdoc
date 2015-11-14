@@ -3,8 +3,8 @@
 	var pocketdocControllers = angular.module('pocketdocControllers', ['pocketdocBackend', 'pocketdocServices', 'ngMessages']);
 
 	pocketdocControllers.controller('questionController',
-	        ['$scope', '$location', 'RunService', 'DiagnosisData', '$mdDialog', 'DiagnosisService', '$translate', 'UserService', 'MetaDataService',
-	function( $scope ,  $location ,  RunService ,  DiagnosisData ,  $mdDialog ,  DiagnosisService ,  $translate ,  UserService ,  MetaDataService) {
+	        ['$scope', '$location', 'RunService', 'DiagnosisData', '$mdDialog', 'DiagnosisService', '$translate', 'UserService', 'MetaDataService', 'LanguageService',
+	function( $scope ,  $location ,  RunService ,  DiagnosisData ,  $mdDialog ,  DiagnosisService ,  $translate ,  UserService ,  MetaDataService, LanguageService) {
 	
         var followUp = RunService.getFollowUp(),
             isFollowUp = followUp != null && followUp != false;
@@ -14,8 +14,15 @@
         $scope.isLoggedIn = UserService.isLoggedIn();
         $scope.user = UserService.getCurrentUser();
         $scope.revise = false;
-        
-        $scope.languages = MetaDataService.getLanguages();
+
+        LanguageService.getLanguages({},
+            function(result){
+                $scope.languages = result;
+            },
+            function(error){
+
+            }
+        );
         $scope.ageRanges = MetaDataService.getAgeRanges();
         
         $scope.checkValidity = function(){
@@ -65,6 +72,7 @@
          * @author Roman Eichenberger, Philipp Christen
          */
 		$scope.changeLanguage = function(lang) {
+            $scope.user.lang = lang;
             UserService.updateLanguage(
                 {
                     lang: lang
@@ -72,7 +80,6 @@
                 function(data){
                     $translate.use( data.lang ).then(
                         function ( lang ) {
-                            $scope.user.lang = lang;
                             $scope.$root.$broadcast( "languageChange", lang );
                         },
                         function ( lang ) {
@@ -367,7 +374,7 @@
             .then( function( goToRegistration ) {
                 $scope.isLoggedIn = UserService.isLoggedIn();
 
-                if ( goToRegistration ) {
+                if ( goToRegistration.state ) {
                     FollowUpData.data = $scope.getFollowUpData();
                     FollowUpData.userData = DiagnosisData.userData;
                     $location.url("/registration").replace();
@@ -404,7 +411,9 @@
         
         $scope.loginDialogCancel = function() { $mdDialog.cancel(); };
             
-        $scope.loginDialogRegister = function() { $mdDialog.hide( 1 ); };
+        $scope.loginDialogRegister = function() {
+            $mdDialog.hide( {state: true} );
+        };
 
         $scope.loginDialogSubmit = function() {
             
@@ -421,7 +430,7 @@
                     $scope.loggedIn = true;
                     $scope.$root.$broadcast("login", data);
                     $scope.user = {};
-                    $mdDialog.hide( 0 );
+                    $mdDialog.hide({state: false});
                 },
                 function( error ) {
                     if (error.errorType == 0)
@@ -477,12 +486,19 @@
      * @author Roman Eichenberger, Philipp Christen
      */
 	pocketdocControllers.controller('registrationController',
-            ['$scope', '$location', '$translate', '$window', '$mdDialog', 'FollowUpData', 'UserService', 'FollowupService', 'MetaDataService',
-    function( $scope ,  $location ,  $translate ,  $window ,  $mdDialog ,  FollowUpData ,  UserService ,  FollowupService ,  MetaDataService ) {
+            ['$scope', '$location', '$translate', '$window', '$mdDialog', 'FollowUpData', 'UserService', 'FollowupService', 'MetaDataService', 'LanguageService',
+    function( $scope ,  $location ,  $translate ,  $window ,  $mdDialog ,  FollowUpData ,  UserService ,  FollowupService ,  MetaDataService, LanguageService) {
 		
         $scope.acceptedTerms = false;
 		$scope.isProfile = UserService.getCurrentUser().user_id >= 0;
-        $scope.languages = MetaDataService.getLanguages();
+        LanguageService.getLanguages({},
+            function(result){
+                $scope.languages = result;
+            },
+            function(error){
+
+            }
+        );
         $scope.ageRanges = MetaDataService.getAgeRanges();
         
         $scope.dataInvalid = true;
@@ -563,6 +579,7 @@
          * @author Roman Eichenberger, Philipp Christen
          */
 		$scope.changeLanguage = function(lang) {
+            $scope.user.lang = lang;
             UserService.updateLanguage(
                 {
                     lang: lang
@@ -570,7 +587,6 @@
                 function(data){
                     $translate.use( data.lang ).then(
                         function ( lang ) {
-                            $scope.user.lang = lang;
                             $scope.$root.$broadcast( "languageChange", lang );
                         },
                         function ( lang ) {
@@ -894,7 +910,7 @@
         
         var currentUser = UserService.getCurrentUser();
 
-        $translate.use( currentUser.lang );
+        $translate.use( currentUser.code );
         
         if ( currentUser.user_id !== -1 ) {
             $scope.handleLogin( currentUser );
@@ -913,11 +929,19 @@
 	}]);
 
     pocketdocControllers.controller('HeaderController',
-            ['$scope', '$rootScope', '$window', '$mdDialog', '$timeout', '$mdSidenav', '$log', '$translate', '$location', 'UserService', 'MetaDataService', '$cookies',
-    function( $scope ,  $rootScope ,  $window ,  $mdDialog ,  $timeout ,  $mdSidenav ,  $log ,  $translate ,  $location ,  UserService ,  MetaDataService ,  $cookies ) {
+            ['$scope', '$rootScope', '$window', '$mdDialog', '$timeout', '$mdSidenav', '$log', '$translate', '$location', 'UserService', 'MetaDataService', 'LanguageService', '$cookies',
+    function( $scope ,  $rootScope ,  $window ,  $mdDialog ,  $timeout ,  $mdSidenav ,  $log ,  $translate ,  $location ,  UserService ,  MetaDataService , LanguageService,  $cookies ) {
 		
         $scope.lang = UserService.getLang();
-        $scope.languages = MetaDataService.getLanguages();
+
+        LanguageService.getLanguages({},
+            function(result){
+                $scope.languages = result;
+            },
+            function(error){
+
+            }
+        );
 		$scope.location = $location;
 		
 		$scope.$on( "login", function( event, data ) {
@@ -1042,7 +1066,7 @@
                     clickOutsideToClose: true
                 })
                 .then( function( goToRegistration) {
-                    if ( goToRegistration == 1 ) {
+                    if ( goToRegistration.state ) {
                         $location.url("/registration");
                     }
                 }, function() {

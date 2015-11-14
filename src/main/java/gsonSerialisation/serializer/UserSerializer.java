@@ -29,6 +29,7 @@ public class UserSerializer implements JsonSerializer<User> {
     final String GENDER = "gender";
     final String AGE_CATEGORY = "age_category";
     final String HISTORY_ID = "history_id";
+    final String LANGUAGE_ID = "lang";
 
     @Override
     public JsonElement serialize(User user, Type type, JsonSerializationContext jsonSerializationContext) {
@@ -40,7 +41,7 @@ public class UserSerializer implements JsonSerializer<User> {
         object.addProperty(EMAIL, user.getEmail());
         object.addProperty(GENDER, user.getGender());
         object.addProperty(AGE_CATEGORY, user.getAgeCategory());
-        object.addProperty(HISTORY_ID, user.getHistory().getId());
+        object.addProperty(LANGUAGE_ID, user.getLanguage().getId());
 
         return object;
 

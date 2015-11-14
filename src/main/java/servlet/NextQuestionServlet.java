@@ -46,6 +46,7 @@ public class NextQuestionServlet extends ServletAbstract {
 
             user = userManager.get(user.getId());
             req.getSession().setAttribute("user", user.getId());
+            userManager.deleteTemporaryUsers();
         }
 
         user = userManager.get(user.getId());
