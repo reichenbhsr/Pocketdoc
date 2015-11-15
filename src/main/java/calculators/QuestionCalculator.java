@@ -143,7 +143,6 @@ public class QuestionCalculator {
         /*
         Aktuelle Diagnosen Rangliste holen
          */
-//        final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getDiagnosisRankingList(user);
         final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getSortedRankingList();
 
         if (diagnosisRankingList.size() > 0) {
@@ -218,30 +217,7 @@ public class QuestionCalculator {
         return getQuestionDependence(question);
     }
 
-    /**
-     * Diese Methode sucht ob eine Frage von der letzten Antwort abhängig ist,
-     * in diesem Fall müsste diese Frage die nextQuestion sein.
-     *
-     * @param history Der Verlauf des Fragelaufs
-     * @return Die Frage von der die letze Antowrt abhängig ist oder null
-     */
-//    private Question getDependentQuestion(History history) {
-//        final Answer answer = history.getLastAnswer();
-//
-//        if (QuestionCalculator.questionsToAsk == null)
-//            QuestionCalculator.questionsToAsk = new Stack<Question>();
-//
-//        if (answer != null) {
-//            for(Question q: answer.getDependencyFrom())
-//                if (q != null)
-//                    QuestionCalculator.questionsToAsk.push(q);
-//        }
-//
-//        if (QuestionCalculator.questionsToAsk.size() >  0)
-//            return QuestionCalculator.questionsToAsk.pop();
-//
-//        return null;
-//    }
+
 
     /**
      * Die Methode sucht alle Questions die schon gestellt wurden.
@@ -358,41 +334,6 @@ public class QuestionCalculator {
         }
     }
 
-    /**
-     * Die Methode überprüft mit welcher Frage, der Scoreunterschied am grössten wäre.
-     * <p>
-     * Dabei muss die aktuelle Diagnose zuoberst sein. (Entspricht nicht den Anforderungen!)
-     *
-     * @param questions Die Fragen die noch nicht gestellt wurden
-     * @param user      der User
-     * @return Die beste Frage oder null
-     * @deprecated
-     */
-//    private Question getBestQuestionOld(final ArrayList<Question> questions, User user) {
-//        Question bestQuestion = null;
-//        //todo: getDiagnosis... wirft fehler wenn leer
-//        int difference = checkDifference(diagnosisCalculator.getDiagnosisRankingList(user), 0);
-//
-//        for (Question question : questions) {
-//
-//            //Check with Answer No
-//            TreeMap<Diagnosis, Integer> sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
-//            int tempDiff = checkDifference(sortedList, difference);
-//            if (tempDiff >= 0 && isDiagnosisOnTop(sortedList)) {
-//                difference = tempDiff;
-//                bestQuestion = question;
-//            }
-//
-//            //Check with Answer Yes
-//            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
-//            tempDiff = checkDifference(sortedList, difference);
-//            if (tempDiff >= 0 && isDiagnosisOnTop(sortedList)) {
-//                difference = tempDiff;
-//                bestQuestion = question;
-//            }
-//        }
-//        return bestQuestion;
-//    }
 
     /**
      * Diese Methode gibt die nächste Frage, nach der reihenfolge der Ids
@@ -444,32 +385,6 @@ public class QuestionCalculator {
             System.out.println("Question: " + question.getName() + " - " + difference);
         }
 
-
-//        for (Question question : questions) {
-//
-//            //Check with Answer No
-////            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerNo());
-//            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerNo()); // RE
-//
-//            if (sortedList.size() > 0) {
-//                int tempDiff = checkDifference(sortedList, difference);
-//                if (tempDiff >= 0) {
-//                    difference = tempDiff;
-//                    bestQuestion = question;
-//                }
-//            }
-//
-//            //Check with Answer Yes
-////            sortedList = diagnosisCalculator.getDiagnosisRankingList(user, question.getAnswerYes());
-//            sortedList = diagnosisCalculator.calculateAnswerToRankingListSorted(question.getAnswerYes()); // RE
-//            if (sortedList.size() > 0) {
-//                int tempDiff = checkDifference(sortedList, difference);
-//                if (tempDiff >= 0) {
-//                    difference = tempDiff;
-//                    bestQuestion = question;
-//                }
-//            }
-//        }
         return bestQuestion;
     }
 
@@ -542,26 +457,30 @@ public class QuestionCalculator {
     private void answerTypedQuestions(User user){
 
         Question q;
+        Answer givenAnswer;
         for(int i = informationQuestions.size() - 1; i > -1; i--){
+            givenAnswer = null;
             q = informationQuestions.get(i);
             switch(q.getType()){
                 case 1:
-                    diagnosisCalculator.addAnswerToRankingList((user.getGender() == 0) ? q.getAnswerYes() : q.getAnswerNo());
-                    informationQuestions.remove(q);
+                    givenAnswer = (user.getGender() == 0) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 case 2:
-                    diagnosisCalculator.addAnswerToRankingList((user.getAgeCategory() == 1) ? q.getAnswerYes() : q.getAnswerNo());
-                    informationQuestions.remove(q);
+                    givenAnswer = (user.getAgeCategory() == 1) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 case 3:
-                    diagnosisCalculator.addAnswerToRankingList((user.getAgeCategory() == 2) ? q.getAnswerYes() : q.getAnswerNo());
-                    informationQuestions.remove(q);
+                    givenAnswer = (user.getAgeCategory() == 2) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 case 4:
-                    diagnosisCalculator.addAnswerToRankingList((user.getAgeCategory() == 3) ? q.getAnswerYes() : q.getAnswerNo());
-                    informationQuestions.remove(q);
+                    givenAnswer = (user.getAgeCategory() == 3) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 default:
+            }
+            if (givenAnswer != null){
+                diagnosisCalculator.addAnswerToRankingList(givenAnswer);
+                informationQuestions = cleanOutDependentQuestions(informationQuestions, givenAnswer);
+                remainingQuestions = cleanOutDependentQuestions(remainingQuestions, givenAnswer);
+                informationQuestions.remove(q);
             }
         }
 
