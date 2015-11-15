@@ -139,12 +139,16 @@
 
         var updateLang = function( data, success, error ) { //  MODIFIED
             currentUser.lang = data.lang;
-            update(currentUser, function(){
+            if (currentUser.user_id == -1){
                 success({lang: LanguageService.getCodeById(data)});
-            }, function(){
-                error("Fehler beim Wechsel der Sprache");
-            });
-
+            }
+            else{
+                update(currentUser, function(){
+                    success({lang: LanguageService.getCodeById(data)});
+                }, function(){
+                    error("Fehler beim Wechsel der Sprache");
+                });
+            }
         };
 
         var isInUse = function( data, success, error ) { // MODIFIED
@@ -237,12 +241,12 @@
          * If all else fails, return German as the default language.
          *
          * @name getDefaultLang
-         * @return {String}
+         * @return {int}
          * @author Philipp Christen
          */
         var getDefaultLang = function() {
-            return 'de';
-        }
+            return 1;
+        };
 
         // on startup, save the fake data to the localstorage
         if ( !localStorage.getItem("users") ) {
@@ -507,7 +511,7 @@
 
     backend.factory('DiagnosisService', ['DataService', 'UtilService', 'UserService', function( DataService, UtilService, UserService ){
 
-        var langId = UtilService.getIdByLocale(UserService.getLang(), DataService.languages());
+        var langId = 1;//UtilService.getIdByLocale(UserService.getLang(), DataService.languages());
 
         // Placeholder
         var getAll = function(success, error ) {};
@@ -516,7 +520,7 @@
             var diagnosisData = {};
 
             // Get current language again
-            langId = UtilService.getIdByLocale(UserService.getLang(), DataService.languages());
+            langId = 1; //UtilService.getIdByLocale(UserService.getLang(), DataService.languages());
 
             // Set diagnosis
             diagnosisData.diagnosis = getDiagByID( diagID );
@@ -741,20 +745,20 @@
                 return obj[0];
             },
 
-            getCurrentLanguageObject : function(langId, dataArray){
-                var obj = $.grep(dataArray, function(e){ return e.lang == langId; });
-                return obj[0];
-            },
-
-            getLocaleById : function(langId, dataArray){
-                var obj = $.grep(dataArray, function(e){ return e.id == langId; });
-                return obj[0].locale;
-            },
-
-            getIdByLocale : function(localeId, dataArray){
-                var obj = $.grep(dataArray, function(e){ return e.locale == localeId; });
-                return obj[0].id;
-            },
+            //getCurrentLanguageObject : function(langId, dataArray){
+            //    var obj = $.grep(dataArray, function(e){ return e.lang == langId; });
+            //    return obj[0];
+            //},
+            //
+            //getLocaleById : function(langId, dataArray){
+            //    var obj = $.grep(dataArray, function(e){ return e.id == langId; });
+            //    return obj[0].locale;
+            //},
+            //
+            //getIdByLocale : function(localeId, dataArray){
+            //    var obj = $.grep(dataArray, function(e){ return e.locale == localeId; });
+            //    return obj[0].id;
+            //},
 
             delay : function(call, param){
                 setTimeout(function(){call(param);}, 500);

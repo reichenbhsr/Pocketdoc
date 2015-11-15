@@ -189,7 +189,7 @@
                     }
                 );
             }, function() {
-                RunService.getQuestionData({user_id: 6},
+                RunService.getQuestionData({user_id: $scope.user.user_id},
                     function(questionData){
 
                         $scope.currentQuestion = questionData.question;
@@ -214,11 +214,11 @@
                     typeof( questionData.action_suggestion ) !== "undefined" ) {
 
                     for(var i = 0; i < questionData.diagnosis.descriptions.length; i++)
-                        if (questionData.diagnosis.descriptions[i].language_id == 1)
+                        if (questionData.diagnosis.descriptions[i].language_id == $scope.user.lang)
                             questionData.diagnosis.description = questionData.diagnosis.descriptions[i].description;
 
                     for(var i = 0; i < questionData.action_suggestion.descriptions.length; i++)
-                        if (questionData.action_suggestion.descriptions[i].language_id == 1)
+                        if (questionData.action_suggestion.descriptions[i].language_id == $scope.user.lang)
                             questionData.action_suggestion.description = questionData.action_suggestion.descriptions[i].description;
 
                     $scope.showDialog(
