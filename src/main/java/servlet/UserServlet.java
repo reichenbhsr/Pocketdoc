@@ -119,23 +119,7 @@ public class UserServlet extends ServletAbstract {
         if (req.getSession().getAttribute("user") == null) {
             resp.getWriter().println("You are not authorized to view this data.");
         } else {
-//            String path = req.getPathInfo();
-//            if (path != null) {
-//                User user = new UserManager().get(getId(path));
-//
-//                final String answer = gson.toJson(user);
-//                sendResponse(answer, resp);
-//            } else {
-//                final ArrayList<User> users = new UserManager().getAll();
-//                JsonArray array = new JsonArray();
-//                if (users != null) {
-//                    for (User user : users) {
-//                        array.add(gson.toJsonTree(user));
-//                    }
-//                }
-//                final String response = gson.toJson(array);
-//                sendResponse(response, resp);
-//            }
+
             User user = new UserManager().get((Integer) req.getSession().getAttribute("user"));
 
             JsonObject jsonResponse = new JsonObject();
@@ -151,10 +135,7 @@ public class UserServlet extends ServletAbstract {
         if (req.getSession().getAttribute("user") == null) {
             resp.getWriter().println("You are not authorized to view this data.");
         } else {
-//            String path = req.getPathInfo();
-//            if (path != null) {
-//                new UserManager().remove(getId(path));
-//            }
+
             int id = (Integer) req.getSession().getAttribute("user");
             UserManager man = new UserManager();
             User user = man.get(id);

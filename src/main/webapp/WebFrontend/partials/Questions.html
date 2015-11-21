@@ -31,18 +31,18 @@
 				<div flex layout="column">
 					<md-input-container ng-show="loggedIn">
 						<label for="name">{{ 'reg_name' | translate }}:</label>
-						<input ng-model="user.name" id="name" ng-blur="checkValidity()">
+						<input ng-model="user.name" id="name" ng-blur="checkValidity()" ng-disabled="forCurrentUser">
 					</md-input-container>
 
 					<div class="profile-subtitle">{{ 'reg_sex' | translate }}:</div>
 
 					<div layout="row" class="profile-row" layout-sm="column">
-						<md-button id="gender-button-male" flex-gt-sm class="md-raised registration-button" ng-click="setGender(0); checkValidity();" ng-class="{'md-primary': user.gender == 0}">
+						<md-button id="gender-button-male" flex-gt-sm class="md-raised registration-button" ng-click="setGender(0); checkValidity();" ng-class="{'md-primary': user.gender == 0}" ng-disabled="forCurrentUser">
 							<md-icon md-svg-icon="images/icons/gender-male.svg"></md-icon>
 							<span>{{ 'reg_sex_male' | translate }}</span>
 						</md-button>
 
-						<md-button id="gender-button-female" flex-gt-sm class="md-raised registration-button" ng-click="setGender(1); checkValidity();" ng-class="{'md-primary': user.gender == 1}">
+						<md-button id="gender-button-female" flex-gt-sm class="md-raised registration-button" ng-click="setGender(1); checkValidity();" ng-class="{'md-primary': user.gender == 1}" ng-disabled="forCurrentUser">
 							<md-icon md-svg-icon="images/icons/gender-female.svg"></md-icon>
 							<span>{{ 'reg_sex_female' | translate }}</span>
 						</md-button>
@@ -50,7 +50,7 @@
 
 					<div class="profile-subtitle">{{ 'reg_ageRange' | translate }}:</div>
 
-					<md-select placeholder="{{ 'reg_defaultValueSelect' | translate }}" ng-model="user.age_category" class="age-category" ng-change="checkValidity();">
+					<md-select placeholder="{{ 'reg_defaultValueSelect' | translate }}" ng-model="user.age_category" class="age-category" ng-change="checkValidity();" ng-disabled="forCurrentUser">
 						<md-option
 							ng-repeat="AR in ageRanges"
 							value="{{AR.id}}">

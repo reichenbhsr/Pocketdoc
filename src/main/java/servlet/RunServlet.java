@@ -6,10 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import managers.RunManager;
 import managers.UserManager;
-import models.ActionSuggestion;
-import models.Answer;
-import models.Diagnosis;
-import models.User;
+import models.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -49,12 +46,22 @@ public class RunServlet extends ServletAbstract {
             if (path != null) {
                 User user = new UserManager().get(getId(path));
 
-                JsonObject paramValue = getRequest(req);
-                Answer answer = gson.fromJson(paramValue, Answer.class);
+                if (user == null)
+                {
+                    // Temporary User got removed
+                    errorCode = 1;
+                }
+                else
+                {
+                    JsonObject paramValue = getRequest(req);
+                    Answer answer = gson.fromJson(paramValue.get("answer"), Answer.class);
+                    Question question = gson.fromJson(paramValue.get("question"), Question.class);
+                    req.getSession().setAttribute("question", question.getId());
 
-                new RunManager(user).addAnswer(answer);
+                    new RunManager(user).addAnswer(answer, question);
 
-                errorCode = -1;
+                    errorCode = -1;
+                }
             }
 
             JsonObject jsonResponse = new JsonObject();

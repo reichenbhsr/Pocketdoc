@@ -127,7 +127,7 @@
 							type="button"
 							class="md-icon-button"
 							aria-label="{{language.name}}"
-							ng-click="changeLanguage( language.id )"
+							ng-click="changeLanguage( language.id ); checkValidity();"
 							ng-class="{'md-primary md-raised': user.lang ==  language.id }">
 							<md-icon md-svg-icon="images/icons/{{ language.code }}.svg" class="s36"></md-icon>
 						</md-button>
@@ -136,34 +136,6 @@
 				 
 			</md-card-content>
 		</md-card>
-	
-		<!--
-		<md-card ng-show="isProfile" >
-			<md-card-content>
-
-				<div class="profile-title" flex>{{ 'reg_actions' | translate }}:</div>
-
-				<div flex layout="row" layout-align="center center">
-					<md-button
-						class="md-raised md-primary"
-						ng-click="logout()"
-						type="button"
-						flex>
-						{{ 'header_logout' | translate }}
-					</md-button>
-					
-					<md-button
-						class="md-raised md-warn"
-						ng-click="deleteClick()"
-						type="button"
-						flex>
-						{{ 'reg_deleteProfile' | translate }}
-					</md-button>
-				</div>
-
-			</md-card-content>
-		</md-card>
-		-->
 	</div>
 
 	<div class="fixedFooter">

@@ -3,6 +3,7 @@ package database.mappers.intermediateClassMappers;
 import database.mappers.DatabaseConnector;
 import models.Answer;
 import models.History;
+import models.Question;
 import models.User;
 
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import java.util.HashSet;
  */
 public class AnswerToHistoryConnector extends DatabaseConnector {
 
-    public int create(Answer answer, History history){
+    public int create(Answer answer, History history, Question question){
 
         try{
             establishConnection();
@@ -30,7 +31,7 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO answers_to_histories (answer, history) VALUES("+ answer.getId() + ", " + history.getId() +");";
+                SQL = "INSERT INTO answers_to_histories (answer, history, question) VALUES(" + ((answer.getId() > -1) ? answer.getId() : null) + ", " + history.getId() + ", " + question.getId() +");";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
                 int id = 0;
@@ -78,6 +79,25 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
         }
 
         return answers;
+    }
+
+    public int deleteAnswersAfterCurrent(int questionId, int historyId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "DELETE FROM answers_to_histories WHERE id >= (SELECT id FROM answers_to_histories WHERE question = "+ questionId +" AND history = "+ historyId +")" +
+                         " AND history = "+ historyId +";";
+
+            return stmt.executeUpdate(SQL);
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete answers after current to history");
+        }
+
+        return 0;
     }
 
     public void delete(int historyId){

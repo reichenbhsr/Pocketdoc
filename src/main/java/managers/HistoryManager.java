@@ -4,6 +4,7 @@ import database.mappers.HistoryConnector;
 import database.mappers.intermediateClassMappers.AnswerToHistoryConnector;
 import models.Answer;
 import models.History;
+import models.Question;
 
 import java.util.ArrayList;
 
@@ -65,14 +66,20 @@ public class HistoryManager implements BasicManager<History> {
         }
     }
 
-    public void addAnswerToHistory(Answer answer, History history){
+    public void addAnswerToHistory(Answer answer, History history, Question question){
 
         History oldHistory = historyMapper.read(history.getId());
         if (oldHistory == null) {
             throw new IllegalArgumentException("History " + history.getId() + " doesn't exist");
         } else {
-            answerToHistoryMapper.create(answer, history);
+            answerToHistoryMapper.create(answer, history, question);
         }
+    }
+
+    public boolean changeGivenAnswer(Question currentQuestion, History history){
+
+        int affectedRows = answerToHistoryMapper.deleteAnswersAfterCurrent(currentQuestion.getId(), history.getId());
+        return affectedRows > 0;
     }
 
     public void clearAnswersForHistory(History history){

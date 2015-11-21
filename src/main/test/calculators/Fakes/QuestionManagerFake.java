@@ -1,6 +1,5 @@
 package calculators.Fakes;
 
-import database.mappers.DatabaseMapper;
 import managers.QuestionManager;
 import models.Question;
 import models.User;

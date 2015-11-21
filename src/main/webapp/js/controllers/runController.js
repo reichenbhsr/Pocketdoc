@@ -25,23 +25,24 @@ angular.module('pocketDocApp').controller('runController', function ($scope, $ht
          */
         var loadQuestion = function () {
             return nextQuestionFactory.get({Id: $scope.userId}, function (result) {
-                result.answer_no = result.question.answer_no;
-                result.answer_yes = result.question.answer_yes;
-                result.question_id = result.question.question_id;
-                result.descriptions = result.question.descriptions;
-                result.name = result.question.name;
-                result.is_symptom = result.question.is_symptom;
-
-                if (angular.isUndefined(result.descriptions)) {
+                if (angular.isUndefined(result.question)){
                     finish();
                 }
-                else {
+                else{
+                    result.answer_no = result.question.answer_no;
+                    result.answer_yes = result.question.answer_yes;
+                    result.question_id = result.question.question_id;
+                    result.descriptions = result.question.descriptions;
+                    result.name = result.question.name;
+                    result.is_symptom = result.question.is_symptom;
+
                     result.descriptions.forEach(function (description) {
                         if (angular.equals(description.language_name, "Deutsch")) {
                             result.german_description = description.description;
                         }
                     });
                 }
+
                 loadTestRunResults();
             });
         }
@@ -317,7 +318,10 @@ angular.module('pocketDocApp').controller('runController', function ($scope, $ht
             question.answer_id = answerId;
             $scope.oldQuestions.push(question);
 
-            var query = {answer_id: answerId};
+            var query = {
+                answer: {answer_id: answerId},
+                question: question
+            };
             var put = $http.put("/run/user/" + $scope.userId, $filter('json')(query));
             $scope.question = null;
             put.then(function (result) {

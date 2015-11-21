@@ -50,7 +50,7 @@
                 {
                     currentUser = JSON.parse(result.user);
                     currentUser.code = LanguageService.getCodeById(currentUser);
-                    success({name: result.name, lang: LanguageService.getCodeById(result)});
+                    success({name: currentUser.name, lang: currentUser.code});
                 }
                 else if (result.errorType = 1)
                 {
@@ -350,14 +350,21 @@
              * @author Roman Eichenberger, Philipp Christen
              */
             var answerQ = function( data, success, error ) {    // MODIFIED
+                var response = {
+                    answer: data.answer,
+                    question: data.question
+                };
 
-                runFactory.sendAnswer({Id: user.user_id}, data.answer, function(result){
+                runFactory.sendAnswer({Id: user.user_id}, response, function(result){
                     console.log(result);
                     if (result.ErrorCode == -1){
                         getQ({user_id: user.user_id}, success, error);
                     }
                     else if (result.ErrorCode == 0){
                         error("Fehler beim Speichern der Antwort");
+                    }
+                    else if (result.ErrorCode == 1){
+                        error("Session abgelaufen. Bitte neu starten!")
                     }
                 });
 
@@ -381,7 +388,7 @@
 
                         questionResult.id = currentQuestion.question_id;
                         for (var i = 0; i < currentQuestion.descriptions.length; i++)
-                            if(currentQuestion.descriptions[i].language_id == UserService.getCurrentUser().lang)
+                            if(currentQuestion.descriptions[i].language_id == user.lang)
                                 questionResult.description = currentQuestion.descriptions[i].description;
 
                         var answerTexts = [];
@@ -392,17 +399,19 @@
                                 desc : "Ja",
                                 style: "md-accent",
                                 answer: currentQuestion.answer_yes,
-                                type: 0
+                                type: 0,
+                                question: currentQuestion
                             }
                         );
 
                         answerTexts.push(
                             {
-                                id : currentQuestion.answer_yes.answer_id,
+                                id : -1,
                                 desc : "Weiss nicht",
                                 style: "md-primary",
-                                answer: currentQuestion.answer_yes,
-                                type: 2
+                                answer: { answer_id: -1},
+                                type: 2,
+                                question: currentQuestion
                             }
                         );
 
@@ -412,7 +421,8 @@
                                 desc : "Nein",
                                 style: "md-warn",
                                 answer: currentQuestion.answer_no,
-                                type: 1
+                                type: 1,
+                                question: currentQuestion
                             }
                         );
 

@@ -190,4 +190,9 @@ public class QuestionManager implements BasicManager<Question> {
     public Question getAndFetch(Question question) {
         return questionMapper.read(question.getId());
     }
+
+    public void recalculate(User user){
+        QuestionCalculator calculator = new QuestionCalculator();
+        calculator.recalculate(user);
+    }
 }

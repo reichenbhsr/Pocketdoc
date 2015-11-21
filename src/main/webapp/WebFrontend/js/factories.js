@@ -1,63 +1,6 @@
 'use strict';
 
-var pocketdocFactories = angular.module('pocketdocFactories', []),
-    root = "http://pockedoc.herokuapp.com";
-
-/* Factories */
-//pocketdocFactories.factory("nextQuestionFactory", function ($resource) {
-//    var baseUrl = root + "/nextQuestion/user/:Id";
-//    return $resource(
-//        baseUrl, {Id: '@Id'},{
-//            'get': { method: 'GET'}
-//        }
-//    );
-//});
-//
-//pocketdocFactories.factory("runFactory", function($http, $resource){
-//    var factory = {};
-//
-//    var baseUrl = root+"/run/user/:Id";
-//
-//    return $resource(
-//        baseUrl, { Id: '@Id' },{
-//            'sendAnswer': { method:'PUT' },
-//            'resetRun': {method: 'DELETE'},
-//            'getDiagnosis': {method: 'GET'}
-//        }
-//    );
-//});
-
-pocketdocFactories.factory("languageFactory", function ($resource) {
-    var baseUrl = "../language";
-    return $resource(
-        baseUrl, {},{
-            'getLanguages': { method: 'GET'}
-        }
-    );
-});
-
-pocketdocFactories.factory("runFactory", function($http, $resource){
-    var factory = {};
-
-    var baseUrl = "../run/user/:Id";
-
-    return $resource(
-        baseUrl, { Id: '@Id' },{
-            'sendAnswer': { method:'PUT' },
-            'resetRun': {method: 'DELETE'},
-            'getDiagnosis': {method: 'GET'}
-        }
-    );
-});
-
-pocketdocFactories.factory("nextQuestionFactory", function ($resource) {
-    var baseUrl = "../nextQuestion/user/:Id";
-    return $resource(
-        baseUrl, {},{
-            'getNextQuestion': { method: 'POST'}
-        }
-    );
-});
+var pocketdocFactories = angular.module('pocketdocFactories', []);
 
 pocketdocFactories.factory("loginFactory", function($http, $resource){
 
@@ -89,6 +32,37 @@ pocketdocFactories.factory("userFactory", function($http, $resource){
             'updateUser': {method: 'PUT'},
             'getUser': {method: 'GET'},
             'deleteUser': {method: 'DELETE'}
+        }
+    );
+});
+
+pocketdocFactories.factory("runFactory", function($http, $resource){
+    var factory = {};
+
+    var baseUrl = "../run/user/:Id";
+
+    return $resource(
+        baseUrl, { Id: '@Id' },{
+            'sendAnswer': { method:'PUT' },
+            'resetRun': {method: 'DELETE'}
+        }
+    );
+});
+
+pocketdocFactories.factory("nextQuestionFactory", function ($resource) {
+    var baseUrl = "../nextQuestion/user/:Id";
+    return $resource(
+        baseUrl, {},{
+            'getNextQuestion': { method: 'POST'}
+        }
+    );
+});
+
+pocketdocFactories.factory("languageFactory", function ($resource) {
+    var baseUrl = "../language";
+    return $resource(
+        baseUrl, {},{
+            'getLanguages': { method: 'GET'}
         }
     );
 });

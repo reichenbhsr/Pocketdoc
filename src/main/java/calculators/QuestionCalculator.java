@@ -80,15 +80,6 @@ public class QuestionCalculator {
             answerTypedQuestions(user);
         }
 
-        // Antwort dem Calculator hinzufügen
-        if (history.getLastAnswer() != null) {
-            diagnosisCalculator.addAnswerToRankingList(history.getLastAnswer());
-            if (informationQuestions.size() > 0)
-                informationQuestions = cleanOutDependentQuestions(informationQuestions, history.getLastAnswer());
-
-            remainingQuestions = cleanOutDependentQuestions(remainingQuestions, history.getLastAnswer());
-        }
-
         topDiagnosis = diagnosisCalculator.getDiagnosis(); // RE
 
         // Gibts abhängige Fragen, die als nächsts gestellt werden müssen?
@@ -124,6 +115,49 @@ public class QuestionCalculator {
         return bestQuestion;
     }
 
+    /**
+     * Diese Methode berechnet die restlichen Fragen und Scores neu, wenn bspw. eine bereits beantwortete Frage neu beantwortet wird.
+     */
+    public void recalculate(User user){
+
+        Set<Answer> answers = user.getHistory().getAnswers();
+
+        informationQuestions = getInformaticQuestions(); // RE
+        remainingQuestions = getQuestionsToAsk(); // RE
+        remainingForcedQuestions = new Stack<Question>();
+
+        DiagnosisCalculator.reset();
+
+        for(Answer answer: answers){
+            diagnosisCalculator.addAnswerToRankingList(answer);
+            if (informationQuestions.size() > 0)
+                informationQuestions = cleanOutDependentQuestions(informationQuestions, answer);
+
+            remainingQuestions = cleanOutDependentQuestions(remainingQuestions, answer);
+        }
+
+    }
+
+    public void addAnswer(Question question, Answer answer){
+
+        if (answer.getId() > -1){
+            diagnosisCalculator.addAnswerToRankingList(answer);
+
+            if (informationQuestions.size() > 0)
+                informationQuestions = cleanOutDependentQuestions(informationQuestions, answer);
+
+            remainingQuestions = cleanOutDependentQuestions(remainingQuestions, answer);
+        }
+        else {
+
+            if (informationQuestions.size() > 0)
+                informationQuestions = cleanOutDependentQuestions(informationQuestions, question);
+
+            remainingQuestions = cleanOutDependentQuestions(remainingQuestions, question);
+
+        }
+
+    }
 
     /**
      * Diese Methode wird gebraucht um die Settings zu überprüfen
@@ -301,6 +335,15 @@ public class QuestionCalculator {
         return questionsToCheck;
     }
 
+    private ArrayList<Question> cleanOutDependentQuestions(ArrayList<Question> questions, Question answeredQuestion){
+
+        ArrayList<Question> questionsToCheck = (ArrayList<Question>) questions.clone();
+
+        questionsToCheck.remove(answeredQuestion);
+
+        return questionsToCheck;
+    }
+
     private Question checkForceDependentQuestion(Answer givenAnswer){   // RE
 
         for(Question q: givenAnswer.getDependencyFrom()){
@@ -382,7 +425,6 @@ public class QuestionCalculator {
                 bestQuestion = question;
             }
 
-            System.out.println("Question: " + question.getName() + " - " + difference);
         }
 
         return bestQuestion;
@@ -392,6 +434,9 @@ public class QuestionCalculator {
         int tempDiff = 0;
         Map.Entry<Diagnosis, Integer> top = diagnosisCalculator.getTopDiagnosis();
         Map.Entry<Diagnosis, Integer> second = diagnosisCalculator.getSecondDiagnosis();
+
+        if (top == null || second == null)
+            return 0;
 
         int topValue = top.getValue();
         int secondValue = second.getValue();
@@ -478,6 +523,7 @@ public class QuestionCalculator {
             }
             if (givenAnswer != null){
                 diagnosisCalculator.addAnswerToRankingList(givenAnswer);
+                historyManager.addAnswerToHistory(givenAnswer, user.getHistory(), givenAnswer.getAnswerOf());
                 informationQuestions = cleanOutDependentQuestions(informationQuestions, givenAnswer);
                 remainingQuestions = cleanOutDependentQuestions(remainingQuestions, givenAnswer);
                 informationQuestions.remove(q);

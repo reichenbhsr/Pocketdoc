@@ -1,5 +1,6 @@
 package managers;
 
+import calculators.QuestionCalculator;
 import models.*;
 
 import java.util.Set;
@@ -49,17 +50,24 @@ public class RunManager {
      *
      * @param answer Die vom User beantwortete Antwort
      */
-    public void addAnswer(Answer answer) {
-        Answer newAnswer = answerManager.get(answer.getId());
+    public void addAnswer(Answer answer, Question question) {
+        if (answer.getId() > -1)
+        {
+            answer = answerManager.get(answer.getId());
+        }
+
         final History history = historyManager.getAndFetch(user.getHistory());
 
-        Set<Answer> answers = history.getAnswers();
-        answers.add(newAnswer);
-        history.setLastAnswer(newAnswer);
+        boolean answerChanged = historyManager.changeGivenAnswer(question, user.getHistory());
+        if (answerChanged)
+            questionManager.recalculate(userManager.get(user.getId()));
 
-        userManager.update(user);
-        historyManager.addAnswerToHistory(newAnswer, history);
+        history.setLastAnswer(answer);
+        historyManager.addAnswerToHistory(answer, history, question);
         historyManager.update(history);
+
+        QuestionCalculator calc = new QuestionCalculator();
+        calc.addAnswer(question, answer);
     }
 
     /**

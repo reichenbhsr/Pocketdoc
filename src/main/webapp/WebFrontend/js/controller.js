@@ -10,7 +10,7 @@
             isFollowUp = followUp != null && followUp != false;
 
         $scope.isPreDiag = !isFollowUp; // Only show PreDiag when NOT in FollowUp-Mode
-        $scope.forCurrentUser = true;
+        $scope.forCurrentUser = UserService.isLoggedIn();
         $scope.isLoggedIn = UserService.isLoggedIn();
         $scope.user = UserService.getCurrentUser();
         $scope.revise = false;
@@ -73,24 +73,24 @@
          */
 		$scope.changeLanguage = function(lang) {
             $scope.user.lang = lang;
-            UserService.updateLanguage(
-                {
-                    lang: lang
-                },
-                function(data){
-                    $translate.use( data.lang ).then(
-                        function ( lang ) {
-                            $scope.$root.$broadcast( "languageChange", lang );
-                        },
-                        function ( lang ) {
-                            console.log("Error occured while changing language");
-                        }
-                    );
-                },
-                function(error){
-                    alert(error);
-                }
-            );
+            //UserService.updateLanguage(
+            //    {
+            //        lang: lang
+            //    },
+            //    function(data){
+            //        $translate.use( data.lang ).then(
+            //            function ( lang ) {
+            //                $scope.$root.$broadcast( "languageChange", lang );
+            //            },
+            //            function ( lang ) {
+            //                console.log("Error occured while changing language");
+            //            }
+            //        );
+            //    },
+            //    function(error){
+            //        alert(error);
+            //    }
+            //);
 		};
         
         /**
@@ -108,6 +108,16 @@
                 $scope.user,
                 function( questionData ) {
                     // Success
+
+                    $translate.use( LanguageService.getCodeById($scope.user) ).then(
+                        function ( lang ) {
+                            $scope.$root.$broadcast( "languageChange", lang );
+                        },
+                        function ( lang ) {
+                            console.log("Error occured while changing language");
+                        }
+                    );
+
                     $scope.currentQuestion = questionData.question;
                     $scope.loading = false;
                     $scope.hidden = false;
@@ -248,26 +258,16 @@
                 });
             };
             
-            if (!$scope.revise) {
+//            if (!$scope.revise) {
                 RunService.answerQuestion(
                     {
-                        question: $scope.currentQuestion,
+                        question: givenAnswer.question,
                         answerId : givenAnswer.id,
                         answer: givenAnswer.answer
                     },
                     success,
                     error
                 );
-            } else {
-                RunService.changeAnswer(
-                    {
-                        questionId: $scope.currentQuestion.id,
-                        answerId: givenAnswer.id
-                    },
-                    success,
-                    error
-                );
-            }
         };
 
         /**
@@ -522,6 +522,7 @@
             $scope.dataInvalid = typeof($scope.user.name) === "undefined" || $scope.dataInvalid;
             $scope.dataInvalid = typeof($scope.user.gender) === "undefined" || $scope.dataInvalid;
             $scope.dataInvalid = typeof($scope.user.age_category) === "undefined" || $scope.dataInvalid;
+            $scope.dataInvalid = typeof($scope.user.lang) === "undefined" || $scope.dataInvalid;
             $scope.dataInvalid = $scope.registrationForm.$invalid || $scope.dataInvalid;
             
         };
@@ -580,24 +581,24 @@
          */
 		$scope.changeLanguage = function(lang) {
             $scope.user.lang = lang;
-            UserService.updateLanguage(
-                {
-                    lang: lang
-                },
-                function(data){
-                    $translate.use( data.lang ).then(
-                        function ( lang ) {
-                            $scope.$root.$broadcast( "languageChange", lang );
-                        },
-                        function ( lang ) {
-                            console.log("Error occured while changing language");
-                        }
-                    );
-                },
-                function(error){
-                    alert(error);
-                }
-            );
+            //UserService.updateLanguage(
+            //    {
+            //        lang: lang
+            //    },
+            //    function(data){
+            //        $translate.use( data.lang ).then(
+            //            function ( lang ) {
+            //                $scope.$root.$broadcast( "languageChange", lang );
+            //            },
+            //            function ( lang ) {
+            //                console.log("Error occured while changing language");
+            //            }
+            //        );
+            //    },
+            //    function(error){
+            //        alert(error);
+            //    }
+            //);
 		};
 		
         /**
@@ -644,19 +645,6 @@
                 $scope.user,
                 function( data ) {
                     $scope.$root.$broadcast("login", data);  
-                    
-                    if (typeof(FollowUpData.data) !== 'undefined' )
-                    {
-                        FollowUpData.data.user = data.id;
-                        FollowupService.registerFollowup(
-                            FollowUpData.data,
-                            function(data){},
-                            function(error){
-                                alert(error);
-                            }
-                        );
-                    }
-                    
                     $window.history.back(); //$location.url('/');
                 },
                 function( error ) {
@@ -674,7 +662,7 @@
             UserService.updateUser(
 				$scope.user,
 				function( data ){
-					$translate.use( $scope.user.lang );
+					$translate.use( data.lang );
 					$window.history.back(); // $location.url('/');
 				},
 				function( error ){
