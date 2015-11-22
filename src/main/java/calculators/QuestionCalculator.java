@@ -338,8 +338,15 @@ public class QuestionCalculator {
     private ArrayList<Question> cleanOutDependentQuestions(ArrayList<Question> questions, Question answeredQuestion){
 
         ArrayList<Question> questionsToCheck = (ArrayList<Question>) questions.clone();
+        Answer answerDependencyToRemove = answeredQuestion.getAnswerYes();
 
         questionsToCheck.remove(answeredQuestion);
+
+        for(Question q: answerDependencyToRemove.getDependencyFrom()){
+            questionsToCheck.remove(q);
+            questionsToCheck = cleanOutDependentQuestions(questionsToCheck, q.getAnswerYes());
+            questionsToCheck = cleanOutDependentQuestions(questionsToCheck, q.getAnswerNo());
+        }
 
         return questionsToCheck;
     }

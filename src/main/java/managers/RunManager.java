@@ -57,6 +57,7 @@ public class RunManager {
         }
 
         final History history = historyManager.getAndFetch(user.getHistory());
+        question = questionManager.get(question.getId());
 
         boolean answerChanged = historyManager.changeGivenAnswer(question, user.getHistory());
         if (answerChanged)
