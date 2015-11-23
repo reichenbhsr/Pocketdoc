@@ -587,27 +587,18 @@
         };
     }]);
 
-    backend.factory('FollowupService', [ '_', 'DataService', 'UtilService', 'UserService', 'RunService', function(  _ ,  DataService ,  UtilService ,  UserService ,  RunService ){
+    backend.factory('FollowupService', [ '_', 'DataService', 'UtilService', 'UserService', 'RunService', 'followupFactory', function(  _ ,  DataService ,  UtilService ,  UserService ,  RunService, followupFactory){
 
         var save = function ( followUps ) {
             localStorage.setItem( "followUps", angular.toJson( followUps ) );
         };
 
         var register = function ( data ) {
-            var followUps = getAll();
+            console.log(data);
+            followupFactory.createFollowup(data, function(result){
 
-            // check if other followUps already exist
-            if ( followUps != null && followUps.length > 0 ) {
-                //if so, get highest ID and add 1.
-                data.id = _.max(followUps, function(fUp){ return fUp.id; }).id + 1;
-            } else {
-                followUps = [];
-                data.id = 0;	//else: first followUp!
-            }
+            });
 
-            followUps.push( data );
-
-            save( followUps );
         };
 
         /**
@@ -618,9 +609,9 @@
          * @param  {Number} followUpID
          * @author Philipp Christen
          */
-        var start = function( followUpID ){
-            RunService.setFollowUp( getByID( followUpID ) );
-            del( followUpID, function(){}, function(){} );
+        var start = function( followUp ){
+            RunService.setFollowUp( followUp );
+            del( followUp.followup_id, function(){}, function(){} );
         };
 
         /**
@@ -633,16 +624,11 @@
          * @author Philipp Christen
          */
         var del = function(followUpID, success, error ) {
-            var followUps = getAll();
 
-            // removes the followUp with the passed ID
-            followUps = _.reject( followUps, function(fUp){
-                return fUp.id === followUpID;
+            followupFactory.removeFollowup({Id: followUpID}, {Id: followUpID}, function(){
+                success(followUpID);
             });
 
-            save( followUps );
-
-            UtilService.delay(success, followUpID );
         };
 
         /**
@@ -675,11 +661,12 @@
          * @return {Array}
          * @author Philipp Christen
          */
-        var getByUserID = function( userID ) {
-            var followUps = _.filter( getAll(), function( fUp ){
-                return fUp.user === userID;
+        var getByUserID = function( data, success, error ) {
+
+            followupFactory.getFollowupsForUser({Id: data.user_id}, {}, function(result){
+                success(result.followups);
             });
-            return followUps.reverse();
+
         };
 
         /**

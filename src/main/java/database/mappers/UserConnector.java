@@ -246,7 +246,7 @@ public class UserConnector extends DatabaseConnector {
             java.util.Date border = new java.util.Date(new java.util.Date().getTime() - 1000 * 60 * 30);
 
             Statement stmt = connection.createStatement();
-            String SQL = "DELETE FROM Users WHERE is_temporary AND last_activity <  '" + border + "';";
+            String SQL = "DELETE FROM users WHERE is_temporary AND last_activity <  '" + border + "';";
 
             stmt.execute(SQL);
         }

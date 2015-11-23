@@ -73,24 +73,6 @@
          */
 		$scope.changeLanguage = function(lang) {
             $scope.user.lang = lang;
-            //UserService.updateLanguage(
-            //    {
-            //        lang: lang
-            //    },
-            //    function(data){
-            //        $translate.use( data.lang ).then(
-            //            function ( lang ) {
-            //                $scope.$root.$broadcast( "languageChange", lang );
-            //            },
-            //            function ( lang ) {
-            //                console.log("Error occured while changing language");
-            //            }
-            //        );
-            //    },
-            //    function(error){
-            //        alert(error);
-            //    }
-            //);
 		};
         
         /**
@@ -337,11 +319,11 @@
          */
         $scope.addFollowUp = function() {
             // only save follow-up when logged in!
-            var userID = UserService.getCurrentUser().id;
+            var userID = UserService.getCurrentUser().user_id;
 
             if ( userID > -1 ) {
                 var followUpData = $scope.getFollowUpData();
-                followUpData.user = userID;
+                followUpData.user_id = userID;
                 followUpData.newest = true;
                 
                 FollowupService.registerFollowup( followUpData );
@@ -353,10 +335,9 @@
         
         $scope.getFollowUpData = function(){
             return {
-                "oldDiagnosis": $scope.diagnosis.id,
-                "oldActionSuggestion": $scope.actionSuggestion.id,
-                "startQuestion": 5,
-                "timeAdded": Date.now()
+                "diagnosis_id": $scope.diagnosis.diagnosis_id,
+                "action_suggestion_id": $scope.actionSuggestion.action_suggestion_id,
+                "timestamp": Date.now()
             };  
         };
 
@@ -581,24 +562,6 @@
          */
 		$scope.changeLanguage = function(lang) {
             $scope.user.lang = lang;
-            //UserService.updateLanguage(
-            //    {
-            //        lang: lang
-            //    },
-            //    function(data){
-            //        $translate.use( data.lang ).then(
-            //            function ( lang ) {
-            //                $scope.$root.$broadcast( "languageChange", lang );
-            //            },
-            //            function ( lang ) {
-            //                console.log("Error occured while changing language");
-            //            }
-            //        );
-            //    },
-            //    function(error){
-            //        alert(error);
-            //    }
-            //);
 		};
 		
         /**
@@ -799,9 +762,9 @@
             $mdDialog.show( confirm ).then(
                 function() {
                     FollowupService.deleteFollowup(
-                        followUp.id,
+                        followUp.followup_id,
                         function( removedID ){
-                            $scope.followUps = _.reject( $scope.followUps, function(fUp){ return fUp.id === removedID; });
+                            $scope.followUps = _.reject( $scope.followUps, function(fUp){ return fUp.followup_id === removedID; });
                         },
                         function( error ){
                             alert( error );
@@ -825,7 +788,7 @@
          * @author Philipp Christen
          */
         $scope.startFollowUp = function ( followUp, $event ) {
-            FollowupService.startFollowup( followUp.id );
+            FollowupService.startFollowup( followUp );
             $location.url( '/run' );
         };
 
@@ -840,7 +803,14 @@
         $scope.handleLogin = function ( user ) {
             $scope.userName = user.name;
             $scope.loggedIn = true;
-            $scope.followUps = FollowupService.getFollowupsForUser( user.id );
+            FollowupService.getFollowupsForUser(user,
+                function(result){
+                    $scope.followUps = result;
+                },
+                function(error){
+
+                }
+            );
             currentUser = user;
         };
 
@@ -1092,7 +1062,7 @@
         var start = function() {
             var existingUser = UserService.getCurrentUser();
 
-            if ( existingUser.id === -1 ) {
+            if ( existingUser.user_id === -1 ) {
                 var cookieUser = $cookies.pocketDocUser;
                 
                 if ( cookieUser && cookieUser !== "null" ) {

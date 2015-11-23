@@ -58,6 +58,17 @@ pocketdocFactories.factory("nextQuestionFactory", function ($resource) {
     );
 });
 
+pocketdocFactories.factory("followupFactory", function ($resource) {
+    var baseUrl = "../followup/:Id";
+    return $resource(
+        baseUrl, {},{
+            'createFollowup' : { method: 'POST' },
+            'getFollowupsForUser': { method: 'GET'},
+            'removeFollowup' : { method: 'DELETE' }
+        }
+    );
+});
+
 pocketdocFactories.factory("languageFactory", function ($resource) {
     var baseUrl = "../language";
     return $resource(

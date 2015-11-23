@@ -22,12 +22,12 @@
 				<md-list layout="column" layout-padding id="followUpList" class="">
 					<md-list-item class="followUp" ng-repeat="followup in followUps" md-swipe-left="deleteFollowUp( followup, event)" ng-class="{'newly-added' : followup.newest}" layout="row">
 
-						<div flex class="md-list-item-text followUpDesc" ng-class="{'notReady': !isFollowUpReady( followup.timeAdded ) }" layout="column">
+						<div flex class="md-list-item-text followUpDesc" ng-class="{'notReady': !isFollowUpReady( followup.timestamp ) }" layout="column">
 							<p>
-								<span ng-show="isFollowUpReady( followup.timeAdded)">{{ followup.timeAdded | date:'dd.MM.yyyy HH:mm' }}</span>
-								<span ng-show="!isFollowUpReady( followup.timeAdded)">{{ 'main_followUp_remaining' | translate }} {{ getRemainingTime( followup.timeAdded ) | date:'HH:mm:ss' }}</span>
+								<span ng-show="isFollowUpReady( followup.timestamp)">{{ followup.timestamp | date:'dd.MM.yyyy HH:mm' }}</span>
+								<span ng-show="!isFollowUpReady( followup.timestamp)">{{ 'main_followUp_remaining' | translate }} {{ getRemainingTime( followup.timestamp ) | date:'HH:mm:ss' }}</span>
 							</p>
-							<h4><span hide-sm>{{ 'main_followUp_diag' | translate }}: </span>{{ getDiagnosis( followup ) }}</h4>
+							<h4><span hide-sm>{{ 'main_followUp_diag' | translate }}: </span>{{ followup.diagnosis_name }}</h4>
 						</div>
 
 						<md-button class="md-icon-button" ng-click="deleteFollowUp(followup, $event)" aria-label="{{ 'main_followUp_delete' | translate }}">
