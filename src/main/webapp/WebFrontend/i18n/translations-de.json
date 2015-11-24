@@ -100,7 +100,7 @@
 	"forgotPassword_send": "Absenden",
 	"forgotPassword_title": "Passwort vergessen",
 	"error_noMoreQuestions": "Leider war dies die letzte Frage. Es handelt sich hier um eine Demo, welche noch nicht den gesamten Funktionsumfang enthält. Sorry :(\nSie werden auf die Startseite weitergeleitet.",
-	"error_noMoreQuestions_title": "Keine weiteren Fragen",
+	"error_noMoreQuestions_title": "Fehler",
 	"preDiag_forMeOrNot": "Diese Diagnose ist...",
 	"preDiag_forMe": "Für mich",
 	"preDiag_notForMe": "Für jemand anders",

@@ -134,6 +134,10 @@
         };
 
         var getCurrent = function(){
+            if (angular.isUndefined(currentUser))
+            {
+
+            }
             return Object.create(currentUser);
         };
 
