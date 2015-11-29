@@ -38,7 +38,7 @@ public class SettingManager implements BasicManager<Setting> {
             Setting minimumDifference = new Setting();
             minimumDifference.setId(MIN_DIFFERENCE);
             minimumDifference.setName("Punkteabstand");
-            minimumDifference.setValue(40);
+            minimumDifference.setValue("40");
             addSetting(minimumDifference);
         }
 
@@ -46,7 +46,7 @@ public class SettingManager implements BasicManager<Setting> {
             Setting consecutiveQuestions = new Setting();
             consecutiveQuestions.setId(CONSECUTIVE_QUESTIONS);
             consecutiveQuestions.setName("Anzahl Runden als erstplazierte Diagnose");
-            consecutiveQuestions.setValue(5);
+            consecutiveQuestions.setValue("5");
             addSetting(consecutiveQuestions);
 
         }
@@ -65,7 +65,7 @@ public class SettingManager implements BasicManager<Setting> {
     @Override
     public Setting add() {
         Setting setting = new Setting();
-        setting.setValue(0);
+        setting.setValue("0");
         settingMapper.create(setting);
         return setting;
     }

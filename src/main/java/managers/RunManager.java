@@ -38,6 +38,11 @@ public class RunManager {
         historyManager = new HistoryManager();
     }
 
+
+    public void startFollowup(Followup followup){
+        questionManager.startFollowup(followup);
+    }
+
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
      */
@@ -97,6 +102,7 @@ public class RunManager {
     public TreeMap<Diagnosis, Integer> getDiagnosisRankingList() {
         return diagnosisManager.getDiagnosesRankingList(user);
     }
+
 
     /**
      * Diese Methode wird aufgerufen um ein Fragendurchlauf zu reseten.

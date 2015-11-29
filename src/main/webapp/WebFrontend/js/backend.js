@@ -129,6 +129,14 @@
             });
         };
 
+        var forgotPassword = function(data, success, error){
+
+            logoutFactory.forgotPassword(data, function(result){
+
+            });
+
+        };
+
         var checkData = function( data, success, error ) {
 
         };
@@ -275,7 +283,8 @@
             isEmailInUse : isInUse,
             isLoggedIn: isLoggedIn,
             getSession: getSession,
-            getLang: getLang
+            getLang: getLang,
+            forgotPassword: forgotPassword
         };
     }]);
 
@@ -343,6 +352,15 @@
 
                     getQ( userData, success, error );
                 })
+            };
+
+            var startFollowup = function( userData, success, error ){
+                user = userData;
+                runFactory.resetRun({Id: followUp.user_id}, userData, function(result){
+                    runFactory.startFollowup(followUp, function(result){
+                        getQ( followUp.user, success, error );
+                    });
+                });
             };
 
             /**
@@ -513,6 +531,7 @@
 
             return {
                 startRun : start,
+                startFollowup : startFollowup,
                 answerQuestion : answerQ,
                 getQuestionData : getQ,
                 changeAnswer : change,
@@ -615,7 +634,6 @@
          */
         var start = function( followUp ){
             RunService.setFollowUp( followUp );
-            del( followUp.followup_id, function(){}, function(){} );
         };
 
         /**

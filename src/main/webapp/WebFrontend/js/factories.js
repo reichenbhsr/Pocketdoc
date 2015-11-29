@@ -17,7 +17,8 @@ pocketdocFactories.factory("logoutFactory", function($http, $resource){
     var baseUrl = "../logout";
 
     return $resource(baseUrl, {},{
-        'logout': {method: 'POST'}
+        'logout': {method: 'POST'},
+        'forgotPassword' : {method: 'PUT'}
     });
 
 });
@@ -43,6 +44,7 @@ pocketdocFactories.factory("runFactory", function($http, $resource){
 
     return $resource(
         baseUrl, { Id: '@Id' },{
+            'startFollowup': {method: 'POST' },
             'sendAnswer': { method:'PUT' },
             'resetRun': {method: 'DELETE'}
         }

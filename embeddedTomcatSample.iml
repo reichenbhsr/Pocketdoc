@@ -68,6 +68,6 @@
     <orderEntry type="library" name="Maven: org.apache.tomcat:servlet-api:6.0.43" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat:juli:6.0.43" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat:annotations-api:6.0.43" level="project" />
+    <orderEntry type="library" exported="" name="javax.mail" level="project" />
   </component>
 </module>
-

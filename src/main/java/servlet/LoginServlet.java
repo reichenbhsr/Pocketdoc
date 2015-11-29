@@ -1,6 +1,5 @@
 package servlet;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import managers.UserManager;
 import models.User;
@@ -11,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Diese Klasse dient als Schnittstelle zur Appliktion. Sie kann via HTTP mit REST aufgerufen werden.
@@ -38,7 +35,7 @@ public class LoginServlet extends ServletAbstract {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        login(req, resp, false);
+        login(req, resp, true);
 
     }
 
@@ -50,7 +47,6 @@ public class LoginServlet extends ServletAbstract {
         JsonObject paramValues = getRequest(req);
         User parsedUser = gson.fromJson(paramValues, User.class);
         int errorType = 0;
-
 
         ArrayList<User> users = new UserManager().getAll();
         for (User user : users) {
@@ -85,4 +81,7 @@ public class LoginServlet extends ServletAbstract {
         sendResponse(response, resp);
 
     }
+
+
+
 }

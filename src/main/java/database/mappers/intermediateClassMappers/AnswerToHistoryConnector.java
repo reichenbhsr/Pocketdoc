@@ -1,10 +1,7 @@
 package database.mappers.intermediateClassMappers;
 
 import database.mappers.DatabaseConnector;
-import models.Answer;
-import models.History;
-import models.Question;
-import models.User;
+import models.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +20,7 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT id FROM answers_to_histories WHERE answer = " + answer.getId() + " AND history = " + history.getId() +";";
+            String SQL = "SELECT id FROM answers_to_histories WHERE answer = " + answer.getId() + " AND history = " + history.getId() +" AND followup is NULL;";
             ResultSet res = stmt.executeQuery(SQL);
 
             if (res.next())
@@ -81,6 +78,64 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
         return answers;
     }
 
+    public void storeCurrentRunToFollowup(Followup followup){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("UPDATE answers_to_histories SET followup = ")
+                    .append(followup.getId())
+                    .append(" WHERE history = ")
+                    .append(followup.getUser().getHistory().getId())
+                    .append(" AND followup is null;");
+
+            stmt.execute(SQL.toString());
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error store current run to followup");
+        }
+    }
+
+    public ArrayList<Question> getYesAnsweredQuestionsFromFollowup(Followup followup){
+
+        ArrayList<Question> questions = new ArrayList<Question>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("SELECT * from answers_to_histories WHERE followup = ")
+                    .append(followup.getId())
+                    .append(" ORDER BY id ASC;");
+
+            ResultSet set = stmt.executeQuery(SQL.toString());
+
+            Answer answer;
+            while (set.next())
+            {
+                answer = new Answer();
+                answer.setId(set.getInt("answer"));
+
+                Question question = answer.getAnswerYesOf();
+
+                if (question != null)
+                    questions.add(question);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read yes answered questions of followup");
+        }
+
+        return questions;
+
+    }
+
     public int deleteAnswersAfterCurrent(int questionId, int historyId){
 
         try{
@@ -88,16 +143,43 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "DELETE FROM answers_to_histories WHERE id >= (SELECT id FROM answers_to_histories WHERE question = "+ questionId +" AND history = "+ historyId +")" +
-                         " AND history = "+ historyId +";";
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("DELETE FROM answers_to_histories WHERE id >= (SELECT id FROM answers_to_histories WHERE question = ")
+                    .append(questionId)
+                    .append(" AND history = ")
+                    .append(historyId)
+                    .append(") AND history = ")
+                    .append(historyId)
+                    .append(" AND followup is null;");
 
-            return stmt.executeUpdate(SQL);
+
+            return stmt.executeUpdate(SQL.toString());
         }
         catch (SQLException ex){
             System.out.println("SQL Error delete answers after current to history");
         }
 
         return 0;
+    }
+
+    public void deleteFromFollowup(int followupId){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("DELETE FROM answers_to_histories WHERE followup = ")
+                    .append(followupId)
+                    .append(";");
+
+            stmt.execute(SQL.toString());
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error delete answer to history from followup");
+        }
+
     }
 
     public void delete(int historyId){
@@ -107,9 +189,12 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "DELETE FROM answers_to_histories WHERE history =" + historyId + ";";
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("DELETE FROM answers_to_histories WHERE history = ")
+                    .append(historyId)
+                    .append(" AND followup is null;");
 
-            stmt.execute(SQL);
+            stmt.execute(SQL.toString());
         }
         catch (SQLException ex){
             System.out.println("SQL Error delete answer to history");

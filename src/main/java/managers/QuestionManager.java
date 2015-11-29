@@ -3,10 +3,7 @@ package managers;
 import calculators.QuestionCalculator;
 import database.mappers.QuestionConnector;
 import managers.intermediateClassManagers.QuestionDescriptionManager;
-import models.Answer;
-import models.Language;
-import models.Question;
-import models.User;
+import models.*;
 import models.intermediateClassModels.QuestionDescription;
 
 import java.util.ArrayList;
@@ -167,6 +164,11 @@ public class QuestionManager implements BasicManager<Question> {
         answerManager.remove(q.getAnswerNo().getId());
         answerManager.remove(q.getAnswerYes().getId());
         questionMapper.delete(id);
+    }
+
+    public void startFollowup(Followup followup){
+        QuestionCalculator calculator = new QuestionCalculator();
+        calculator.initFollowup(followup);
     }
 
     /**

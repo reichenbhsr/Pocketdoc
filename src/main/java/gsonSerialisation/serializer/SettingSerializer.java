@@ -21,6 +21,7 @@ public class SettingSerializer implements JsonSerializer<Setting> {
     final String ID = "setting_id";
     final String NAME = "name";
     final String VALUE = "value";
+    final String TYPE = "type";
 
 
     @Override
@@ -30,6 +31,7 @@ public class SettingSerializer implements JsonSerializer<Setting> {
         object.addProperty(ID, setting.getId());
         object.addProperty(NAME, setting.getName());
         object.addProperty(VALUE, setting.getValue());
+        object.addProperty(TYPE, setting.getType());
 
         return object;
     }

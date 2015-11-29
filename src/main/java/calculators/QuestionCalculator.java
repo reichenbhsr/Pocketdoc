@@ -20,9 +20,13 @@ public class QuestionCalculator {
     private HistoryManager historyManager;
     private Diagnosis topDiagnosis;
     private SettingManager settingManager;
+    private FollowupManager followupManager;
     private static ArrayList<Question> informationQuestions;
     private static ArrayList<Question> remainingQuestions;
     private static Stack<Question> remainingForcedQuestions;
+    private static Queue<Question> followupQuestions;
+    private static Queue<Question> answeredFollowupQuestions;
+    private static Followup currentFollowup;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
@@ -32,6 +36,7 @@ public class QuestionCalculator {
         diagnosisCalculator = new DiagnosisCalculator();
         historyManager = new HistoryManager();
         settingManager = new SettingManager();
+        followupManager = new FollowupManager();
     }
 
     /**
@@ -50,6 +55,19 @@ public class QuestionCalculator {
         this.historyManager = historyManager;
         this.settingManager = settingManager;
         diagnosisCalculator = new DiagnosisCalculator(historyManager, answerManager, diagnosisManager);
+    }
+
+    public void initFollowup(Followup followup){
+
+        followupQuestions = new LinkedList<Question>();
+        answeredFollowupQuestions = new LinkedList<Question>();
+        currentFollowup = followup;
+
+        ArrayList<Question> questions = followupManager.getYesAnsweredQuestionOfFollowup(followup);
+
+        for(Question q: questions)
+            followupQuestions.add(q);
+
     }
 
     /**
@@ -72,6 +90,7 @@ public class QuestionCalculator {
      */
     public Question getNextQuestion(User user) {
         History history = historyManager.getAndFetch(user.getHistory());
+        Question bestQuestion;
 
         if (remainingQuestions == null){
             informationQuestions = getInformaticQuestions(); // RE
@@ -82,34 +101,52 @@ public class QuestionCalculator {
 
         topDiagnosis = diagnosisCalculator.getDiagnosis(); // RE
 
-        // Gibts abhängige Fragen, die als nächsts gestellt werden müssen?
-        if (user.getHistory().getLastAnswer() != null){
-            Question forcedQuestion = checkForceDependentQuestion(user.getHistory().getLastAnswer());
+        if (followupQuestions == null){
+            // Gibts abhängige Fragen, die als nächsts gestellt werden müssen?
+            if (user.getHistory().getLastAnswer() != null){
+                Question forcedQuestion = checkForceDependentQuestion(user.getHistory().getLastAnswer());
 
-            if (forcedQuestion != null)
-                return forcedQuestion;
+                if (forcedQuestion != null)
+                    return forcedQuestion;
+            }
+
+
+            /*
+            Beste Frage herausfinden
+             */
+            bestQuestion = getBestQuestion(remainingQuestions, user);
+
+            if (bestQuestion == null) {
+                bestQuestion = remainingQuestions.get(0);
+            }
+
+            /*
+            Ist die beste Frage abhängig? (Wenn ja soll diese gestellt werden)
+             */
+            bestQuestion = getQuestionDependence(bestQuestion);
+
+            /*
+            Settinsg überprüfen
+             */
+            if (checkSettings(user, history)) {
+                return null;
+            }
         }
+        else if (followupQuestions.size() == 0){
 
+            // Followup Fragen gestellt, Diagnose prüfen
 
-        /*
-        Beste Frage herausfinden
-         */
-        Question bestQuestion = getBestQuestion(remainingQuestions, user);
+            followupQuestions = null;
+            if (topDiagnosis.equals(currentFollowup.getDiagnosis()))
+                bestQuestion = null; // Diagnose ist gleich, wieder stellen
+            else
+                bestQuestion = getNextQuestion(user); // Diagnose Unterschiedlich, mit normalem Durchlauf fortsetzen.
 
-        if (bestQuestion == null) {
-            bestQuestion = remainingQuestions.get(0);
         }
-
-        /*
-        Ist die beste Frage abhängig? (Wenn ja soll diese gestellt werden)
-         */
-        bestQuestion = getQuestionDependence(bestQuestion);
-
-        /*
-        Settinsg überprüfen
-         */
-        if (checkSettings(user, history)) {
-            return null;
+        else{
+            // Followup wird durchgeführt
+            bestQuestion = followupQuestions.remove();
+            answeredFollowupQuestions.add(bestQuestion);
         }
 
         return bestQuestion;
@@ -126,6 +163,12 @@ public class QuestionCalculator {
         remainingQuestions = getQuestionsToAsk(); // RE
         remainingForcedQuestions = new Stack<Question>();
 
+        for(Question question: followupQuestions)
+            answeredFollowupQuestions.add(question);
+
+        followupQuestions = answeredFollowupQuestions;
+        answeredFollowupQuestions = new LinkedList<Question>();
+
         DiagnosisCalculator.reset();
 
         for(Answer answer: answers){
@@ -139,6 +182,8 @@ public class QuestionCalculator {
     }
 
     public void addAnswer(Question question, Answer answer){
+
+        System.out.println("Given answer: " + answer.getId() + ". Is Answer Yes: " + (answer.getAnswerYesOf() != null));
 
         if (answer.getId() > -1){
             diagnosisCalculator.addAnswerToRankingList(answer);
@@ -180,7 +225,7 @@ public class QuestionCalculator {
         final TreeMap<Diagnosis, Integer> diagnosisRankingList = diagnosisCalculator.getSortedRankingList();
 
         if (diagnosisRankingList.size() > 0) {
-            final int minDifference = settingManager.get(SettingManager.MIN_DIFFERENCE).getValue();
+            final int minDifference = Integer.parseInt(settingManager.get(SettingManager.MIN_DIFFERENCE).getValue());
             final Iterator<Map.Entry<Diagnosis, Integer>> iterator = diagnosisRankingList.entrySet().iterator();
             int firstScore = iterator.next().getValue();
             int secondScore = 0;
@@ -197,7 +242,7 @@ public class QuestionCalculator {
              */
             if (firstScore - secondScore >= minDifference) {
                 final Integer actualConsecutiveQuestions = history.getConsecutiveQuestions() + 1;
-                final int consecutiveQuestions = settingManager.get(SettingManager.CONSECUTIVE_QUESTIONS).getValue();
+                final int consecutiveQuestions = Integer.parseInt(settingManager.get(SettingManager.CONSECUTIVE_QUESTIONS).getValue());
 
                 /*
                 Überprüfen ob
@@ -534,6 +579,8 @@ public class QuestionCalculator {
                 informationQuestions = cleanOutDependentQuestions(informationQuestions, givenAnswer);
                 remainingQuestions = cleanOutDependentQuestions(remainingQuestions, givenAnswer);
                 informationQuestions.remove(q);
+                if (followupQuestions != null)
+                    followupQuestions.remove(givenAnswer.getAnswerOf());
             }
         }
 
@@ -543,6 +590,8 @@ public class QuestionCalculator {
 
         informationQuestions = null;
         remainingQuestions = null;
+        followupQuestions = null;
+        currentFollowup = null;
         DiagnosisCalculator.reset();
     }
 }

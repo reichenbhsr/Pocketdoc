@@ -84,30 +84,34 @@
         $scope.confirmPreDiag = function() {
             $scope.isPreDiag = false;
 
+            var success = function( questionData ) {
+                // Success
+
+                $translate.use( LanguageService.getCodeById($scope.user) ).then(
+                    function ( lang ) {
+                        $scope.$root.$broadcast( "languageChange", lang );
+                    },
+                    function ( lang ) {
+                        console.log("Error occured while changing language");
+                    }
+                );
+
+                $scope.currentQuestion = questionData.question;
+                $scope.loading = false;
+                $scope.hidden = false;
+            };
+
+            var error = function( error ) {
+                alert( error );
+            };
+
             //UserService.
-
-            RunService.startRun(
-                $scope.user,
-                function( questionData ) {
-                    // Success
-
-                    $translate.use( LanguageService.getCodeById($scope.user) ).then(
-                        function ( lang ) {
-                            $scope.$root.$broadcast( "languageChange", lang );
-                        },
-                        function ( lang ) {
-                            console.log("Error occured while changing language");
-                        }
-                    );
-
-                    $scope.currentQuestion = questionData.question;
-                    $scope.loading = false;
-                    $scope.hidden = false;
-                },
-                function( error ) {
-                    alert( error );
-                }
-            );
+            if (RunService.getFollowUp()){
+                RunService.startFollowup($scope.user, success, error);
+            }
+            else{
+                RunService.startRun($scope.user, success, error);
+            }
         };
 		
 		$scope.answerQuestion = function( givenAnswer ) {
@@ -437,8 +441,18 @@
          * @author Philipp Christen
          */
         var ForgotPasswordController = function($scope, $mdDialog) {
+            $scope.email = "";
             $scope.cancel = function() { $mdDialog.cancel(); };
-            $scope.accept = function() { $mdDialog.hide(); };
+            $scope.accept = function() {
+                UserService.forgotPassword({email: $scope.email},
+                    function(result){
+                        $mdDialog.hide();
+                    },
+                    function(error){
+
+                    }
+                );
+            };
         };
 
         /**

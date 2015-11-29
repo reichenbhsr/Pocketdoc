@@ -2,6 +2,8 @@ package database.mappers;
 
 import models.User;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -220,6 +222,50 @@ public class UserConnector extends DatabaseConnector {
         }
 
         return false;
+    }
+
+    public User addPasswordRestoreToken(String address)
+    {
+        SecureRandom random = new SecureRandom();
+        String token = new BigInteger(130, random).toString(32);
+        User user = null;
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "UPDATE users SET password_restore_token = '" + token + "' WHERE email = '" + address + "';";
+
+            int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+
+            if (rows > 0)
+            {
+                SQL = "SELECT * FROM users WHERE email = '" + address +"';";
+                stmt = connection.createStatement();
+
+                ResultSet set = stmt.executeQuery(SQL);
+
+                if (set.next())
+                {
+                    user = new User();
+                    user.setId(set.getInt("id"));
+                    user.setName(set.getString("name"));
+                    user.setEmail(set.getString("email"));
+                    user.setLanguageId(set.getInt("lang"));
+                    user.setPasswordRestoreToken(token);
+                }
+
+                set.close();
+
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error add password restore token");
+        }
+
+        return user;
     }
 
     public void delete(int userId)

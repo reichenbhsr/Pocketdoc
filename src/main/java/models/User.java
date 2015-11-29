@@ -28,6 +28,8 @@ public class User {
 
     private boolean isTemporary;
 
+    private String passwordRestoreToken;
+
     private int languageId = 1;
     private Language language;
 
@@ -73,6 +75,9 @@ public class User {
 
     public boolean isTemporary(){ return isTemporary; }
     public void setTemporary(boolean isTemporary){ this.isTemporary = isTemporary; }
+
+    public String getPasswordRestoreToken(){ return passwordRestoreToken; }
+    public void setPasswordRestoreToken(String restoreToken) { passwordRestoreToken = restoreToken; }
 
     public void setHistoryId(int historyId){ this.historyId = historyId; }
     public History getHistory() {

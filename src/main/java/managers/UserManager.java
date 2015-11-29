@@ -17,16 +17,14 @@ import java.util.ArrayList;
  */
 public class UserManager implements BasicManager<User> {
 
-//    private DatabaseMapper<User> userMapper; FIXME
     private HistoryManager historyManager;
-    private UserConnector userMapper;   // FIXME
+    private UserConnector userMapper;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
      */
     public UserManager() {
-//        userMapper = new UserMapper(); FIXME
-        userMapper = new UserConnector(); // FIXME
+        userMapper = new UserConnector();
         historyManager = new HistoryManager();
     }
 
@@ -36,7 +34,6 @@ public class UserManager implements BasicManager<User> {
         History history = historyManager.add();
         user.setHistory(history);
 
-//        userMapper.create(user); FIXME
         userMapper.createUser(user);
         return user;
     }
@@ -56,16 +53,13 @@ public class UserManager implements BasicManager<User> {
             if (user.getHistory() == null) {
                 user.setHistory(oldUser.getHistory());
             }
-//            return userMapper.update(user);
-            return userMapper.updateUser(user); // FIXME
+            return userMapper.updateUser(user);
         }
     }
 
     @Override
     public User get(int id) {
-
-//        return userMapper.read(id);
-        return userMapper.getUser(id); // FIXME
+        return userMapper.getUser(id);
     }
 
     @Override
@@ -87,6 +81,11 @@ public class UserManager implements BasicManager<User> {
     public boolean checkPassword(String address, String password)
     {
         return userMapper.checkPassword(address, password);
+    }
+
+    public User addPasswordRestoreToken(String address)
+    {
+        return userMapper.addPasswordRestoreToken(address);
     }
 
     public void deleteTemporaryUsers()

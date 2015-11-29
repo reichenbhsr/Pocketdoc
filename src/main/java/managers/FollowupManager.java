@@ -2,9 +2,12 @@ package managers;
 
 import database.mappers.FollowupConntector;
 import database.mappers.UserConnector;
+import database.mappers.intermediateClassMappers.AnswerToHistoryConnector;
 import models.Followup;
+import models.Question;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Diese Klasse dient als Mittelstück der Applikation wenn es um Objekte der Klasse Followup geht.
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 public class FollowupManager implements BasicManager<Followup>{
 
     private FollowupConntector followupConnector;
+    private AnswerToHistoryConnector answerToHistoryConnector;
     private UserConnector userConnector;
 
     /**
@@ -27,10 +31,15 @@ public class FollowupManager implements BasicManager<Followup>{
 
         followupConnector = new FollowupConntector();
         userConnector = new UserConnector();
+        answerToHistoryConnector = new AnswerToHistoryConnector();
     }
 
     public int createFollowup(Followup followup){
-        return followupConnector.create(followup);
+        int id = followupConnector.create(followup);
+        followup.setId(id);
+        answerToHistoryConnector.storeCurrentRunToFollowup(followup);
+
+        return id;
     }
 
     @Override
@@ -57,10 +66,16 @@ public class FollowupManager implements BasicManager<Followup>{
     @Override
     public void remove(int id) {
         followupConnector.delete(id);
+        answerToHistoryConnector.deleteFromFollowup(id);
     }
 
     public ArrayList<Followup> getFollowupsOfUser(int userId){
+
         return followupConnector.readFromUser(userId);
+    }
+
+    public ArrayList<Question> getYesAnsweredQuestionOfFollowup(Followup followup){
+        return answerToHistoryConnector.getYesAnsweredQuestionsFromFollowup(followup);
     }
 
 }

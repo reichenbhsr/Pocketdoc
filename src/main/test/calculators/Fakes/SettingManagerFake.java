@@ -15,10 +15,10 @@ public class SettingManagerFake extends SettingManager {
         final Setting setting = new Setting();
         switch (id){
             case SettingManager.CONSECUTIVE_QUESTIONS:
-                setting.setValue(5);
+                setting.setValue("5");
                 return setting;
             case SettingManager.MIN_DIFFERENCE:
-                setting.setValue(50);
+                setting.setValue("50");
                 return setting;
             default:
                 return null;

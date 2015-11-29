@@ -4,6 +4,7 @@ import calculators.DiagnosisCalculator;
 import calculators.QuestionCalculator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import managers.FollowupManager;
 import managers.RunManager;
 import managers.UserManager;
 import models.*;
@@ -35,6 +36,25 @@ import java.util.TreeMap;
         urlPatterns = {"/run/user/*"}
 )
 public class RunServlet extends ServletAbstract {
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (req.getSession().getAttribute("user") == null) {
+            resp.getWriter().println("You are not authorized to view this data.");
+        } else {
+
+            JsonObject paramValue = getRequest(req);
+            Followup followup = gson.fromJson(paramValue, Followup.class);
+
+            RunManager manager = new RunManager(followup.getUser());
+            manager.startFollowup(followup);
+
+            new FollowupManager().remove(followup.getId());
+
+            String answer = gson.toJson(followup);
+            sendResponse(answer, resp);
+        }
+    }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

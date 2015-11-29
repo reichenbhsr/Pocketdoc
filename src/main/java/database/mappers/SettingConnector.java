@@ -26,9 +26,10 @@ public class SettingConnector extends DatabaseConnector{
             else {
 
                 stmt = connection.createStatement();
-                SQL = "INSERT INTO settings (name, value) VALUES (" +
+                SQL = "INSERT INTO settings (name, value, type) VALUES (" +
                         (setting.getName() == null ? null : "'" + setting.getName() + "'") + "," +
-                        "'" + setting.getValue() + "');";
+                        "'" + setting.getValue() + "'," +
+                        setting.getType() + ");";
 
                 int rows = stmt.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
                 int id = 0;
@@ -57,7 +58,8 @@ public class SettingConnector extends DatabaseConnector{
             Statement stmt = connection.createStatement();
             String SQL = "UPDATE settings SET " +
                     "name=" + (setting.getName() == null ? null : "'" + setting.getName() + "'") + "," +
-                    " value='" + setting.getValue() +"'"+
+                    " value='" + setting.getValue() +"',"+
+                    " type=" + setting.getType() +
                     " WHERE id =" + setting.getId() + ";";
 
             stmt.execute(SQL);
@@ -84,7 +86,8 @@ public class SettingConnector extends DatabaseConnector{
                 Setting setting = new Setting();
                 setting.setId(set.getInt("id"));
                 setting.setName(set.getString("name"));
-                setting.setValue(set.getInt("value"));
+                setting.setValue(set.getString("value"));
+                setting.setType(set.getInt("type"));
 
                 return setting;
             }
@@ -116,7 +119,8 @@ public class SettingConnector extends DatabaseConnector{
                 setting = new Setting();
                 setting.setId(set.getInt("id"));
                 setting.setName(set.getString("name"));
-                setting.setValue(set.getInt("value"));
+                setting.setValue(set.getString("value"));
+                setting.setType(set.getInt("type"));
 
                 settings.add(setting);
             }
