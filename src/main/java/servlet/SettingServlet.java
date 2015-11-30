@@ -60,7 +60,6 @@ public class SettingServlet extends ServletAbstract {
                     }
                 }
                 String response = gson.toJson(array);
-                response += "  Length: " + settings.size();
                 sendResponse(response, resp);
             }
         }

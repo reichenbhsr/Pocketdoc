@@ -1517,11 +1517,10 @@
 
 			ageRanges: function() {
 				return [
-					{ "id": 0, "start":  0, "end":  10 },
-					{ "id": 1, "start": 11, "end":  25 },
-					{ "id": 2, "start": 26, "end":  50 },
-					{ "id": 3, "start": 51, "end":  70 },
-					{ "id": 4, "start": 71, "end": 100 }
+					{ "id": 0, "start": 10, "end":  25 },
+					{ "id": 1, "start": 26, "end":  50 },
+					{ "id": 2, "start": 51, "end":  70 },
+					{ "id": 3, "start": 71, "end": 100 }
 				];
 			}
 			
