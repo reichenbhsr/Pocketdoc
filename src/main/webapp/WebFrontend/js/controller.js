@@ -457,7 +457,7 @@
                         if (error.errorCode == 0)
                             $scope.forgotForm.forgotEmail.$setValidity('notFound', false);
                         else if (error.errorCode == 1)
-                            $scope.forgotForm.forgotEmail.$setValidity('notSent', true);
+                            $scope.forgotForm.forgotEmail.$setValidity('notSent', false);
                     }
                 );
             };
