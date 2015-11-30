@@ -96,6 +96,10 @@ public class SettingManager implements BasicManager<Setting> {
         return settingMapper.read(id);
     }
 
+    public Setting getSetting(String name){
+        return settingMapper.readByName(name);
+    }
+
     @Override
     public ArrayList<Setting> getAll() {
         return settingMapper.readAll();

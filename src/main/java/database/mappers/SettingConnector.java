@@ -100,6 +100,34 @@ public class SettingConnector extends DatabaseConnector{
         return null;
     }
 
+    public Setting readByName(String name){
+        try{
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM settings WHERE name='"+ name + "';";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            if (set.next())
+            {
+                Setting setting = new Setting();
+                setting.setId(set.getInt("id"));
+                setting.setName(set.getString("name"));
+                setting.setValue(set.getString("value"));
+                setting.setType(set.getInt("type"));
+
+                return setting;
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read Setting by name");
+        }
+
+        return null;
+    }
+
     public ArrayList<Setting> readAll(){
 
         ArrayList<Setting> settings = new ArrayList<Setting>();
@@ -109,7 +137,7 @@ public class SettingConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM settings;";
+            String SQL = "SELECT * FROM settings ORDER BY ord;";
 
             ResultSet set = stmt.executeQuery(SQL);
 

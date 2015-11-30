@@ -563,13 +563,13 @@ public class QuestionCalculator {
                     givenAnswer = (user.getGender() == 0) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 case 2:
-                    givenAnswer = (user.getAgeCategory() == 1) ? q.getAnswerYes() : q.getAnswerNo();
+                    givenAnswer = (user.getAgeCategory() == 0) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 case 3:
-                    givenAnswer = (user.getAgeCategory() == 2) ? q.getAnswerYes() : q.getAnswerNo();
+                    givenAnswer = (user.getAgeCategory() == 1) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 case 4:
-                    givenAnswer = (user.getAgeCategory() == 3) ? q.getAnswerYes() : q.getAnswerNo();
+                    givenAnswer = (user.getAgeCategory() == 2) ? q.getAnswerYes() : q.getAnswerNo();
                     break;
                 default:
             }

@@ -67,8 +67,8 @@ public class QuestionConnector extends DatabaseConnector{
                             " answer_yes=" + question.getAnswerYes().getId() +","+
                             " answer_no=" + question.getAnswerNo().getId() +","+
                             " force_dependent_asking=" + question.getForceDependentAsking() +","+
-                            " depends_on=" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) +", "+
-                            " type=" + question.getType() +""+
+                            " depends_on=" + (question.getDependsOn() != null ? question.getDependsOn().getId() : null) +" "+
+//                            " type=" + question.getType() +""+
                             " WHERE id =" + question.getId() + ";";
 
             stmt.execute(SQL);

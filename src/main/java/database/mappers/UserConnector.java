@@ -253,6 +253,7 @@ public class UserConnector extends DatabaseConnector {
                     user.setName(set.getString("name"));
                     user.setEmail(set.getString("email"));
                     user.setLanguageId(set.getInt("lang"));
+                    user.setPassword(set.getString("password"));
                     user.setPasswordRestoreToken(token);
                 }
 

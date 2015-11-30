@@ -35,6 +35,13 @@ public class LogoutServlet extends ServletAbstract {
 
     private static final String USERNAME = "%%USERNAME%%";
     private static final String RESTORE_URL = "%%RESTORE_URL%%";
+    private static final String PASSWORD = "%%PASSWORD%%";
+
+    private static final String SETTING_HOST = "Mail Host";
+    private static final String SETTING_USER = "Mail User";
+    private static final String SETTING_PW = "Mail Passwort";
+    private static final String SETTING_SUBJECT = "Passwort vergessen Betreff ";
+    private static final String SETTING_TEXT = "Passwort vergessen Text ";
 
 
     @Override
@@ -65,7 +72,7 @@ public class LogoutServlet extends ServletAbstract {
 
                 if (user != null) {
                     errorCode = 1; // Mail konnte nicht versandt werden.
-                    boolean sent = sendMail(user.getEmail(), user.getName(), user.getLanguage().getName(), user.getPasswordRestoreToken());
+                    boolean sent = sendMail(user);
 
                     if (sent)
                         errorCode = -1; // Alles Ok
@@ -79,14 +86,14 @@ public class LogoutServlet extends ServletAbstract {
 
     }
 
-    private boolean sendMail(String address, String name, String language, String token){
+    private boolean sendMail(User user){
 
-        String to = address;
-        final String from = "pocketdoc@forventis.ch";
-        final String password = "Pocketdoc@01";
-        String host = "tux125.hoststar.ch";
+        SettingManager settings = new SettingManager();
+        String to = user.getEmail();
+        final String from = settings.getSetting(SETTING_USER).getValue();
+        final String password = settings.getSetting(SETTING_PW).getValue();
+        String host = settings.getSetting(SETTING_HOST).getValue();
         String port = "587";
-        ArrayList<Setting> settings = new SettingManager().getAll();
 
         // Get system properties
         Properties properties = System.getProperties();
@@ -121,12 +128,14 @@ public class LogoutServlet extends ServletAbstract {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
             // Set Subject: header field
-            message.setSubject("Passwort Vergessen @ Pocketdoc");
+            message.setSubject(settings.getSetting(SETTING_SUBJECT +user.getLanguage().getName()).getValue());
 
-            for(Setting setting: settings){
-                if (setting.getName().equals("Passwort vergessen " + language) )
-                    message.setText(setting.getValue().replace(USERNAME, name).replace(RESTORE_URL, "http://pocketdoc.herokuapp.com/WebFrontend/forgotPassword?token=" + token));
-            }
+            String text = settings.getSetting(SETTING_TEXT  +user.getLanguage().getName()).getValue();
+            text = text.replace(USERNAME, user.getName())
+                    .replace(RESTORE_URL, "http://pocketdoc.herokuapp.com/WebFrontend/forgotPassword?token=" + user.getPasswordRestoreToken())
+                    .replace(PASSWORD, user.getPassword());
+
+            message.setText(text);
 
             // Send message
             Transport.send(message);
