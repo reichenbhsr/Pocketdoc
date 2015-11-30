@@ -55,6 +55,7 @@ public class LogoutServlet extends ServletAbstract {
 
         JsonObject paramValues = getRequest(req);
         JsonElement email = paramValues.get("email");
+        int errorCode = 0; // User nicht gefunden
 
         if (email != null){
             String address = email.getAsString();
@@ -62,14 +63,23 @@ public class LogoutServlet extends ServletAbstract {
             if (!address.equals("")) {
                 User user = new UserManager().addPasswordRestoreToken(email.getAsString());
 
-                if (user != null)
-                    sendMail(user.getEmail(), user.getName(), user.getLanguage().getName(), user.getPasswordRestoreToken());
+                if (user != null) {
+                    errorCode = 1; // Mail konnte nicht versandt werden.
+                    boolean sent = sendMail(user.getEmail(), user.getName(), user.getLanguage().getName(), user.getPasswordRestoreToken());
+
+                    if (sent)
+                        errorCode = -1; // Alles Ok
+                }
             }
         }
 
+        JsonObject jsonResponse = new JsonObject();
+        jsonResponse.addProperty("errorCode", errorCode);
+        sendResponse(gson.toJson(jsonResponse), resp);
+
     }
 
-    private void sendMail(String address, String name, String language, String token){
+    private boolean sendMail(String address, String name, String language, String token){
 
         String to = address;
         final String from = "pocketdoc@forventis.ch";
@@ -121,9 +131,13 @@ public class LogoutServlet extends ServletAbstract {
             // Send message
             Transport.send(message);
             System.out.println("Sent message successfully....");
+
+            return true;
         }catch (MessagingException mex) {
             mex.printStackTrace();
         }
+
+        return false;
 
     }
 

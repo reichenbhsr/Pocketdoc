@@ -442,14 +442,22 @@
          */
         var ForgotPasswordController = function($scope, $mdDialog) {
             $scope.email = "";
+            $scope.isSent = false;
             $scope.cancel = function() { $mdDialog.cancel(); };
             $scope.accept = function() {
+                $scope.forgotForm.forgotEmail.$setValidity('notFound', true);
+                $scope.forgotForm.forgotEmail.$setValidity('notSent', true);
+
                 UserService.forgotPassword({email: $scope.email},
                     function(result){
-                        $mdDialog.hide();
+                        $scope.isSent = true;
+                        //$mdDialog.hide();
                     },
                     function(error){
-
+                        if (error.errorCode == 0)
+                            $scope.forgotForm.forgotEmail.$setValidity('notFound', false);
+                        else if (error.errorCode == 1)
+                            $scope.forgotForm.forgotEmail.$setValidity('notSent', true);
                     }
                 );
             };

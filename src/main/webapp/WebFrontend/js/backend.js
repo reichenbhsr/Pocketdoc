@@ -132,7 +132,10 @@
         var forgotPassword = function(data, success, error){
 
             logoutFactory.forgotPassword(data, function(result){
-
+                if (result.errorCode == -1)
+                    success();
+                else
+                    error(result);
             });
 
         };
