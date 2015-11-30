@@ -99,7 +99,7 @@ public class LogoutServlet extends ServletAbstract {
         properties.put("mail.smtp.port", port);
         properties.put("mail.debug", "true");
         properties.put("mail.smtp.socketFactory.port", port);
-        properties.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+        //properties.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
         properties.put("mail.smtp.socketFactory.fallback", "false");
         properties.put("mail.smtp.starttls.enable", "true");
 
