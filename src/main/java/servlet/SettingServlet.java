@@ -59,7 +59,8 @@ public class SettingServlet extends ServletAbstract {
                         array.add(gson.toJsonTree(setting));
                     }
                 }
-                final String response = gson.toJson(array);
+                String response = gson.toJson(array);
+                response += "  Length: " + settings.size();
                 sendResponse(response, resp);
             }
         }
