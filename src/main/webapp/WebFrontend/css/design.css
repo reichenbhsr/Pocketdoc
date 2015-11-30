@@ -87,9 +87,9 @@ h1{
 }
 
 #answeredQuestions .answeredQuestion button h3 {
-  text-overflow: ellipsis;
+/*  text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: nowrap;*/
   margin-right: 5px;
 }
 .answeredQuestion {
