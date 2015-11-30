@@ -163,11 +163,13 @@ public class QuestionCalculator {
         remainingQuestions = getQuestionsToAsk(); // RE
         remainingForcedQuestions = new Stack<Question>();
 
-        for(Question question: followupQuestions)
-            answeredFollowupQuestions.add(question);
+        if (followupQuestions != null){
+            for(Question question: followupQuestions)
+                answeredFollowupQuestions.add(question);
 
-        followupQuestions = answeredFollowupQuestions;
-        answeredFollowupQuestions = new LinkedList<Question>();
+            followupQuestions = answeredFollowupQuestions;
+            answeredFollowupQuestions = new LinkedList<Question>();
+        }
 
         DiagnosisCalculator.reset();
 
@@ -177,7 +179,15 @@ public class QuestionCalculator {
                 informationQuestions = cleanOutDependentQuestions(informationQuestions, answer);
 
             remainingQuestions = cleanOutDependentQuestions(remainingQuestions, answer);
+
+            if (followupQuestions != null){
+                if (followupQuestions.remove(answer.getAnswerOf()))
+                    answeredFollowupQuestions.add(answer.getAnswerOf());
+            }
         }
+
+        if (followupQuestions != null)
+            followupQuestions.remove();
 
     }
 
@@ -591,6 +601,7 @@ public class QuestionCalculator {
         informationQuestions = null;
         remainingQuestions = null;
         followupQuestions = null;
+        answeredFollowupQuestions = null;
         currentFollowup = null;
         DiagnosisCalculator.reset();
     }
