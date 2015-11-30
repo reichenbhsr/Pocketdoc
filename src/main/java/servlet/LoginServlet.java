@@ -35,7 +35,7 @@ public class LoginServlet extends ServletAbstract {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        login(req, resp, true);
+        login(req, resp, false);
 
     }
 

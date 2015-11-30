@@ -40,6 +40,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="sass-stdlib" level="application" />
+    <orderEntry type="library" exported="" name="javax.mail" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:7.0.34" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-logging-juli:7.0.34" level="project" />
     <orderEntry type="library" name="Maven: org.postgresql:postgresql:9.3-1102-jdbc41" level="project" />
@@ -68,6 +69,7 @@
     <orderEntry type="library" name="Maven: org.apache.tomcat:servlet-api:6.0.43" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat:juli:6.0.43" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat:annotations-api:6.0.43" level="project" />
-    <orderEntry type="library" exported="" name="javax.mail" level="project" />
+    <orderEntry type="library" name="Maven: javax.mail:mail:1.4" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
   </component>
 </module>
