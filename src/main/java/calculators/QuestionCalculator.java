@@ -498,8 +498,6 @@ public class QuestionCalculator {
             int secondValue = secondEntry.getValue();
 
             for(Question question: questions){
-//            for(int ix = 0; ix < 100; ix++){
-//                Question question = questions.get(ix);
 
                 difference = calculateDifference(question, top, second, topValue, secondValue);
 
@@ -526,20 +524,6 @@ public class QuestionCalculator {
 
         topValue += answerNo.getScoreForDiagnosis(top) + answerYes.getScoreForDiagnosis(top);
         secondValue += answerNo.getScoreForDiagnosis(second) + answerYes.getScoreForDiagnosis(second);
-
-//        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerNo().getAnswerToDiagnosisScoreDistributions()){
-//            if (dist.getDiagnosis().equals(top.getKey()))
-//                topValue += dist.getScore();
-//            else if (dist.getDiagnosis().equals(second.getKey()))
-//                secondValue += dist.getScore();
-//        }
-//
-//        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerYes().getAnswerToDiagnosisScoreDistributions()){
-//            if (dist.getDiagnosis().equals(top.getKey()))
-//                topValue += dist.getScore();
-//            else if (dist.getDiagnosis().equals(second.getKey()))
-//                secondValue += dist.getScore();
-//        }
 
         return Math.abs(topValue - secondValue);
 

@@ -36,28 +36,6 @@ public class LoginServlet extends ServletAbstract {
 
         login(req, resp, true);
 
-        DiagnosisDesignationManager designationManager = new DiagnosisDesignationManager();
-
-        if (designationManager.getAll().size() == 0){
-            DiagnosisManager diagnosisManager = new DiagnosisManager();
-            LanguageManager languageManager = new LanguageManager();
-
-            ArrayList<Diagnosis> diagnoses = diagnosisManager.getAll();
-            ArrayList<Language> languages = languageManager.getAll();
-
-            for(Diagnosis diagnosis: diagnoses)
-            {
-                for(Language language: languages)
-                {
-                    DiagnosisDesignation designation = new DiagnosisDesignation();
-                    designation.setLanguage(language);
-                    designation.setDiagnosis(diagnosis);
-                    designation.setDesignation("");
-                    designationManager.add(designation);
-                }
-            }
-        }
-
     }
 
     @Override
