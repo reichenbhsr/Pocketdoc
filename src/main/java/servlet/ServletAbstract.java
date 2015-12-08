@@ -49,6 +49,7 @@ public abstract class ServletAbstract extends HttpServlet {
         gsonBuilder.registerTypeAdapter(Followup.class, new FollowupDeserializer());
         gsonBuilder.registerTypeAdapter(ActionSuggestionDescription.class, new ActionSuggestionDescriptionDeserializer());
         gsonBuilder.registerTypeAdapter(DiagnosisDescription.class, new DiagnosisDescriptionDeserializer());
+        gsonBuilder.registerTypeAdapter(DiagnosisDesignation.class, new DiagnosisDesignationDeserializer());
         gsonBuilder.registerTypeAdapter(QuestionDescription.class, new QuestionDescriptionDeserializer());
         gsonBuilder.registerTypeAdapter(AnswerToActionSuggestionScoreDistribution.class, new AnswerToActionSuggestionScoreDistributionDeserializer());
         gsonBuilder.registerTypeAdapter(AnswerToDiagnosisScoreDistribution.class, new AnswerToDiagnosisScoreDistributionDeserializer());

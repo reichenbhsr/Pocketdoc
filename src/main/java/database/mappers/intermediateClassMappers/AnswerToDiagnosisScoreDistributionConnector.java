@@ -1,6 +1,8 @@
 package database.mappers.intermediateClassMappers;
 
 import database.mappers.DatabaseConnector;
+import models.Answer;
+import models.Diagnosis;
 import models.intermediateClassModels.AnswerToDiagnosisScoreDistribution;
 
 import java.sql.ResultSet;
@@ -199,6 +201,32 @@ public class AnswerToDiagnosisScoreDistributionConnector extends DatabaseConnect
         }
 
         return set;
+    }
+
+    public int readScoreForDiagnosisFromAnswer(Answer answer, Diagnosis diagnosis){
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("SELECT score FROM score_distribution_answers_to_diagnoses WHERE diagnosis = ")
+               .append(diagnosis.getId())
+               .append(" AND answer = ")
+               .append(answer.getId())
+               .append(";");
+
+            ResultSet res = stmt.executeQuery(SQL.toString());
+
+            if (res.next())
+                return res.getInt("score");
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read Score for Diagnosis from Answer!");
+        }
+
+        return 0;
     }
 
     public void delete(int atdsdId){

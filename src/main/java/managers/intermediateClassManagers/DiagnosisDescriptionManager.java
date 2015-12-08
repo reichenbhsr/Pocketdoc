@@ -16,14 +16,12 @@ import java.util.ArrayList;
  */
 public class DiagnosisDescriptionManager implements IntermediateManager<DiagnosisDescription> {
 
-//    private DatabaseMapper<DiagnosisDescription> diagnosisDescriptionMapper; FIXME
     private DiagnosisDescriptionConnector diagnosisDescriptionMapper;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
      */
     public DiagnosisDescriptionManager() {
-//        diagnosisDescriptionMapper = new DiagnosisDescriptionMapper();
         diagnosisDescriptionMapper = new DiagnosisDescriptionConnector();
     }
 

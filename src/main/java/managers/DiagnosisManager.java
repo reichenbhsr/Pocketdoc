@@ -4,13 +4,16 @@ import calculators.DiagnosisCalculator;
 import database.mappers.DiagnosisConnector;
 import database.mappers.intermediateClassMappers.AnswerToDiagnosisScoreDistributionConnector;
 import database.mappers.intermediateClassMappers.DiagnosisDescriptionConnector;
+import database.mappers.intermediateClassMappers.DiagnosisDesignationConnector;
 import database.mappers.intermediateClassMappers.PerfectDiagnosisDiagnosesToAnswersConnector;
 import managers.intermediateClassManagers.DiagnosisDescriptionManager;
+import managers.intermediateClassManagers.DiagnosisDesignationManager;
 import models.Answer;
 import models.Diagnosis;
 import models.Language;
 import models.User;
 import models.intermediateClassModels.DiagnosisDescription;
+import models.intermediateClassModels.DiagnosisDesignation;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -26,21 +29,21 @@ import java.util.TreeMap;
  */
 public class DiagnosisManager implements BasicManager<Diagnosis> {
 
-//    private DatabaseMapper<Diagnosis> diagnosisMapper; FIXME
     private DiagnosisConnector diagnosisMapper;
     private PerfectDiagnosisDiagnosesToAnswersConnector perfectDiagnosisMapper;
     private AnswerToDiagnosisScoreDistributionConnector atdsdc;
     private DiagnosisDescriptionConnector diagnosisDescriptionConnector;
+    private DiagnosisDesignationConnector diagnosisDesignationConnector;
 
     /**
      * Dieser Konstruktor soll offiziell gebraucht werden.
      */
     public DiagnosisManager() {
-//        diagnosisMapper = new DiagnosisMapper(); FIXME
         diagnosisMapper = new DiagnosisConnector();
         perfectDiagnosisMapper = new PerfectDiagnosisDiagnosesToAnswersConnector();
         atdsdc = new AnswerToDiagnosisScoreDistributionConnector();
         diagnosisDescriptionConnector = new DiagnosisDescriptionConnector();
+        diagnosisDesignationConnector = new DiagnosisDesignationConnector();
     }
 
     /**
@@ -59,6 +62,7 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
         Diagnosis diagnosis = new Diagnosis();
         diagnosisMapper.create(diagnosis);
         addDescriptions(diagnosis);
+        addDesignations(diagnosis);
 
         return diagnosis;
     }
@@ -81,6 +85,23 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
     }
 
     /**
+     * Mit dieser Methode werden der Diagnosis in allen Sprachen eine leere Bezeichnung hinzugefügt.
+     *
+     * @param diagnosis die Diagnosis
+     */
+    private void addDesignations(Diagnosis diagnosis) {
+        if (new LanguageManager().getAll() != null) {
+            for (Language language : new LanguageManager().getAll()) {
+                DiagnosisDesignation diagnosisDesignation = new DiagnosisDesignation();
+                diagnosisDesignation.setDesignation("");
+                diagnosisDesignation.setDiagnosis(diagnosis);
+                diagnosisDesignation.setLanguage(language);
+                new DiagnosisDesignationManager().add(diagnosisDesignation);
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      * <p>
      * Attribute die nicht vom Objekt in der Datenbank geholt werden falls sie leer sind:
@@ -97,6 +118,9 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
 
             if (diagnosis.getDescriptions() == null) {
                 diagnosis.setDescriptions(oldDiagnosis.getDescriptions());
+            }
+            if (diagnosis.getDesignations() == null){
+                diagnosis.setDesignations(oldDiagnosis.getDesignations());
             }
             if (diagnosis.getName() == null) {
                 diagnosis.setName(oldDiagnosis.getName());
@@ -124,12 +148,12 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
         atdsdc.deleteFromDiagnosis(id);
         perfectDiagnosisMapper.deleteFromDiagnosis(id);
         diagnosisDescriptionConnector.deleteFromDiagnosis(id);
+        diagnosisDesignationConnector.deleteFromDiagnosis(id);
         diagnosisMapper.delete(id);
     }
 
     public Diagnosis diagnose(User user) {
         DiagnosisCalculator calculator = new DiagnosisCalculator();
-//        return calculator.getDiagnosis(user);
         return calculator.getDiagnosis(); // RE
     }
 
@@ -150,7 +174,6 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
      */
     public TreeMap<Diagnosis, Integer> getDiagnosesRankingList(User user) {
         DiagnosisCalculator calculator = new DiagnosisCalculator();
-//        return calculator.getDiagnosisRankingList(user);
         return calculator.getSortedRankingList();
     }
 
@@ -176,7 +199,6 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
      */
     public Diagnosis getAndFetch(Diagnosis diagnosis) {
         return diagnosis;
-//        return diagnosisMapper.readAndFetch(diagnosis.getId());
     }
 
     /**

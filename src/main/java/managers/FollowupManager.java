@@ -3,6 +3,7 @@ package managers;
 import database.mappers.FollowupConntector;
 import database.mappers.UserConnector;
 import database.mappers.intermediateClassMappers.AnswerToHistoryConnector;
+import models.Answer;
 import models.Followup;
 import models.Question;
 
@@ -76,6 +77,10 @@ public class FollowupManager implements BasicManager<Followup>{
 
     public ArrayList<Question> getYesAnsweredQuestionOfFollowup(Followup followup){
         return answerToHistoryConnector.getYesAnsweredQuestionsFromFollowup(followup);
+    }
+
+    public ArrayList<Answer> getInformationQuestionsOfFollowup(Followup followup){
+        return answerToHistoryConnector.getInformationAnswersFromFollowup(followup);
     }
 
 }

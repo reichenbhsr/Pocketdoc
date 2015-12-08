@@ -71,6 +71,11 @@ public class Answer {
         this.answerToDiagnosisScoreDistributions = answerToDiagnosisScoreDistributions;
     }
 
+    public int getScoreForDiagnosis(Diagnosis diagnosis){
+        AnswerToDiagnosisScoreDistributionConnector ac = new AnswerToDiagnosisScoreDistributionConnector();
+        return ac.readScoreForDiagnosisFromAnswer(this, diagnosis);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Answer) {

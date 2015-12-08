@@ -5,6 +5,7 @@ import managers.DiagnosisManager;
 import models.Answer;
 import models.Diagnosis;
 import models.intermediateClassModels.DiagnosisDescription;
+import models.intermediateClassModels.DiagnosisDesignation;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Set;
  * <li>Name</li>
  * <li>Perfect Diagnosis</li>
  * <li>Description</li>
+ * <li>Designations</li>
  * </ul>
  * <p>
  * Die Descriptions (Array) werden aus der Zwischentabelle geholt und mit folgenden Elemente aufgefüllt:
@@ -29,6 +31,14 @@ import java.util.Set;
  * <li>Description</li>
  * </ul>
  * <p>
+ * Die Bezeichnungen (Array) werden aus der Zwischentabelle geholt und mit folgenden Elemente aufgefüllt:
+ * <ul>
+ * <li>Designation Id</li>
+ * <li>Language Id</li>
+ * <li>Language Name</li>
+ * <li>Designation</li>
+ * </ul>
+ * <p>
  * Für die Perfekte Diagnose (Array) wird den {@link gsonSerialisation.serializer.AnswerSerializer} gebraucht.
  *
  * @author Nathan Bourquin
@@ -37,12 +47,18 @@ public class DiagnosisSerializer implements JsonSerializer<Diagnosis> {
     final String ID = "diagnosis_id";
     final String NAME = "name";
     final String DESCRIPTIONS = "descriptions";
+    final String DESIGNATIONS = "designations";
     final String PERFECT_DIAGNOSIS = "perfect_diagnosis";
 
     final String DESCRIPTIONS_ID = "description_id";
     final String DESCRIPTIONS_LANGUAGE_ID = "language_id";
     final String DESCRIPTIONS_LANGUAGE_NAME = "language_name";
     final String DESCRIPTIONS_DESCRIPTION = "description";
+
+    final String DESIGNATIONS_ID = "designation_id";
+    final String DESIGNATIONS_LANGUAGE_ID = "language_id";
+    final String DESIGNATIONS_LANGUAGE_NAME = "language_name";
+    final String DESIGNATIONS_DESIGNATION = "designation";
 
     final String PERFECT_DIAGNOSIS_ANSWER = "answer";
 
@@ -55,6 +71,7 @@ public class DiagnosisSerializer implements JsonSerializer<Diagnosis> {
         object.addProperty(ID, diagnosis.getId());
         object.addProperty(NAME, diagnosis.getName());
         setDescriptions(object, diagnosis);
+        setDesignations(object, diagnosis);
         setPerfectDiagnoses(object, diagnosis, jsonSerializationContext);
         return object;
     }
@@ -75,6 +92,25 @@ public class DiagnosisSerializer implements JsonSerializer<Diagnosis> {
                 array.add(underObject);
             }
             object.add(DESCRIPTIONS, array);
+        }
+    }
+
+    void setDesignations(JsonObject object, Diagnosis diagnosis) {
+        final Set<DiagnosisDesignation> designations = diagnosis.getDesignations();
+
+        if (designations != null) {
+
+            JsonArray array = new JsonArray();
+            for (DiagnosisDesignation designation : designations) {
+                JsonObject underObject = new JsonObject();
+                underObject.addProperty(DESIGNATIONS_ID, designation.getId());
+                underObject.addProperty(DESIGNATIONS_LANGUAGE_ID, designation.getLanguage().getId());
+                underObject.addProperty(DESIGNATIONS_LANGUAGE_NAME, designation.getLanguage().getName());
+                underObject.addProperty(DESIGNATIONS_DESIGNATION, designation.getDesignation());
+
+                array.add(underObject);
+            }
+            object.add(DESIGNATIONS, array);
         }
     }
 

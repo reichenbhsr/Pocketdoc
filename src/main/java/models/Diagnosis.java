@@ -1,11 +1,9 @@
 package models;
 
-import database.mappers.intermediateClassMappers.AnswerToDiagnosisScoreDistributionConnector;
-import database.mappers.intermediateClassMappers.DiagnosisDescriptionConnector;
-import database.mappers.intermediateClassMappers.PerfectDiagnosisDiagnosesToAnswersConnector;
-import database.mappers.intermediateClassMappers.QuestionDescriptionConnector;
+import database.mappers.intermediateClassMappers.*;
 import models.intermediateClassModels.AnswerToDiagnosisScoreDistribution;
 import models.intermediateClassModels.DiagnosisDescription;
+import models.intermediateClassModels.DiagnosisDesignation;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -28,6 +26,8 @@ public class Diagnosis {
     private Set<AnswerToDiagnosisScoreDistribution> answerToDiagnosisScoreDistributions;
 
     private Set<DiagnosisDescription> descriptions;
+
+    private Set<DiagnosisDesignation> designations;
 
     private Set<Answer> answersForPerfectDiagnosis;
 
@@ -63,6 +63,20 @@ public class Diagnosis {
 
     public void setDescriptions(Set<DiagnosisDescription> descriptions) {
         this.descriptions = descriptions;
+    }
+
+    public Set<DiagnosisDesignation> getDesignations() {
+
+        if (designations == null){
+            DiagnosisDesignationConnector ddc = new DiagnosisDesignationConnector();
+            designations = ddc.readSetOfDiagnosisDesignations(id);
+        }
+
+        return designations;
+    }
+
+    public void setDesignations(Set<DiagnosisDesignation> designations) {
+        this.designations = designations;
     }
 
     @Override

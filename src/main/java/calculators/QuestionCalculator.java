@@ -5,6 +5,9 @@ import models.*;
 import models.intermediateClassModels.AnswerToDiagnosisScoreDistribution;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Klasse dient zur Berechnung der nächste sinnvollste Frage.
@@ -24,6 +27,7 @@ public class QuestionCalculator {
     private static ArrayList<Question> informationQuestions;
     private static ArrayList<Question> remainingQuestions;
     private static Stack<Question> remainingForcedQuestions;
+    private static ArrayList<Answer> followupInformationAnswers;
     private static Queue<Question> followupQuestions;
     private static Queue<Question> answeredFollowupQuestions;
     private static Followup currentFollowup;
@@ -64,6 +68,7 @@ public class QuestionCalculator {
         currentFollowup = followup;
 
         ArrayList<Question> questions = followupManager.getYesAnsweredQuestionOfFollowup(followup);
+        followupInformationAnswers = followupManager.getInformationQuestionsOfFollowup(followup);
 
         for(Question q: questions)
             followupQuestions.add(q);
@@ -97,6 +102,8 @@ public class QuestionCalculator {
             remainingQuestions = getQuestionsToAsk(); // RE
             remainingForcedQuestions = new Stack<Question>();
             answerTypedQuestions(user);
+            if (followupInformationAnswers != null && followupInformationAnswers.size() > 0)
+                answerInformationsForFollowup(user);
         }
 
         topDiagnosis = diagnosisCalculator.getDiagnosis(); // RE
@@ -114,7 +121,9 @@ public class QuestionCalculator {
             /*
             Beste Frage herausfinden
              */
+            Date start = new Date();
             bestQuestion = getBestQuestion(remainingQuestions, user);
+            System.out.println("Time for calculating: " + (new Date().getTime() - start.getTime()));
 
             if (bestQuestion == null) {
                 bestQuestion = remainingQuestions.get(0);
@@ -126,7 +135,7 @@ public class QuestionCalculator {
             bestQuestion = getQuestionDependence(bestQuestion);
 
             /*
-            Settinsg überprüfen
+            Settings überprüfen
              */
             if (checkSettings(user, history)) {
                 return null;
@@ -166,7 +175,10 @@ public class QuestionCalculator {
         if (followupQuestions != null){
             for(Question question: followupQuestions)
                 answeredFollowupQuestions.add(question);
+        }
 
+        if (answeredFollowupQuestions != null)
+        {
             followupQuestions = answeredFollowupQuestions;
             answeredFollowupQuestions = new LinkedList<Question>();
         }
@@ -469,53 +481,65 @@ public class QuestionCalculator {
     private Question getBestQuestion(final ArrayList<Question> questions, User user) {
         Question bestQuestion = null;
         int highestDifference = 0;
+        Map.Entry<Diagnosis, Integer> topEntry = diagnosisCalculator.getTopDiagnosis();
+        Map.Entry<Diagnosis, Integer> secondEntry = diagnosisCalculator.getSecondDiagnosis();
 
         // RE: Prüft, ob es Informative Fragen hat. diese zu Erst stellen
         for(Question question: informationQuestions)
             if (!question.isSymptom())
                 return question;
 
-        TreeMap<Diagnosis, Integer> sortedList;
 
         int difference;
-        for(Question question: questions){
+        if (topEntry != null){
+            Diagnosis top = topEntry.getKey();
+            Diagnosis second = secondEntry.getKey();
+            int topValue = topEntry.getValue();
+            int secondValue = secondEntry.getValue();
 
-            difference = calculateDifference(question);
+            for(Question question: questions){
+//            for(int ix = 0; ix < 100; ix++){
+//                Question question = questions.get(ix);
 
-            if (highestDifference < difference){
-                highestDifference = difference;
-                bestQuestion = question;
+                difference = calculateDifference(question, top, second, topValue, secondValue);
+
+                if (highestDifference < difference){
+                    highestDifference = difference;
+                    bestQuestion = question;
+                }
+
             }
-
         }
 
         return bestQuestion;
     }
 
-    private int calculateDifference(Question question){ // FIXME RE
+    private int calculateDifference(Question question, Diagnosis top, Diagnosis second, int topValue, int secondValue){ // FIXME RE
         int tempDiff = 0;
-        Map.Entry<Diagnosis, Integer> top = diagnosisCalculator.getTopDiagnosis();
-        Map.Entry<Diagnosis, Integer> second = diagnosisCalculator.getSecondDiagnosis();
+
 
         if (top == null || second == null)
             return 0;
 
-        int topValue = top.getValue();
-        int secondValue = second.getValue();
+        Answer answerNo = question.getAnswerNo();
+        Answer answerYes = question.getAnswerYes();
 
-        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerNo().getAnswerToDiagnosisScoreDistributions()){
-            if (dist.getDiagnosis().equals(top.getKey()))
-                topValue += dist.getScore();
-            else if (dist.getDiagnosis().equals(second.getKey()))
-                secondValue += dist.getScore();
-        }
+        topValue += answerNo.getScoreForDiagnosis(top) + answerYes.getScoreForDiagnosis(top);
+        secondValue += answerNo.getScoreForDiagnosis(second) + answerYes.getScoreForDiagnosis(second);
 
-        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerYes().getAnswerToDiagnosisScoreDistributions()){
-            if (dist.getDiagnosis().equals(top.getKey()))
-                topValue += dist.getScore();
-            else if (dist.getDiagnosis().equals(second.getKey()))
-                secondValue += dist.getScore();
-        }
+//        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerNo().getAnswerToDiagnosisScoreDistributions()){
+//            if (dist.getDiagnosis().equals(top.getKey()))
+//                topValue += dist.getScore();
+//            else if (dist.getDiagnosis().equals(second.getKey()))
+//                secondValue += dist.getScore();
+//        }
+//
+//        for(AnswerToDiagnosisScoreDistribution dist: question.getAnswerYes().getAnswerToDiagnosisScoreDistributions()){
+//            if (dist.getDiagnosis().equals(top.getKey()))
+//                topValue += dist.getScore();
+//            else if (dist.getDiagnosis().equals(second.getKey()))
+//                secondValue += dist.getScore();
+//        }
 
         return Math.abs(topValue - secondValue);
 
@@ -559,6 +583,19 @@ public class QuestionCalculator {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private void answerInformationsForFollowup(User user){
+
+        for(Answer answer: followupInformationAnswers) {
+            diagnosisCalculator.addAnswerToRankingList(answer);
+            historyManager.addAnswerToHistory(answer, user.getHistory(), answer.getAnswerOf());
+            informationQuestions = cleanOutDependentQuestions(informationQuestions, answer);
+            informationQuestions.remove(answer);
+        }
+
+        followupInformationAnswers = null;
+
     }
 
     private void answerTypedQuestions(User user){

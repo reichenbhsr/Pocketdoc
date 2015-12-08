@@ -15,7 +15,7 @@
         </div>
     </div>
     <div id="content">
-        <div id="data">
+        <div id="dataDiagnosis">
             <div  class="dataRow">
                 <h2>Diagnosen</h2>
                 <div ng-show='diagnoses.length < 1 && diagnosesLoaded'>
@@ -46,6 +46,19 @@
                 <div></div>
             </div>
             <div class="dataRow">
+                <label for="diagnosis_designation">Bezeichnung:</label>
+            </div>
+            <div class="dataRow">
+                <div>
+                    <input class="form-control" type="text" id="diagnosis_designation" type="text" ng-model="diagnosis.german_designation.designation" /><br/>
+                </div>
+                <div>
+                    <input class="form-control" type="text" ng-show="diagnosis.currentDesignation" id="diagnosis_designation_other_languages" type="text" ng-model="diagnosis.currentDesignation.designation" /><br/>
+                </div>
+                <div>
+                </div>
+            </div>
+            <div class="dataRow">
                 <label for="diagnosis_long">Beschreibung:</label>
             </div>
             <div style="flex: 1;" class="dataRow">
@@ -60,50 +73,8 @@
                     <input class="btn btn-default" type="submit" data-ng-click="testAllPerfectDiagnoses()" value="Test All"/>
                 </div>
             </div>
-
-<!--
-            <div>
-                <div class="col-lg-12">
-                    <h2>Diagnosen</h2>
-                    <div ng-show='diagnoses.length < 1 && diagnosesLoaded'>
-                        <p class="error">Es gibt noch keine Diagnosen</p>
-                    </div>
-                    <div ng-show="questions.length < 1 && questionsLoaded">
-                        <p class="error">Es gibt noch keine Fragen</p>
-                    </div>
-                </div>
-
-            </div>
-
-            <div>
-                <div ng-show="diagnoses.length > 0">
-                    <div class="col-lg-4">
-                        <label for="diagnosis_name">Name:</label>
-                        <input class="form-control" type="text" id="diagnosis_name" type="text" ng-model="diagnosis.name" /><br/>
-                        <label for="diagnosis_long">Beschreibung:</label>
-                        <textarea class="form-control" id="diagnosis_long" ng-model="diagnosis.german_description.description" rows="4" cols="50"></textarea>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="btn-group">
-                            <a class="btn btn-default dropdown-toggle btn-select2" data-toggle="dropdown">
-                                <span ng-if="!diagnosis.currentDescription">Sprache<span class="caret"></span></span>
-                                <span ng-if="diagnosis.currentDescription">{{diagnosis.currentDescription.language_name}}<span class="caret"></span></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li ng-repeat="description in diagnosis.descriptions" ng-if="description.language_name!=='Deutsch'"><a ng-click="setLanguage(description.language_name)">{{description.language_name}}</a></li>
-                            </ul>
-                        </div>
-                        <textarea class="form-control" ng-show="diagnosis.currentDescription" id="diagnosis_long_other_languages" ng-model="diagnosis.currentDescription.description" rows="4" cols="50"></textarea>
-                    </div>
-                </div>
-                <div ng-show="questions.length > 0 && diagnoses.length > 0" class="col-lg-4">
-                    <input class="btn btn-default" type="submit" data-ng-click="testPerfectDiagnosis()" value="Test Current"/>
-                    <input class="btn btn-default" type="submit" data-ng-click="testAllPerfectDiagnoses()" value="Test All"/>
-                </div>
-            </div>
         </div>
-        -->
-        <div id="tables">
+        <div id="tablesDiagnosis">
             <div id="questions">
                 <!-- FRAGENTABELLE -->
                 <div ng-show="!questionsLoaded">

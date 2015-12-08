@@ -46,7 +46,7 @@
     overflow: auto;
 }
 
-#data, #dataSyndrom{
+#data, #dataSyndrom, #dataDiagnosis{
     position: fixed;
     top: 52px;
     left: 250px;
@@ -57,6 +57,23 @@
     padding: 0 5px;
 }
 
+#data{
+    z-index: 1;
+}
+
+#dataSyndrom{
+    height: 198px;
+}
+
+#dataDiagnosis{
+    height: 400px;
+}
+
+.dropdown-menu{
+    overflow: auto;
+    max-height: 400px;
+}
+
 .dataRow{
     display: flex;
 }
@@ -65,7 +82,7 @@
     flex: 1;
 }
 
-#tables, #tablesSyndrom{
+#tables, #tablesSyndrom, #tablesDiagnosis{
     position: fixed;
     top: 350px;
     left: 250px;
@@ -76,12 +93,12 @@
     padding: 5px;
 }
 
-#dataSyndrom{
-    height: 198px;
-}
-
 #tablesSyndrom{
     top: 250px;
+}
+
+#tablesDiagnosis{
+    top: 450px;
 }
 
 .list-group ul{

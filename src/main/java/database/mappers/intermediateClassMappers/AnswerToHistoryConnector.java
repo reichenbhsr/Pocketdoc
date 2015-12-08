@@ -123,7 +123,7 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
 
                 Question question = answer.getAnswerYesOf();
 
-                if (question != null)
+                if (question != null && question.isSymptom())
                     questions.add(question);
             }
 
@@ -133,6 +133,43 @@ public class AnswerToHistoryConnector extends DatabaseConnector {
         }
 
         return questions;
+
+    }
+
+    public ArrayList<Answer> getInformationAnswersFromFollowup(Followup followup){
+
+        ArrayList<Answer> answers = new ArrayList<Answer>();
+
+        try{
+
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("SELECT * from answers_to_histories WHERE followup = ")
+                    .append(followup.getId())
+                    .append(" ORDER BY id ASC;");
+
+            ResultSet set = stmt.executeQuery(SQL.toString());
+
+            Answer answer;
+            while (set.next())
+            {
+                answer = new Answer();
+                answer.setId(set.getInt("answer"));
+
+                Question question = answer.getAnswerOf();
+
+                if (!question.isSymptom())
+                    answers.add(answer);
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read information questions of followup");
+        }
+
+        return answers;
 
     }
 

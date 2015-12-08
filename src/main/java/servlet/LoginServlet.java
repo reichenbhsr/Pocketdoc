@@ -1,8 +1,14 @@
 package servlet;
 
 import com.google.gson.JsonObject;
+import managers.DiagnosisManager;
+import managers.LanguageManager;
 import managers.UserManager;
+import managers.intermediateClassManagers.DiagnosisDesignationManager;
+import models.Diagnosis;
+import models.Language;
 import models.User;
+import models.intermediateClassModels.DiagnosisDesignation;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,6 +35,28 @@ public class LoginServlet extends ServletAbstract {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         login(req, resp, true);
+
+        DiagnosisDesignationManager designationManager = new DiagnosisDesignationManager();
+
+        if (designationManager.getAll().size() == 0){
+            DiagnosisManager diagnosisManager = new DiagnosisManager();
+            LanguageManager languageManager = new LanguageManager();
+
+            ArrayList<Diagnosis> diagnoses = diagnosisManager.getAll();
+            ArrayList<Language> languages = languageManager.getAll();
+
+            for(Diagnosis diagnosis: diagnoses)
+            {
+                for(Language language: languages)
+                {
+                    DiagnosisDesignation designation = new DiagnosisDesignation();
+                    designation.setLanguage(language);
+                    designation.setDiagnosis(diagnosis);
+                    designation.setDesignation("");
+                    designationManager.add(designation);
+                }
+            }
+        }
 
     }
 

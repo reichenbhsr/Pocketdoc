@@ -1,8 +1,9 @@
-angular.module('pocketDocApp').controller('diagnosisController', function($scope, $http,$q , diagnosisFactory, ngTableParams, $window, questionFactory, diagnosisDescriptionFactory,answerToDiagnosisScoreDistributionFactory, perfectDiagnosisFactory) {
+angular.module('pocketDocApp').controller('diagnosisController', function($scope, $http,$q , diagnosisFactory, ngTableParams, $window, questionFactory, diagnosisDescriptionFactory, diagnosisDesignationFactory,answerToDiagnosisScoreDistributionFactory, perfectDiagnosisFactory) {
     //Default Initialisierung von benutzen Variablen
     $scope.diagnoses = [];
     $scope.diagnosis="";
     $scope.diagnosis.german_description="";
+    $scope.diagnosis.german_designation="";
     $scope.diagnosesLoaded = false;
     $scope.showPerfectDiagnosisTest = false
     $scope.questions = [];
@@ -83,6 +84,7 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
         $scope.diagnosis = diagnosis;
         $scope.perfectDiagnosisTest = undefined;
         findGermanDescription();
+        findGermanDesignation();
         getScoreDistributionsForCurrentDiagnosis();
         getPerfectDiagnosisForCurrentDiagnosis();
         $scope.showPerfectDiagnosisTest = false;
@@ -135,50 +137,6 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
             }
         }
 
-        //if(answer.answer_id === question.answer_yes.answer_id && angular.isDefined($scope.diagnosis.perfect_diagnosis)){
-        //    if(question.perfect_diagnosis_yes){ //Wir müssen löschen
-        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-        //            if(perfectDiagnosis.answer.answer_id === question.answer_yes.answer_id){
-        //                removeTheseDiagnoses.push(perfectDiagnosis);
-        //            }
-        //        });
-        //    }
-        //    if(!question.perfect_diagnosis_yes){ //Existiert bereits? Wenn nein, hinzufügen!
-        //        add = true;
-        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-        //            if(perfectDiagnosis.answer.answer_id === question.answer_yes.answer_id){
-        //                add = false;
-        //            }
-        //        });
-        //        if(add){
-        //            $scope.diagnosis.perfect_diagnosis.push({answer:{answer_id:question.answer_yes.answer_id, has_dependency:question.answer_yes.has_dependency}});
-        //        }
-        //    }
-        //}
-        ///**
-        // * Handelt es sich um eine Nein Antwort
-        // */
-        //if(answer.answer_id === question.answer_no.answer_id && angular.isDefined($scope.diagnosis.perfect_diagnosis)){
-        //    if(question.perfect_diagnosis_no){ //Wir müssen löschen
-        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-        //            if(perfectDiagnosis.answer.answer_id === question.answer_no.answer_id){
-        //                removeTheseDiagnoses.push(perfectDiagnosis);
-        //            }
-        //        });
-        //    }
-        //    if(!question.perfect_diagnosis_no){ //Existiert bereits? Wenn nein, hinzufügen
-        //        add = true;
-        //        $scope.diagnosis.perfect_diagnosis.forEach(function(perfectDiagnosis){
-        //            if(perfectDiagnosis.answer.answer_id === question.answer_no.answer_id){
-        //                add = false;
-        //            }
-        //        });
-        //        if(add){
-        //            $scope.diagnosis.perfect_diagnosis.push({answer:{answer_id:question.answer_no.answer_id, has_dependency:question.answer_no.has_dependency}});
-        //        }
-        //    }
-        //}
-
         /**
          * Da wir über alle typischen Antworten einer Diagnose iterieren und mittels id Vergleich die zu löschende typische Antwort suchen
          * ist es nicht möglich die typische Antwort mittels splice aus dem Array zu entfernen deshalb machen wir hier ein neues
@@ -210,6 +168,16 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
             $scope.diagnosis.descriptions.forEach(function(description) {
                 if(angular.equals(description.language_name, "Deutsch")){
                     $scope.diagnosis.german_description = description;
+                }
+            });
+        }
+    }
+
+    function findGermanDesignation(){
+        if(angular.isDefined($scope.diagnosis.designations)){
+            $scope.diagnosis.designations.forEach(function(designation) {
+                if(angular.equals(designation.language_name, "Deutsch")){
+                    $scope.diagnosis.german_designation = designation;
                 }
             });
         }
@@ -296,6 +264,11 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
         $scope.diagnosis.descriptions.forEach(function(description){
             if(angular.equals(description.language_name, language)){
                 $scope.diagnosis.currentDescription = description;
+            }
+        });
+        $scope.diagnosis.designations.forEach(function(designation){
+            if(angular.equals(designation.language_name, language)){
+                $scope.diagnosis.currentDesignation = designation;
             }
         });
     }
@@ -415,6 +388,7 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
             if ($scope.diagnoses.length > 0) {
                 $scope.diagnosis = $scope.diagnoses[0];
                 findGermanDescription();
+                findGermanDesignation();
             }
             $scope.diagnosesLoaded = true;
             /**
@@ -449,6 +423,9 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
                 diagnosisFactory.update(newValue);
                 newValue.descriptions.forEach(function(description){
                     diagnosisDescriptionFactory.update(description);
+                });
+                newValue.designations.forEach(function(designation){
+                    diagnosisDesignationFactory.update(designation);
                 });
             }
         }

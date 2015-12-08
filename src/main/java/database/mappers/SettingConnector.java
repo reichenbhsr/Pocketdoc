@@ -77,9 +77,12 @@ public class SettingConnector extends DatabaseConnector{
             establishConnection();
 
             Statement stmt = connection.createStatement();
-            String SQL = "SELECT * FROM settings WHERE id='"+ settingId + "';";
+            StringBuilder SQL = new StringBuilder();
+            SQL.append("SELECT * FROM settings WHERE id=")
+               .append(settingId)
+               .append(";");
 
-            ResultSet set = stmt.executeQuery(SQL);
+            ResultSet set = stmt.executeQuery(SQL.toString());
 
             if (set.next())
             {
