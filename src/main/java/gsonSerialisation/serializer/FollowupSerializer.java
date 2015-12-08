@@ -5,8 +5,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import models.Followup;
+import models.intermediateClassModels.DiagnosisDesignation;
 
 import java.lang.reflect.Type;
+import java.util.Set;
 
 /**
  * Diese Klasse wird gebraucht um mithilfe von Gson, ein Followup Objekt zu einem Json Objekt umzuwandeln
@@ -38,8 +40,11 @@ public class FollowupSerializer implements JsonSerializer<Followup> {
         object.addProperty(ID, followup.getId());
         object.addProperty(USER_ID, followup.getUser().getId());
         object.addProperty(DIAGNOSIS_ID, followup.getDiagnosis().getId());
-        String diagnosisName = followup.getDiagnosis().getName();
-        object.addProperty(DIAGNOSIS_NAME, diagnosisName.substring(diagnosisName.indexOf("_") + 1));
+        Set<DiagnosisDesignation> designations = followup.getDiagnosis().getDesignations();
+        for(DiagnosisDesignation designation: designations) {
+            if (designation.getLanguage().getId() == followup.getUser().getLanguage().getId())
+                object.addProperty(DIAGNOSIS_NAME, designation.getDesignation());
+        }
         object.addProperty(ACTION_SUGGESTION_ID, followup.getActionSuggestion().getId());
         object.addProperty(TIMESTAMP, followup.getTimeStamp().getTime());
 
