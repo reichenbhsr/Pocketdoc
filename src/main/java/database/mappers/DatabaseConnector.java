@@ -49,7 +49,7 @@ public class DatabaseConnector {
 
             // Localhost Connection
             //connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/pocketdoc?user=postgres&password=password");
-            //connection = DriverManager.getConnection(reader.getValue("connection-string"));
+            connection = DriverManager.getConnection(reader.getValue("connection-string"));
 
             // Localhost Test Connection
             //connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/pocketdoc_test", "postgres", "password");
