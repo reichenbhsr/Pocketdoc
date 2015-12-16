@@ -6,11 +6,11 @@
 INSERT INTO histories(consecutive_questions) VALUES
 (1);
 
---TABLE users(name,password,history)
-INSERT INTO users(name,password,history) VALUES
-('admin', '1234', 1);
-
 --TABLE languages(name)
 INSERT INTO languages(name) VALUES
 ('Deutsch'),
 ('Englisch');
+
+--TABLE users(name,password,history, email, gender, age_category, is_admin, is_temporary, lang)
+INSERT INTO users(name,password,history, email, gender, age_category, is_admin, is_temporary, lang) VALUES
+('admin', '1234', 1, 'admin@pocketdoc.ch', 0, 0, true, false, 1);

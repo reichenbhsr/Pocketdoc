@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<database-configuration>
+    <connection-string>jdbc:postgresql://localhost:5432/pocketdoc?user=pocketdoc&amp;password=password</connection-string>
+</database-configuration>

@@ -77,9 +77,7 @@ public class NextQuestionServlet extends ServletAbstract {
             int id = getId(path);
             User user;
 
-
             user = new UserManager().get(id);
-
 
             RunManager manager = new RunManager(user);
             final Question question = manager.getNextQuestion();

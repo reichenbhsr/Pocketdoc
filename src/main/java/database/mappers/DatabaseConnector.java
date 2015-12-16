@@ -2,6 +2,7 @@ package database.mappers;
 
 import models.Question;
 import models.User;
+import util.XMLReader;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -38,14 +39,21 @@ public class DatabaseConnector {
 
         try {
 
+            XMLReader reader = new XMLReader("config.xml");
+
             // Heroku connection from Localhost
             //connection = DriverManager.getConnection("jdbc:postgresql://ec2-79-125-21-70.eu-west-1.compute.amazonaws.com:5432/d3sd306179mt7j?user=zcdhqlrumnxkeo&password=vFddXxjvToPRJwSesubS3Mux4U&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory");
 
             // Heroku connection
-            connection = DriverManager.getConnection("jdbc:postgresql://ec2-79-125-21-70.eu-west-1.compute.amazonaws.com:5432/d3sd306179mt7j?user=zcdhqlrumnxkeo&password=vFddXxjvToPRJwSesubS3Mux4U");
+            //connection = DriverManager.getConnection("jdbc:postgresql://ec2-79-125-21-70.eu-west-1.compute.amazonaws.com:5432/d3sd306179mt7j?user=zcdhqlrumnxkeo&password=vFddXxjvToPRJwSesubS3Mux4U");
 
             // Localhost Connection
-            //connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/pocketdoc", "postgres", "password");
+            //connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/pocketdoc?user=postgres&password=password");
+            connection = DriverManager.getConnection(reader.getValue("connection-string"));
+
+            // Localhost Test Connection
+            //connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/pocketdoc_test", "postgres", "password");
+
 
         } catch (SQLException e) {
 
