@@ -20,7 +20,7 @@ public class XMLReader {
 
         try {
 
-            File xmlFile = new File(getClass().getClassLoader().getResource(file).getFile());
+            File xmlFile = new File(getClass().getClassLoader().getSystemResource(file).getFile());
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
