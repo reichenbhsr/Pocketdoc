@@ -1,4 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
 <database-configuration>
-    <connection-string>jdbc:postgresql://ec2-79-125-21-70.eu-west-1.compute.amazonaws.com:5432/d3sd306179mt7j?user=zcdhqlrumnxkeo&password=vFddXxjvToPRJwSesubS3Mux4U</connection-string>
+    <connection-string>jdbc:postgresql://ec2-79-125-21-70.eu-west-1.compute.amazonaws.com:5432/d3sd306179mt7j?user=zcdhqlrumnxkeo&amp;password=vFddXxjvToPRJwSesubS3Mux4U</connection-string>
 </database-configuration>
