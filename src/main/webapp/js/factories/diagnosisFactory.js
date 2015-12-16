@@ -5,6 +5,7 @@ angular.module('pocketDocApp').factory("diagnosisFactory", function($http, $reso
 
     return $resource(
         baseUrl, { id: '@diagnosis_id' },{
+            'copy' : { method: 'POST' },
             'update': { method:'PUT' }
         }
     );

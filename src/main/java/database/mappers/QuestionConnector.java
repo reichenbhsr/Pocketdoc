@@ -219,6 +219,39 @@ public class QuestionConnector extends DatabaseConnector{
         return null;
     }
 
+    public Question readQuestionOfType(int type){
+
+        try{
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM Questions WHERE type='"+ type + "';";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            if (set.next())
+            {
+                Question question = new Question();
+                question.setId(set.getInt("id"));
+                question.setName(set.getString("name"));
+                question.setSymptom(set.getBoolean("is_symptom"));
+                question.setAnswerNoId(set.getInt("answer_no"));
+                question.setAnswerYesId(set.getInt("answer_yes"));
+                question.setDependsOnId(set.getInt("depends_on"));
+                question.setForceDependentAsking(set.getBoolean("force_dependent_asking"));
+                question.setType(set.getInt("type"));
+
+                return question;
+            }
+
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read Question of type");
+        }
+
+        return null;
+    }
+
     public ArrayList<Question> readAll(){
 
         ArrayList<Question> questions = new ArrayList<Question>();

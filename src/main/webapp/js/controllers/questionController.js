@@ -1,4 +1,4 @@
-angular.module('pocketDocApp').controller('questionController', function($scope, $http,$q , diagnosisFactory, ngTableParams,actionSuggestionFactory,answerToActionSuggestionScoreDistributionFactory, questionFactory, questionDescriptionFactory,answerToDiagnosisScoreDistributionFactory, perfectDiagnosisFactory) {
+angular.module('pocketDocApp').controller('questionController', function($scope, $http,$q , diagnosisFactory, ngTableParams,actionSuggestionFactory,answerToActionSuggestionScoreDistributionFactory, questionFactory, questionDescriptionFactory,answerToDiagnosisScoreDistributionFactory, perfectDiagnosisFactory, syndromFactory) {
     //Default Initialisierung von benutzen Variablen
     $scope.questions = [];
     $scope.question="";
@@ -266,6 +266,17 @@ angular.module('pocketDocApp').controller('questionController', function($scope,
             }
         });
     }
+
+    /**
+     * Generiert ein Syndrom anhand einer Frage
+     * @param isYes Bei true wird die Antwort Ja bereits dem Syndrom hinzugefügt, ansonsten die Antwort Nein
+     */
+    $scope.generateSyndrom = function(isYes){
+        var answer = (isYes) ? $scope.question.answer_yes : $scope.question.answer_no;
+        syndromFactory.createSyndromFromAnswer(answer, function(){
+            alert("Syndrom erstellt!");
+        });
+    };
 
     /**
      * Für Die Aktuelle Frage sollen die dazugehörigen Answer Score Verteilungen ermittelt werden, welche die Diagnosen betreffen

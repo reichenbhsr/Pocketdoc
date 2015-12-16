@@ -6,10 +6,13 @@
         <div ng-show="syndromsLoaded" class="list-group">
             <ul>
                 <li>
-                    <a no-reload="" data-ng-click="addSyndrom()" class="list-group-item"><b>Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
+                    <a no-reload="" data-ng-click="addSyndrom()" class="list-group-item"><b class="desc">Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
                 </li>
                 <li ng-repeat="syndrom in syndroms | orderBy:'name'">
-                    <a no-reload="" data-ng-click="setSyndrom(syndrom)" class="list-group-item">{{syndrom.name}}<i ng-click="removeSyndrom(syndrom, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i></a>
+                    <a no-reload="" data-ng-click="setSyndrom(syndrom)" class="list-group-item">
+                        <div class="desc">{{syndrom.name}}</div>
+                        <i ng-click="removeSyndrom(syndrom, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i>
+                    </a>
                 </li>
             </ul>
         </div>

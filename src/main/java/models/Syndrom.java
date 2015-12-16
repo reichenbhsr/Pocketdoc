@@ -4,8 +4,6 @@ import database.mappers.intermediateClassMappers.AnswersToSyndromsConnector;
 import database.mappers.intermediateClassMappers.SyndromToActionSuggestionScoreDistributionConnector;
 import models.intermediateClassModels.SyndromToActionSuggestionScoreDistribution;
 
-import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 /**

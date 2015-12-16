@@ -6,10 +6,13 @@
         <div ng-show="diagnosesLoaded" class="list-group">
             <ul>
                 <li>
-                    <a no-reload="" data-ng-click="addDiagnosis()" class="list-group-item"><b>Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
+                    <a no-reload="" data-ng-click="addDiagnosis()" class="list-group-item"><b class="desc">Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
                 </li>
                 <li ng-repeat="diagnosis in diagnoses | orderBy:'name'">
-                    <a no-reload="" data-ng-click="setDiagnosis(diagnosis)" class="list-group-item">{{diagnosis.name}}<i ng-click="removeDiagnosis(diagnosis, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i></a>
+                    <a no-reload="" data-ng-click="setDiagnosis(diagnosis)" class="list-group-item">
+                        <div class="desc">{{diagnosis.name}}</div>
+                        <i ng-click="removeDiagnosis(diagnosis, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -56,6 +59,7 @@
                     <input class="form-control" type="text" ng-show="diagnosis.currentDesignation" id="diagnosis_designation_other_languages" type="text" ng-model="diagnosis.currentDesignation.designation" /><br/>
                 </div>
                 <div>
+                    <input class="btn btn-default" type="submit" data-ng-click="copyDiagnosis()" value="Kopie anlegen"/>
                 </div>
             </div>
             <div class="dataRow">

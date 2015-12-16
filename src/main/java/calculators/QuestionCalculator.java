@@ -61,11 +61,16 @@ public class QuestionCalculator {
         diagnosisCalculator = new DiagnosisCalculator(historyManager, answerManager, diagnosisManager);
     }
 
+    /**
+     * Initialisiert ein Followup, um dieses durchzuführen
+     *
+     * @param followup Followup, welches durchgeführt werden soll.
+     */
     public void initFollowup(Followup followup){
 
         followupQuestions = new LinkedList<Question>();
         answeredFollowupQuestions = new LinkedList<Question>();
-        currentFollowup = followup;
+        currentFollowup = followupManager.get(followup.getId());
 
         ArrayList<Question> questions = followupManager.getYesAnsweredQuestionOfFollowup(followup);
         followupInformationAnswers = followupManager.getInformationQuestionsOfFollowup(followup);
@@ -121,9 +126,7 @@ public class QuestionCalculator {
             /*
             Beste Frage herausfinden
              */
-            Date start = new Date();
             bestQuestion = getBestQuestion(remainingQuestions, user);
-            System.out.println("Time for calculating: " + (new Date().getTime() - start.getTime()));
 
             if (bestQuestion == null) {
                 bestQuestion = remainingQuestions.get(0);
@@ -154,8 +157,10 @@ public class QuestionCalculator {
         }
         else{
             // Followup wird durchgeführt
-            bestQuestion = followupQuestions.remove();
-            answeredFollowupQuestions.add(bestQuestion);
+            do{
+                bestQuestion = followupQuestions.remove();
+                answeredFollowupQuestions.add(bestQuestion);
+            }while(bestQuestion != null && !remainingQuestions.contains(bestQuestion));
         }
 
         return bestQuestion;
@@ -203,9 +208,12 @@ public class QuestionCalculator {
 
     }
 
+    /**
+     * Beantwortet die aktuelle Frage, um deren Scores hinzuzufügen und Vorbereitungen für die nächste Frage zu treffen.
+     * @param question Beantwortete Frage
+     * @param answer Gegebene Antwort
+     */
     public void addAnswer(Question question, Answer answer){
-
-        System.out.println("Given answer: " + answer.getId() + ". Is Answer Yes: " + (answer.getAnswerYesOf() != null));
 
         if (answer.getId() > -1){
             diagnosisCalculator.addAnswerToRankingList(answer);
@@ -353,6 +361,11 @@ public class QuestionCalculator {
         return questions;
     }
 
+    /**
+     * Gibt alle Fragen zurück, welche noch gefragt werden sollen.
+     *
+     * @return Liste aller zu fragenden Antworten.
+     */
     private ArrayList<Question> getQuestionsToAsk(){    // FIXME RE
         ArrayList<Question> questions = questionManager.getAll();
         ArrayList<Question> questionsToAsk = new ArrayList<Question>();
@@ -370,6 +383,10 @@ public class QuestionCalculator {
 
     }
 
+    /**
+     * Gibt alle Informations Fragen zurück.
+     * @return Liste aller Informations Fragen.
+     */
     private ArrayList<Question> getInformaticQuestions(){   // FIXME RE
         ArrayList<Question> questions = questionManager.getAll();
         ArrayList<Question> questionsToAsk = new ArrayList<Question>();
@@ -386,6 +403,13 @@ public class QuestionCalculator {
         return questionsToAsk;
     }
 
+    /**
+     * Entfernt alle abhängigen Fragen, welche mit der aktuellen Antwort ausgeschlossen werden können, aus der Frageliste.
+     *
+     * @param questions Liste der zu reinigenden Fragen.
+     * @param givenAnswer Gegebene Antwort
+     * @return Gereinigte Fragenliste.
+     */
     private ArrayList<Question> cleanOutDependentQuestions(ArrayList<Question> questions, Answer givenAnswer){
 
         ArrayList<Question> questionsToCheck = (ArrayList<Question>) questions.clone();
@@ -402,6 +426,12 @@ public class QuestionCalculator {
         return questionsToCheck;
     }
 
+    /**
+     * Entfernt alle abhängigen Fragen, welche mit der Antwort "Weiss nicht" ausgeschlossen werden können, aus der Frageliste.
+     * @param questions Liste der zu reinigenden Fragen.
+     * @param answeredQuestion Frage, die mit "Weiss nicht" beantwortet wurde.
+     * @return Gereinigte Fragenliste.
+     */
     private ArrayList<Question> cleanOutDependentQuestions(ArrayList<Question> questions, Question answeredQuestion){
 
         ArrayList<Question> questionsToCheck = (ArrayList<Question>) questions.clone();
@@ -418,6 +448,12 @@ public class QuestionCalculator {
         return questionsToCheck;
     }
 
+    /**
+     * Prüft, ob eine Frage von der aktuellen Antwort abhängig ist, die zwangsläufig als nächstes gestellt werden muss.
+     *
+     * @param givenAnswer Gegebene Antwort
+     * @return Frage, die als nächstes gestellt werden muss.
+     */
     private Question checkForceDependentQuestion(Answer givenAnswer){   // RE
 
         for(Question q: givenAnswer.getDependencyFrom()){
@@ -512,6 +548,16 @@ public class QuestionCalculator {
         return bestQuestion;
     }
 
+    /**
+     * Berechnet den Scoreunterschied zwischen der aktuellen Top Diagnose und der zweiten Diagnose.
+     *
+     * @param question Aktuelle Frage
+     * @param top Top Diagnose
+     * @param second Zweite Diagnose
+     * @param topValue Score der Top Diagnose
+     * @param secondValue Score der Zweitdiagnose
+     * @return Scoredifferenz zwischen der Top und der Zweit Diagnose.
+     */
     private int calculateDifference(Question question, Diagnosis top, Diagnosis second, int topValue, int secondValue){ // FIXME RE
         int tempDiff = 0;
 
@@ -529,51 +575,22 @@ public class QuestionCalculator {
 
     }
 
-    private int checkDifference(final TreeMap<Diagnosis, Integer> sortedList){ // FIXME RE
-        final Iterator<Map.Entry<Diagnosis, Integer>> iterator = sortedList.entrySet().iterator();
-        try {
-            final Map.Entry<Diagnosis, Integer> firstEntry = iterator.next();
-            int tempDiff;
-            if (iterator.hasNext()) {
-                final Map.Entry<Diagnosis, Integer> secondEntry = iterator.next();
-
-                tempDiff = firstEntry.getValue() - secondEntry.getValue();
-            } else {
-                tempDiff = firstEntry.getValue();
-            }
-
-            return Math.abs(tempDiff);
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
     /**
-     * Die Methode überprüft ob die anfängliche top-Diagnose in der Liste noch oben ist
-     *
-     * @param sortedList Die neue Rankliste
-     * @return true oder false
+     * Beantwortet die Informativen Fragen des Followups anhand des vorherigen Durchlaufs.
+     * @param user
      */
-    private boolean isDiagnosisOnTop(final TreeMap<Diagnosis, Integer> sortedList) {
-        final Iterator<Map.Entry<Diagnosis, Integer>> iterator = sortedList.entrySet().iterator();
-        try {
-
-            final Map.Entry<Diagnosis, Integer> firstEntry = iterator.next();
-            return topDiagnosis.equals(firstEntry.getKey());
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     private void answerInformationsForFollowup(User user){
 
         for(Answer answer: followupInformationAnswers) {
+            Question questionOfAnswer = answer.getAnswerOf();
+
+            if (questionOfAnswer.getType() >= 10){
+                if (answer.getAnswerYesOf() != null)
+                    answer = getAnswerCorrectTimeQuestion(questionOfAnswer);
+            }
+
             diagnosisCalculator.addAnswerToRankingList(answer);
-            historyManager.addAnswerToHistory(answer, user.getHistory(), answer.getAnswerOf());
+            historyManager.addAnswerToHistory(answer, user.getHistory(), questionOfAnswer);
             informationQuestions = cleanOutDependentQuestions(informationQuestions, answer);
             informationQuestions.remove(answer);
         }
@@ -582,6 +599,58 @@ public class QuestionCalculator {
 
     }
 
+    /**
+     * Beantwortet bei einem Followup automatisch, wie lange eine Krankheit bereits besteht anhand der Angabe des Users beim
+     * ersten Durchlauf und der verstrichenen Zeit, seit jenem Durchlauf.
+     */
+    private Answer getAnswerCorrectTimeQuestion(Question timeQuestion){
+
+
+        Date lastRun = currentFollowup.getTimeStamp();
+        Date now = new Date();
+        long timespanInHours = (now.getTime() - lastRun.getTime()) / 3600000;
+
+        switch(timeQuestion.getType()){
+            case 10:
+                timespanInHours += 2;
+                break;
+            case 11:
+                timespanInHours += 4;
+                break;
+            case 12:
+                timespanInHours += 24;
+                break;
+            case 13:
+                timespanInHours += 72;
+                break;
+            case 14:
+                timespanInHours += 168;
+                break;
+            case 15:
+                timespanInHours += 504;
+                break;
+        }
+
+        if (timespanInHours <= 2)
+            return questionManager.getTypedQuestion(10).getAnswerYes();
+        else if (timespanInHours > 2 && timespanInHours < 4)
+            return questionManager.getTypedQuestion(11).getAnswerYes();
+        else if (timespanInHours >= 4 && timespanInHours < 24 )
+            return questionManager.getTypedQuestion(12).getAnswerYes();
+        else if (timespanInHours >= 24 && timespanInHours < 72 )
+            return questionManager.getTypedQuestion(13).getAnswerYes();
+        else if (timespanInHours >= 72 && timespanInHours < 168 )
+            return questionManager.getTypedQuestion(14).getAnswerYes();
+        else if (timespanInHours >= 168 && timespanInHours < 504 )
+            return questionManager.getTypedQuestion(15).getAnswerYes();
+
+        return timeQuestion.getAnswerYes();
+    }
+
+    /**
+     * Beantwortet typisierte Fragen automatisch (Aktuell Geschlecht und Alter)
+     * @param user User Daten, anhand welcher die Antworten gegeben werden sollen.
+     */
     private void answerTypedQuestions(User user){
 
         Question q;

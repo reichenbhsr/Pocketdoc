@@ -69,13 +69,13 @@ public class SyndromManager implements BasicManager<Syndrom> {
                 syndrom.setSymptoms(oldSyndrom.getSymptoms());
             }
 
-            addPerfectAnswersToDiagnosis(syndrom);
+            addAnswersToSyndrom(syndrom);
 
             return syndromMapper.update(syndrom);
         }
     }
 
-    public void addPerfectAnswersToDiagnosis(Syndrom syndrom){
+    public void addAnswersToSyndrom(Syndrom syndrom){
 
         answerToSyndromMapper.delete(syndrom.getId());
 

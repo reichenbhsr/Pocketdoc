@@ -6,10 +6,13 @@
         <div ng-show="actionSuggestionsLoaded" class="list-group">
             <ul>
                 <li>
-                    <a no-reload="" data-ng-click="addActionSuggestion()" class="list-group-item"><b>Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
+                    <a no-reload="" data-ng-click="addActionSuggestion()" class="list-group-item"><b class="desc">Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
                 </li>
                 <li ng-repeat="actionSuggestion in actionSuggestions | orderBy:'name'">
-                    <a no-reload="" data-ng-click="setActionSuggestion(actionSuggestion)" class="list-group-item">{{actionSuggestion.name}}<i ng-click="removeActionSuggestion(actionSuggestion, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i></a>
+                    <a no-reload="" data-ng-click="setActionSuggestion(actionSuggestion)" class="list-group-item">
+                        <div class="desc">{{actionSuggestion.name}}</div>
+                        <i ng-click="removeActionSuggestion(actionSuggestion, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i>
+                    </a>
                 </li>
             </ul>
         </div>

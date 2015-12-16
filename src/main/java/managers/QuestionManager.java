@@ -157,6 +157,10 @@ public class QuestionManager implements BasicManager<Question> {
         return questionMapper.readAll();
     }
 
+    public Question getTypedQuestion(int type){
+        return questionMapper.readQuestionOfType(type);
+    }
+
     @Override
     public void remove(int id) {
         Question q = get(id);

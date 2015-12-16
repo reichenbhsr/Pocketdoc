@@ -173,6 +173,7 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
         }
     }
 
+    // Die Deutsche Bezeichnung soll immer angezeigt werden, daher muss diese zuerst gesucht werden.
     function findGermanDesignation(){
         if(angular.isDefined($scope.diagnosis.designations)){
             $scope.diagnosis.designations.forEach(function(designation) {
@@ -318,6 +319,30 @@ angular.module('pocketDocApp').controller('diagnosisController', function($scope
      */
     $scope.testAllPerfectDiagnoses = function(){
         $window.open('https://pocketdoc.herokuapp.com/perfectDiagnosis', '_blank');
+    };
+
+    /**
+     * Legt eine Kopie der aktuellen Diagnose an.
+     */
+    $scope.copyDiagnosis = function(){
+        diagnosisFactory.copy($scope.diagnosis, $scope.diagnosis, function(answer){
+            //Die neue Diagnose den bereits vorhandenen Diagnosen anfügen
+            $scope.diagnoses.push(angular.copy(answer));
+            /**
+             * Die neu hinzugefügte Diagnose suchen und als momentan angezeigte Diagnose setzen.
+             * Dies ist nötig weil newDiagnosis nach dieser Methode nicht mehr definiert ist.
+             */
+            $scope.diagnoses.forEach(function(diagnosis){
+                if(diagnosis.diagnosis_id === answer.diagnosis_id){
+                    $scope.setDiagnosis(diagnosis);
+                }
+            });
+
+            // Scoreverteilung neu laden
+            $scope.allScoreDistributions = answerToDiagnosisScoreDistributionFactory.query(function () {
+                getScoreDistributionsForCurrentDiagnosis();
+            });
+        });
     };
 
     /**

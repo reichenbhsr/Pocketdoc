@@ -1,6 +1,6 @@
 package managers;
 
-import database.mappers.FollowupConntector;
+import database.mappers.FollowupConnector;
 import database.mappers.UserConnector;
 import database.mappers.intermediateClassMappers.AnswerToHistoryConnector;
 import models.Answer;
@@ -8,7 +8,6 @@ import models.Followup;
 import models.Question;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * Diese Klasse dient als Mittelstück der Applikation wenn es um Objekte der Klasse Followup geht.
@@ -21,7 +20,7 @@ import java.util.HashSet;
  */
 public class FollowupManager implements BasicManager<Followup>{
 
-    private FollowupConntector followupConnector;
+    private FollowupConnector followupConnector;
     private AnswerToHistoryConnector answerToHistoryConnector;
     private UserConnector userConnector;
 
@@ -30,7 +29,7 @@ public class FollowupManager implements BasicManager<Followup>{
      */
     public FollowupManager(){
 
-        followupConnector = new FollowupConntector();
+        followupConnector = new FollowupConnector();
         userConnector = new UserConnector();
         answerToHistoryConnector = new AnswerToHistoryConnector();
     }
@@ -56,7 +55,7 @@ public class FollowupManager implements BasicManager<Followup>{
 
     @Override
     public Followup get(int id) {
-        return null;
+        return followupConnector.read(id);
     }
 
     @Override

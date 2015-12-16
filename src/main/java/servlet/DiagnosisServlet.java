@@ -3,7 +3,13 @@ package servlet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import managers.DiagnosisManager;
+import managers.intermediateClassManagers.AnswerToDiagnosisScoreDistributionManager;
+import managers.intermediateClassManagers.DiagnosisDescriptionManager;
+import managers.intermediateClassManagers.DiagnosisDesignationManager;
 import models.Diagnosis;
+import models.intermediateClassModels.AnswerToDiagnosisScoreDistribution;
+import models.intermediateClassModels.DiagnosisDescription;
+import models.intermediateClassModels.DiagnosisDesignation;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +39,51 @@ public class DiagnosisServlet extends ServletAbstract {
         if (req.getSession().getAttribute("user") == null) {
             resp.getWriter().println("You are not authorized to view this data.");
         } else {
-            final Diagnosis diagnosis = new DiagnosisManager().add();
+            DiagnosisManager diagnosisManager = new DiagnosisManager();
+            Diagnosis diagnosis = diagnosisManager.add();
+
+            String path = req.getPathInfo();
+
+            if (path != null){
+                DiagnosisDescriptionManager descManager = new DiagnosisDescriptionManager();
+                DiagnosisDesignationManager desigManager = new DiagnosisDesignationManager();
+                AnswerToDiagnosisScoreDistributionManager scoreManager = new AnswerToDiagnosisScoreDistributionManager();
+
+                // Infos der Diagnose Kopieren
+                Diagnosis diagToCopy = diagnosisManager.get(getId(path));
+                diagnosis.setName(diagToCopy.getName() + "-Kopie");
+                diagnosis.setAnswersForPerfectDiagnosis(diagToCopy.getAnswersForPerfectDiagnosis());
+                diagnosisManager.update(diagnosis);
+
+                // Beschreibungen Kopieren
+                for(DiagnosisDescription descToCopy: diagToCopy.getDescriptions()){
+                    for(DiagnosisDescription desc: diagnosis.getDescriptions()){
+                        if (descToCopy.getLanguage().getId() == desc.getLanguage().getId()){
+                            desc.setDescription(descToCopy.getDescription());
+                            descManager.update(desc);
+                        }
+                    }
+                }
+
+                // Bezeichnungen kopieren
+                for(DiagnosisDesignation desigToCopy: diagToCopy.getDesignations()){
+                    for(DiagnosisDesignation desig: diagnosis.getDesignations()){
+                        if (desigToCopy.getLanguage().getId() == desig.getLanguage().getId()){
+                            desig.setDesignation(desigToCopy.getDesignation());
+                            desigManager.update(desig);
+                        }
+                    }
+                }
+
+                // Scores Kopieren
+                for(AnswerToDiagnosisScoreDistribution dist: diagToCopy.getAnswerToDiagnosisScoreDistributions()){
+                    dist.setId(0);
+                    dist.setDiagnosis(diagnosis);
+                    scoreManager.add(dist);
+                }
+
+                diagnosis = diagnosisManager.get(diagnosis.getId());
+            }
 
             final String answer = gson.toJson(diagnosis);
             sendResponse(answer, resp);

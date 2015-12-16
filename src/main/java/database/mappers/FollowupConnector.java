@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Created by Roman on 23.11.2015.
  */
-public class FollowupConntector extends DatabaseConnector{
+public class FollowupConnector extends DatabaseConnector{
 
     public int create(Followup followup){
 
@@ -52,6 +52,36 @@ public class FollowupConntector extends DatabaseConnector{
 
         return -1;
 
+    }
+
+    public Followup read(int followupId){
+
+        try{
+            establishConnection();
+
+            Statement stmt = connection.createStatement();
+            String SQL = "SELECT * FROM followups WHERE id = " + followupId + ";";
+
+            ResultSet set = stmt.executeQuery(SQL);
+
+            Followup followup = null;
+            if (set.next())
+            {
+                followup = new Followup();
+                followup.setId(set.getInt("id"));
+                followup.setDiagnosisId(set.getInt("diagnosis"));
+                followup.setUserId(set.getInt("usr"));
+                followup.setActionSuggestionId(set.getInt("action_suggestion"));
+                followup.setTimestamp(set.getTimestamp("timestamp"));
+            }
+
+            return followup;
+        }
+        catch (SQLException ex){
+            System.out.println("SQL Error read followup");
+        }
+
+        return null;
     }
 
     public ArrayList<Followup> readFromUser(int userId){

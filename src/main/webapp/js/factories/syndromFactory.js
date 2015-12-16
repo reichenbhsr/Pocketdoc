@@ -5,6 +5,7 @@ angular.module('pocketDocApp').factory("syndromFactory", function($http, $resour
 
     return $resource(
         baseUrl, { id: '@syndrom_id' },{
+            'createSyndromFromAnswer': { method: 'POST' },
             'update': { method:'PUT' }
         }
     );

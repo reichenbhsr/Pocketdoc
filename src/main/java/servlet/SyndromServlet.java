@@ -3,6 +3,7 @@ package servlet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import managers.SyndromManager;
+import models.Answer;
 import models.Syndrom;
 
 import javax.servlet.ServletException;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Diese Klasse dient als Schnittstelle zur Appliktion. Sie kann via HTTP mit REST aufgerufen werden.
@@ -35,8 +36,20 @@ public class SyndromServlet extends ServletAbstract {
         } else {
             final Syndrom syndrom = new SyndromManager().add();
 
-            final String answer = gson.toJson(syndrom);
-            sendResponse(answer, resp);
+            JsonObject paramValue = getRequest(req);
+            Answer answer = gson.fromJson(paramValue, Answer.class);
+
+            // Standardantwort dem Syndrom hinzufügen
+            if (answer != null){
+                syndrom.setName(answer.getAnswerOf().getName() + "-Syndrom");
+                HashSet<Answer> answers = new HashSet<Answer>();
+                answers.add(answer);
+                syndrom.setSymptoms(answers);
+                new SyndromManager().update(syndrom);
+            }
+
+            final String response = gson.toJson(syndrom);
+            sendResponse(response, resp);
         }
     }
 

@@ -6,16 +6,19 @@
         <div ng-show="questionsLoaded" class="list-group">
             <ul>
                 <li>
-                    <a no-reload="" data-ng-click="addQuestion()" class="list-group-item"><b>Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
+                    <a no-reload="" data-ng-click="addQuestion()" class="list-group-item"><b class="desc">Hinzufügen</b><i class="glyphicon glyphicon-plus pull-right"></i></a>
                 </li>
                 <li ng-repeat="question in questions | orderBy:'name'">
-                    <a no-reload="" data-ng-click="setQuestion(question)" class="list-group-item">{{question.name}}<i ng-click="removeQuestion(question, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i></a>
+                    <a no-reload="" data-ng-click="setQuestion(question)" class="list-group-item">
+                        <div class="desc">{{question.name}}</div>
+                        <i ng-click="removeQuestion(question, $index)" no-reload="" class="glyphicon glyphicon-trash pull-right"></i>
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
     <div id="content">
-        <div id="data">
+        <div id="dataQuestion">
             <div class="dataRow">
                 <h2>Fragen</h2>
                 <div ng-show="questions.length < 1 && questionsLoaded" class="col-lg-12">
@@ -86,8 +89,18 @@
                     <label><input type="radio" ng-model="question.is_symptom" ng-value="true">Symptom</label>
                 </div>
             </div>
+            <div class="dataRow">
+                <div>
+                    <input class="btn btn-default" type="submit" data-ng-click="generateSyndrom(true)" value="Syndrom Antwort Ja anlegen"/>
+                </div>
+                <div>
+                    <input class="btn btn-default" type="submit" data-ng-click="generateSyndrom(false)" value="Syndrom Antwort Nein anlegen"/>
+                </div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
-        <div id="tables">
+        <div id="tablesQuestion">
             <!-- FRAGENTABELLE -->
             <div ng-show="!diagnosesLoaded">
                 <img src="img/loader.gif" />
