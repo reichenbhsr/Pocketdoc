@@ -612,22 +612,22 @@ public class QuestionCalculator {
 
         switch(timeQuestion.getType()){
             case 10:
-                timespanInHours += 2;
+                timespanInHours += 0;
                 break;
             case 11:
-                timespanInHours += 4;
+                timespanInHours += 2;
                 break;
             case 12:
-                timespanInHours += 24;
+                timespanInHours += 4;
                 break;
             case 13:
-                timespanInHours += 72;
+                timespanInHours += 24;
                 break;
             case 14:
-                timespanInHours += 168;
+                timespanInHours += 72;
                 break;
             case 15:
-                timespanInHours += 504;
+                timespanInHours += 168;
                 break;
         }
 

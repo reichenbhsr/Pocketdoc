@@ -200,27 +200,26 @@ public class QuestionCalculatorTest {
     @Test
     public void testGetNextQuestion1() throws Exception {
 
+        QuestionCalculator.reset();
         final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
-        questionCalculator.reset();
         Question nextQuestion = questionCalculator.getNextQuestion(user);
 
-        //Antwortet auf Answer 3
+        //Antwortet auf Answer 1
         HashSet<Answer> hashSet = new HashSet<Answer>();
-        hashSet.add(answerList.get(2));
+        hashSet.add(answerList.get(0));
         user.getHistory().setAnswers(hashSet);
-        user.getHistory().setLastAnswer(answerList.get(2));
+        user.getHistory().setLastAnswer(answerList.get(0));
 
-        questionCalculator.addAnswer(answerList.get(2).getAnswerOf(), answerList.get(2));
+        questionCalculator.addAnswer(answerList.get(0).getAnswerNoOf(), answerList.get(0));
         nextQuestion = questionCalculator.getNextQuestion(user);
 
-        assertEquals(questionList.get(2),nextQuestion);
+        assertEquals(questionList.get(1),nextQuestion);
     }
 
     @Test
     public void testGetNextQuestion2() throws Exception {
-
+        QuestionCalculator.reset();
         final QuestionCalculator questionCalculator = new QuestionCalculator(new QuestionManagerFake(questionList), historyManagerFake, answerManagerFake, settingManagerFake,diagnosisManagerFake);
-        questionCalculator.reset();
         Question nextQuestion = questionCalculator.getNextQuestion(user);
 
         //Antwortet auf Answer 6
@@ -230,7 +229,7 @@ public class QuestionCalculatorTest {
         user.getHistory().setLastAnswer(answerList.get(5));
 
 
-        questionCalculator.addAnswer(answerList.get(5).getAnswerOf(), answerList.get(5));
+        questionCalculator.addAnswer(answerList.get(5).getAnswerYesOf(), answerList.get(5));
         nextQuestion = questionCalculator.getNextQuestion(user);
 
         assertEquals(questionList.get(1), nextQuestion);
