@@ -158,9 +158,13 @@ public class QuestionCalculator {
         else{
             // Followup wird durchgeführt
             do{
-                bestQuestion = followupQuestions.remove();
-                answeredFollowupQuestions.add(bestQuestion);
+                bestQuestion = followupQuestions.poll();
+                if (bestQuestion != null)
+                    answeredFollowupQuestions.add(bestQuestion);
             }while(bestQuestion != null && !remainingQuestions.contains(bestQuestion));
+
+            if (bestQuestion == null)
+                bestQuestion = getNextQuestion(user);
         }
 
         return bestQuestion;
