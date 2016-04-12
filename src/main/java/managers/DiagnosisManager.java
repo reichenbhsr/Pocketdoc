@@ -215,7 +215,7 @@ public class DiagnosisManager implements BasicManager<Diagnosis> {
             final Diagnosis diagnosis = diagnoses.get(i);
 
             final TreeMap<Diagnosis, Integer> diagnosisIntegerTreeMap = testPerfectDiagnosis(diagnosis.getId());
-            if(!diagnosisIntegerTreeMap.firstKey().equals(diagnosis)){
+            if(diagnosisIntegerTreeMap.size() == 0 || !diagnosisIntegerTreeMap.firstKey().equals(diagnosis)){
                 failedDiagnoses.add(diagnosis);
             }
         }
